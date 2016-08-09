@@ -71,17 +71,19 @@ namespace App5
             if (listView.SelectedItem == null)
                 return;
 
+            if (listView.SelectionMode == ListViewSelectionMode.Single)
+            {
+                AdvancedDetails.Visibility = Visibility.Collapsed;
+                ShowAdvancedDetails.Visibility = Visibility.Visible;
 
-            AdvancedDetails.Visibility = Visibility.Collapsed;
-            ShowAdvancedDetails.Visibility = Visibility.Visible;
+                AppDetails.DataContext = listView.SelectedItem;
+                AppDetails.Visibility = Visibility.Visible;
 
-            AppDetails.DataContext = listView.SelectedItem;
-            AppDetails.Visibility = Visibility.Visible;
+                commandBar.Visibility = Visibility.Collapsed;
 
-            commandBar.Visibility = Visibility.Collapsed;
-
-            AppData data = (AppData)listView.SelectedItem;
-            await data.CalculateSize();
+                AppData data = (AppData)listView.SelectedItem;
+                await data.CalculateSize();
+            }
         }
 
         private async void CopyToClipboardTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
@@ -120,6 +122,17 @@ namespace App5
         {
             AdvancedDetails.Visibility = Visibility.Visible;
             ShowAdvancedDetails.Visibility = Visibility.Collapsed;
+        }
+
+        private void SelectAppBarButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            listView.SelectedItem = null;
+            listView.SelectionMode = ListViewSelectionMode.Single;
+        }
+
+        private void SelectAppBarButton_Checked(object sender, RoutedEventArgs e)
+        {
+            listView.SelectionMode = ListViewSelectionMode.Multiple;
         }
     }
 }

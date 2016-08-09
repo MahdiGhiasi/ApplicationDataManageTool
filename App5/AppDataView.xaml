@@ -27,12 +27,12 @@
 
     <Page.BottomAppBar>
         <CommandBar x:Name="commandBar">
-            <AppBarButton x:Name="BackupAppBarButton" Content="Backup" Visibility="{Binding IsChecked, Converter={StaticResource BoolToVis}, ElementName=SelectAppBarButton}">
+            <AppBarButton x:Name="BackupAppBarButton" Label="Backup" Visibility="{Binding IsChecked, Converter={StaticResource BoolToVis}, ElementName=SelectAppBarButton}">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE8AD;"/>
                 </AppBarButton.Icon>
             </AppBarButton>
-            <AppBarToggleButton x:Name="SelectAppBarButton" Content="Select">
+            <AppBarToggleButton x:Name="SelectAppBarButton" Label="Select" Unchecked="SelectAppBarButton_Unchecked" Checked="SelectAppBarButton_Checked">
                 <AppBarToggleButton.Icon>
                     <FontIcon Glyph="&#xE133;"/>
                 </AppBarToggleButton.Icon>
@@ -45,7 +45,7 @@
         <TextBlock Text="APPS" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24"  />
         <ListView x:Name="listView" Margin="10,54,10,0" ScrollViewer.HorizontalScrollMode="Auto"
                   ItemTemplate="{StaticResource appsListSmall}" SelectionChanged="listView_SelectionChanged"
-                  HorizontalContentAlignment="Stretch" />
+                  HorizontalContentAlignment="Stretch" SelectionMode="Single" />
 
         <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="AppDetails" Visibility="Visible">
             <StackPanel Orientation="Vertical" Margin="20,20,0,0">
