@@ -7,6 +7,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -33,10 +34,13 @@ namespace App5
         {
             this.InitializeComponent();
 
+            AppDetails.Visibility = Visibility.Collapsed;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            ((App)App.Current).BackRequested += AppDataView_BackRequested;
+
             listView.ItemsSource = appsData;
             foreach (var item in App.appsData)
             {
@@ -44,26 +48,33 @@ namespace App5
             }
         }
 
-        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            try
-            {
-                foreach (var item in e.RemovedItems)
-                {
-                    // Set the DataTemplate of the deselected ListViewItems
-                    ((ListViewItem)(sender as ListView).ContainerFromItem(item)).ContentTemplate = appsListSmall;
-                }
-            }
-            catch { }
+            ((App)App.Current).BackRequested -= AppDataView_BackRequested;
 
-            try
-            {
-                AppData cur = (AppData)e.AddedItems[0];
-                ((ListViewItem)(sender as ListView).ContainerFromItem(cur)).ContentTemplate = appsListLarge;
-                cur.CalculateSize();
-            }
-            catch { }
+            base.OnNavigatingFrom(e);
+        }
 
+        private void AppDataView_BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            if (AppDetails.Visibility == Visibility.Visible)
+            {
+                AppDetails.Visibility = Visibility.Collapsed;
+                listView.SelectedItem = null;
+                e.Handled = true;
+            }
+        }
+
+        private async void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (listView.SelectedItem == null)
+                return;
+
+            AppDetails.DataContext = listView.SelectedItem;
+            AppDetails.Visibility = Visibility.Visible;
+
+            AppData data = (AppData)listView.SelectedItem;
+            await data.CalculateSize();
         }
 
         private async void CopyToClipboardTextBlock_Tapped(object sender, TappedRoutedEventArgs e)

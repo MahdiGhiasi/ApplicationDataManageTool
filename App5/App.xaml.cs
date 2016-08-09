@@ -72,6 +72,16 @@ namespace App5
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
+
+
+                // Register a handler for BackRequested events and set the
+                // visibility of the Back button
+                SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    rootFrame.CanGoBack ?
+                    AppViewBackButtonVisibility.Visible :
+                    AppViewBackButtonVisibility.Collapsed;
             }
 
             if (rootFrame.Content == null)
@@ -81,15 +91,6 @@ namespace App5
                 // parameter
                 rootFrame.Navigate(typeof(MainPage), e.Arguments);
             }
-
-            SystemNavigationManager.GetForCurrentView().BackRequested += (sender, ee) =>
-            {
-                if (!ee.Handled && rootFrame.CanGoBack)
-                {
-                    ee.Handled = true;
-                    rootFrame.GoBack();
-                }
-            };
 
             // Ensure the current window is active
             Window.Current.Activate();
@@ -117,6 +118,31 @@ namespace App5
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        public event EventHandler<BackRequestedEventArgs> BackRequested;
+
+        private void OnBackRequested(object sender, BackRequestedEventArgs e)
+        {
+            // Raise child event
+            var eventHandler = this.BackRequested;
+
+            if (eventHandler != null)
+            {
+                eventHandler(sender, e);
+            }
+
+            if (!e.Handled)
+            {
+                var _rootFrame = Window.Current.Content as Frame;
+
+                if (_rootFrame != null && _rootFrame.CanGoBack)
+                {
+                    e.Handled = true;
+                    _rootFrame.GoBack();
+
+                }
+            }
         }
     }
 }

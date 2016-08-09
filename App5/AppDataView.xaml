@@ -21,38 +21,6 @@
                 </StackPanel>
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Name="appsListLarge">
-            <Grid>
-                <StackPanel Orientation="Vertical" Margin="0,0,0,5">
-                    <StackPanel Orientation="Horizontal">
-                        <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}" Margin="5">
-                            <Image Source="{Binding Logo}" Width="50" Height="50"></Image>
-                        </Grid>
-                        <TextBlock Margin="0,20,0,0"
-                                           Text="{Binding DisplayName}"
-                                           TextWrapping="WrapWholeWords" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Vertical" Margin="0,15,20,0">
-                        <TextBlock Text="App size:"/>
-                        <TextBlock Text="{Binding AppSize}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped"  />
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="0,15,20,0">
-                        <TextBlock Text="App data size:"/>
-                        <TextBlock Text="{Binding AppDataSize}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped"  />
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="0,15,20,0">
-                        <TextBlock Text="Package ID:"/>
-                        <TextBlock Text="{Binding PackageId}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped"  />
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="0,15,20,0">
-                        <TextBlock Text="Path:" />
-                        <TextBlock Text="{Binding PackageRootFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" />
-                    </StackPanel>
-                </StackPanel>
-            </Grid>
-
-        </DataTemplate>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -61,5 +29,45 @@
                   ItemTemplate="{StaticResource appsListSmall}" SelectionChanged="listView_SelectionChanged"
                   HorizontalContentAlignment="Stretch" />
 
+        <ScrollViewer Background="White" x:Name="AppDetails" Visibility="Visible">
+            <StackPanel Orientation="Vertical" Margin="20,20,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}" Margin="5">
+                        <Image Source="{Binding Logo}" Width="50" Height="50"></Image>
+                    </Grid>
+                    <TextBlock Margin="0,20,0,0"
+                                           Text="{Binding DisplayName}"
+                                           TextWrapping="WrapWholeWords" />
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Margin="0,15,20,0">
+                    <TextBlock Text="App data size:"/>
+                    <TextBlock Text="{Binding AppDataSize}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped"  />
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="0,15,20,0">
+                    <TextBlock Text="Package ID:"/>
+                    <TextBlock Text="{Binding PackageId}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped"  />
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="0,15,20,0">
+                    <TextBlock Text="Data Path:" />
+                    <TextBlock Text="{Binding PackageDataFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="0,15,20,0">
+                    <TextBlock Text="Installation Path:" />
+                    <TextBlock Text="{Binding PackageRootFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" />
+                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Content="Reset app" HorizontalAlignment="Stretch" Margin="0,0,10,0" />
+                    <Button Grid.Column="1" Content="Backup app data" HorizontalAlignment="Stretch" Margin="0,0,20,0" />
+                </Grid>
+                
+            </StackPanel>
+        </ScrollViewer>
+        
+        
     </Grid>
 </Page>
