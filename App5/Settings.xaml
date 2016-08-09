@@ -9,7 +9,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock Text="SETTINGS" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24" VerticalAlignment="Top" />
-        <StackPanel Margin="20,54,20,0">
+        <StackPanel Margin="20,64,20,0">
             <TextBlock Text="Backup folder:" Margin="0,10,0,5" />
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -20,7 +20,7 @@
                 <Button Content="..." Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,0,0,0" />
             </Grid>
 
-            <CheckBox Margin="0,32,0,0">
+            <CheckBox Margin="0,24,0,0">
                 <CheckBox.Content>
                     <StackPanel>
                         <TextBlock Text="Compress backup archives" />
