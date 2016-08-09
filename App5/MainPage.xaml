@@ -14,11 +14,10 @@
             <StackPanel>
                 <TextBlock Text="APPLICATION DATA MANAGE TOOL" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24"  />
                 <TextBlock Text="This tool allows you to backup data from applications." Margin="24,24,24,72" TextWrapping="WrapWholeWords" />
-                <Button Margin="92,10,92,0" x:Name="appDataViewButton" Content="Apps" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="appDataViewButton_Click"/>
-                <Button Margin="92,10,92,0" x:Name="appDataBackupsButton" Content="Backups" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
-                
-                <Button Margin="92,10,92,0" x:Name="appDataSettingsButton" Content="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
-                <Button Margin="92,10,92,0" x:Name="appDataAboutButton" Content="About" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+                <Button Margin="54,10,54,0" Height="44" x:Name="appDataViewButton" Content="Apps" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="appDataViewButton_Click"/>
+                <Button Margin="54,10,54,0" Height="44" x:Name="appDataBackupsButton" Content="Backups" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+                <Button Margin="54,10,54,0" Height="44" x:Name="appDataSettingsButton" Content="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+                <Button Margin="54,10,54,0" Height="44"  x:Name="appDataAboutButton" Content="About" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
             </StackPanel>
         </ScrollViewer>
         <Grid x:Name="progress" Visibility="Collapsed" Background="#AA000000">
