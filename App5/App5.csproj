@@ -103,6 +103,7 @@
       <DependentUpon>AppDataView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters.cs" />
+    <Compile Include="FileOperations.cs" />
     <Compile Include="LoadAppData.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

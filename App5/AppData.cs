@@ -28,7 +28,7 @@ namespace App5
 
                 string path = PackageDataFolder;
                 StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(path);//PackageRootFolder.ToLower().Replace("c:\\data\\","u:\\"));
-                AppDataSize = GetFileSizeString(await GetSize(folder));
+                AppDataSize = FileOperations.GetFileSizeString(await FileOperations.GetSize(folder));
                 SizeIsCalculated = true;
                 NotifyChange();
             }
@@ -37,38 +37,6 @@ namespace App5
                 AppDataSize = "Unknown";
             }
         }
-
-        private async Task<double> GetSize(StorageFolder folder)
-        {
-            double size = 0;
-            foreach (var item in await folder.GetFilesAsync())
-            {
-                size += (await item.GetBasicPropertiesAsync()).Size;
-            }
-
-            foreach (var item in await folder.GetFoldersAsync())
-            {
-                size += await GetSize(item);
-            }
-
-            return size;
-        }
-
-        private string GetFileSizeString(double byteCount)
-        {
-            string size = "0 Bytes";
-            if (byteCount >= 1073741824.0)
-                size = String.Format("{0:##.##}", byteCount / 1073741824.0) + " GB";
-            else if (byteCount >= 1048576.0)
-                size = String.Format("{0:##.##}", byteCount / 1048576.0) + " MB";
-            else if (byteCount >= 1024.0)
-                size = String.Format("{0:##.##}", byteCount / 1024.0) + " KB";
-            else if (byteCount > 0 && byteCount < 1024.0)
-                size = byteCount.ToString() + " Bytes";
-
-            return size;
-        }
-
 
         internal void NotifyChange()
         {
