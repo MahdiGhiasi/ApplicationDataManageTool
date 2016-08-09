@@ -15,6 +15,7 @@ namespace App5
         public ImageSource Logo { get; set; }
         public string AppDataSize { get; set; } = "Calculating...";
         public string FamilyName { get; set; }
+        public bool SizeIsCalculated { get; set; } = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -22,10 +23,14 @@ namespace App5
         public async Task CalculateSize()
         {
             try {
+                if (SizeIsCalculated)
+                    return;
+
                 string path = PackageDataFolder;
                 StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(path);//PackageRootFolder.ToLower().Replace("c:\\data\\","u:\\"));
-                AppDataSize = GetFileSizeString(await GetSize(folder)) + " Bytes";
+                AppDataSize = GetFileSizeString(await GetSize(folder));
                 NotifyChange();
+                SizeIsCalculated = true;
             }
             catch
             {
