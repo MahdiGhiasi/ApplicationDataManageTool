@@ -41,18 +41,18 @@
                                            TextWrapping="WrapWholeWords" />
                 </StackPanel>
 
-                <StackPanel Orientation="Vertical" Margin="0,15,20,0">
+                <StackPanel Orientation="Vertical" Margin="0,20,20,0">
+                    <TextBlock Text="Package ID:" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding PackageId}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"   />
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="0,20,20,0">
                     <TextBlock Text="App data size:" FontWeight="SemiBold" />
                     <TextBlock Text="{Binding AppDataSize}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
                     <Grid Height="5" Margin="0,4,0,0">
                         <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=SizeIsCalculated, Converter={StaticResource NotBoolToVis}}" />
                     </Grid>
                 </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="0,20,20,0">
-                    <TextBlock Text="Package ID:" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding PackageId}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"   />
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="0,20,20,0">
+                <StackPanel Orientation="Vertical" Margin="0,15,20,0">
                     <TextBlock Text="Data Path:" FontWeight="SemiBold" />
                     <TextBlock Text="{Binding PackageDataFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
                 </StackPanel>
