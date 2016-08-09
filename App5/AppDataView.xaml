@@ -1,0 +1,65 @@
+﻿<Page
+    x:Class="App5.AppDataView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:App5"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+
+    <Page.Resources>
+        <DataTemplate x:Name="appsListSmall">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}" Margin="5">
+                        <Image Source="{Binding Logo}" Width="50" Height="50"></Image>
+                    </Grid>
+                    <TextBlock Margin="0,20,0,0"
+                                       Text="{Binding DisplayName}"
+                                       TextWrapping="WrapWholeWords" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Name="appsListLarge">
+            <Grid>
+                <StackPanel Orientation="Vertical" Margin="0,0,0,5">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}" Margin="5">
+                            <Image Source="{Binding Logo}" Width="50" Height="50"></Image>
+                        </Grid>
+                        <TextBlock Margin="0,20,0,0"
+                                           Text="{Binding DisplayName}"
+                                           TextWrapping="WrapWholeWords" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="0,15,20,0">
+                        <TextBlock Text="App size:"/>
+                        <TextBlock Text="{Binding AppSize}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped"  />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,15,20,0">
+                        <TextBlock Text="App data size:"/>
+                        <TextBlock Text="{Binding AppDataSize}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped"  />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,15,20,0">
+                        <TextBlock Text="Package ID:"/>
+                        <TextBlock Text="{Binding PackageId}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped"  />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,15,20,0">
+                        <TextBlock Text="Path:" />
+                        <TextBlock Text="{Binding PackageRootFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <ListView x:Name="listView" Margin="10,10,10,10" ScrollViewer.HorizontalScrollMode="Auto"
+                  ItemTemplate="{StaticResource appsListSmall}" SelectionChanged="listView_SelectionChanged"
+                  HorizontalContentAlignment="Stretch" />
+
+    </Grid>
+</Page>

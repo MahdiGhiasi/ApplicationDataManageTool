@@ -1,0 +1,20 @@
+﻿<Page
+    x:Class="App5.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:App5"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Button x:Name="appDataViewButton" Content="View app data" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="92,78,92,0" Click="appDataViewButton_Click"/>
+
+        <Grid x:Name="progress" Visibility="Collapsed" Background="#AAFFFFFF">
+            <ProgressRing x:Name="progressRing" Height="50" Width="50" IsActive="False"/>
+            <TextBlock x:Name="progressStatus" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,100,0,0" Text="Loading apps..." />
+        </Grid>
+    </Grid>
+</Page>
