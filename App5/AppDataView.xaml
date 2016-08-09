@@ -53,14 +53,18 @@
                         <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=SizeIsCalculated, Converter={StaticResource NotBoolToVis}}" />
                     </Grid>
                 </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="0,15,20,0">
-                    <TextBlock Text="Data Path:" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding PackageDataFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
+                <StackPanel Visibility="Visible" x:Name="AdvancedDetails">
+                    <StackPanel Orientation="Vertical" Margin="0,15,20,0">
+                        <TextBlock Text="Data Path:" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding PackageDataFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,20,20,0">
+                        <TextBlock Text="Installation Path:" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding PackageRootFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
+                    </StackPanel>
+                    <TextBlock Text="Hide advanced details" Margin="0,15,20,0" x:Name="HideAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="HideAdvancedDetails_Tapped" />
                 </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="0,20,20,0">
-                    <TextBlock Text="Installation Path:" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding PackageRootFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
-                </StackPanel>
+                <TextBlock Text="Show advanced details" Margin="0,15,20,0" x:Name="ShowAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="ShowAdvancedDetails_Tapped" />
                 <Grid Margin="0,20,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />

@@ -70,6 +70,10 @@ namespace App5
             if (listView.SelectedItem == null)
                 return;
 
+
+            AdvancedDetails.Visibility = Visibility.Collapsed;
+            ShowAdvancedDetails.Visibility = Visibility.Visible;
+
             AppDetails.DataContext = listView.SelectedItem;
             AppDetails.Visibility = Visibility.Visible;
 
@@ -103,5 +107,16 @@ namespace App5
             }
         }
 
+        private void HideAdvancedDetails_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            AdvancedDetails.Visibility = Visibility.Collapsed;
+            ShowAdvancedDetails.Visibility = Visibility.Visible;
+        }
+
+        private void ShowAdvancedDetails_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            AdvancedDetails.Visibility = Visibility.Visible;
+            ShowAdvancedDetails.Visibility = Visibility.Collapsed;
+        }
     }
 }
