@@ -29,8 +29,8 @@ namespace App5
                 string path = PackageDataFolder;
                 StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(path);//PackageRootFolder.ToLower().Replace("c:\\data\\","u:\\"));
                 AppDataSize = GetFileSizeString(await GetSize(folder));
-                NotifyChange();
                 SizeIsCalculated = true;
+                NotifyChange();
             }
             catch
             {

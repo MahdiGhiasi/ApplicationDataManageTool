@@ -61,8 +61,8 @@
                         <ColumnDefinition />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Content="Reset app" HorizontalAlignment="Stretch" Margin="0,0,10,0" />
-                    <Button Grid.Column="1" Content="Backup app data" HorizontalAlignment="Stretch" Margin="0,0,20,0" />
+                    <Button Grid.Column="0" Content="Reset app" HorizontalAlignment="Stretch" Margin="0,0,10,0" IsEnabled="{Binding SizeIsCalculated}" />
+                    <Button Grid.Column="1" Content="Backup app data" HorizontalAlignment="Stretch" Margin="0,0,20,0" IsEnabled="{Binding SizeIsCalculated}" />
                 </Grid>
                 
             </StackPanel>
