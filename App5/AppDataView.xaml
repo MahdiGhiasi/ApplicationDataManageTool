@@ -25,8 +25,9 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-        <ListView x:Name="listView" Margin="10,10,10,10" ScrollViewer.HorizontalScrollMode="Auto"
+        
+        <TextBlock Text="APPS" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24"  />
+        <ListView x:Name="listView" Margin="10,54,10,0" ScrollViewer.HorizontalScrollMode="Auto"
                   ItemTemplate="{StaticResource appsListSmall}" SelectionChanged="listView_SelectionChanged"
                   HorizontalContentAlignment="Stretch" />
 
@@ -68,7 +69,11 @@
                     <Button Grid.Column="0" Content="Reset app" HorizontalAlignment="Stretch" Margin="0,0,10,0" IsEnabled="{Binding SizeIsCalculated}" />
                     <Button Grid.Column="1" Content="Backup app data" HorizontalAlignment="Stretch" Margin="0,0,20,0" IsEnabled="{Binding SizeIsCalculated}" />
                 </Grid>
-                
+                <StackPanel Orientation="Vertical" Margin="0,20,20,0">
+                    <TextBlock Text="Available backups:" FontWeight="SemiBold" Margin="0,0,0,10" />
+                    <TextBlock x:Name="noBackupsAvailable" Margin="5,0,0,0" Text="No backups." TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" FontStyle="Italic" Opacity="0.5" />
+                    <ListView x:Name="backups" Margin="5,0,0,0"></ListView>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
         

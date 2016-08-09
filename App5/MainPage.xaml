@@ -10,8 +10,17 @@
 
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button x:Name="appDataViewButton" Content="View app data" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="92,78,92,0" Click="appDataViewButton_Click"/>
-
+        <ScrollViewer>
+            <StackPanel>
+                <TextBlock Text="APPLICATION DATA MANAGE TOOL" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24"  />
+                <TextBlock Text="This tool allows you to backup data from applications." Margin="24,24,24,72" TextWrapping="WrapWholeWords" />
+                <Button Margin="92,10,92,0" x:Name="appDataViewButton" Content="Apps" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="appDataViewButton_Click"/>
+                <Button Margin="92,10,92,0" x:Name="appDataBackupsButton" Content="Backups" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+                
+                <Button Margin="92,10,92,0" x:Name="appDataSettingsButton" Content="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+                <Button Margin="92,10,92,0" x:Name="appDataAboutButton" Content="About" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
+            </StackPanel>
+        </ScrollViewer>
         <Grid x:Name="progress" Visibility="Collapsed" Background="#AA000000">
             <ProgressRing x:Name="progressRing" Height="50" Width="50" IsActive="False"/>
             <TextBlock x:Name="progressStatus" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,100,0,0" Text="Loading apps..." />
