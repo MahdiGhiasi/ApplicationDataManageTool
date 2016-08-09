@@ -21,6 +21,7 @@
                 </StackPanel>
             </Grid>
         </DataTemplate>
+        <local:NotBoolToVisConverter x:Key="NotBoolToVis" />
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -43,6 +44,9 @@
                 <StackPanel Orientation="Vertical" Margin="0,15,20,0">
                     <TextBlock Text="App data size:"/>
                     <TextBlock Text="{Binding AppDataSize}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped"  />
+                    <Grid Height="5">
+                        <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=SizeIsCalculated, Converter={StaticResource NotBoolToVis}}" />
+                    </Grid>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Margin="0,15,20,0">
                     <TextBlock Text="Package ID:"/>

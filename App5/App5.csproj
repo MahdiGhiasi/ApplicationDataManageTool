@@ -102,6 +102,7 @@
     <Compile Include="AppDataView.xaml.cs">
       <DependentUpon>AppDataView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BoolToVis.cs" />
     <Compile Include="LoadAppData.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
