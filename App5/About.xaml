@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Text="ABOUT" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24"  />
+        <TextBlock Text="ABOUT" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24" VerticalAlignment="Top"  />
 
     </Grid>
 </Page>
