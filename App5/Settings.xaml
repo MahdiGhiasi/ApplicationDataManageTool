@@ -9,5 +9,25 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock Text="SETTINGS" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24" VerticalAlignment="Top" />
+        <StackPanel Margin="20,54,20,0">
+            <TextBlock Text="Backup folder:" Margin="0,10,0,5" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="50" />
+                </Grid.ColumnDefinitions>
+                <TextBox IsReadOnly="True" Grid.Column="0" />
+                <Button Content="..." Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,0,0,0" />
+            </Grid>
+
+            <CheckBox Margin="0,32,0,0">
+                <CheckBox.Content>
+                    <StackPanel>
+                        <TextBlock Text="Compress backup archives" />
+                        <TextBlock Text="Creating backups will take a longer time but will be less in size if you enable this option." TextWrapping="WrapWholeWords" Opacity="0.7" Margin="0,5,0,0" />
+                    </StackPanel>
+                </CheckBox.Content>
+            </CheckBox>
+        </StackPanel>
     </Grid>
 </Page>
