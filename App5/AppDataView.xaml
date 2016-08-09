@@ -81,13 +81,13 @@
                     <TextBlock Text="Hide advanced details" Margin="0,15,20,0" x:Name="HideAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="HideAdvancedDetails_Tapped" />
                 </StackPanel>
                 <TextBlock Text="Show advanced details" Margin="0,15,20,0" x:Name="ShowAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="ShowAdvancedDetails_Tapped" />
-                <Grid Margin="0,20,0,0">
+                <Grid Margin="0,40,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Button Grid.Column="0" Content="Reset app" HorizontalAlignment="Stretch" Margin="0,0,10,0" IsEnabled="{Binding SizeIsCalculated}" />
-                    <Button Grid.Column="1" Content="Backup app data" HorizontalAlignment="Stretch" Margin="0,0,20,0" IsEnabled="{Binding SizeIsCalculated}" />
+                    <Button Grid.Column="1" Content="Create backup" HorizontalAlignment="Stretch" Margin="0,0,20,0" IsEnabled="{Binding SizeIsCalculated}" />
                 </Grid>
                 <StackPanel Orientation="Vertical" Margin="0,20,20,0">
                     <TextBlock Text="Available backups:" FontWeight="SemiBold" Margin="0,0,0,10" />
