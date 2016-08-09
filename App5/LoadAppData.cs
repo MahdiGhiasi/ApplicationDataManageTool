@@ -104,6 +104,8 @@ namespace App5
                 }
             }
 
+            list = list.OrderBy(x => x.DisplayName).ToList();
+
             OnLoadCompleted();
             return list;
         }
