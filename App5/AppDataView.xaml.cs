@@ -61,6 +61,7 @@ namespace App5
             {
                 AppDetails.Visibility = Visibility.Collapsed;
                 listView.SelectedItem = null;
+                commandBar.Visibility = Visibility.Visible;
                 e.Handled = true;
             }
         }
@@ -76,6 +77,8 @@ namespace App5
 
             AppDetails.DataContext = listView.SelectedItem;
             AppDetails.Visibility = Visibility.Visible;
+
+            commandBar.Visibility = Visibility.Collapsed;
 
             AppData data = (AppData)listView.SelectedItem;
             await data.CalculateSize();

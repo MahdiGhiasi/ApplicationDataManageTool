@@ -22,8 +22,24 @@
             </Grid>
         </DataTemplate>
         <local:NotBoolToVisConverter x:Key="NotBoolToVis" />
+        <local:BoolToVisConverter x:Key="BoolToVis" />
     </Page.Resources>
 
+    <Page.BottomAppBar>
+        <CommandBar x:Name="commandBar">
+            <AppBarButton x:Name="BackupAppBarButton" Content="Backup" Visibility="{Binding IsChecked, Converter={StaticResource BoolToVis}, ElementName=SelectAppBarButton}">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE8AD;"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarToggleButton x:Name="SelectAppBarButton" Content="Select">
+                <AppBarToggleButton.Icon>
+                    <FontIcon Glyph="&#xE133;"/>
+                </AppBarToggleButton.Icon>
+            </AppBarToggleButton>
+        </CommandBar>
+    </Page.BottomAppBar>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         
         <TextBlock Text="APPS" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24"  />
