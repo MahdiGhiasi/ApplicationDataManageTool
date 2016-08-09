@@ -92,6 +92,7 @@ namespace App5
                     data.PackageId = item.Id.FullName;
                     data.PackageRootFolder = item.InstalledLocation.Path;
                     data.FamilyName = item.Id.FamilyName;
+                    data.PackageDataFolder = "C:\\Data\\Users\\DefApps\\APPDATA\\Local\\Packages\\" + data.FamilyName;
 
                     list.Add(data);
                 }
