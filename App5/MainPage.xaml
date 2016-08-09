@@ -12,7 +12,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Button x:Name="appDataViewButton" Content="View app data" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="92,78,92,0" Click="appDataViewButton_Click"/>
 
-        <Grid x:Name="progress" Visibility="Collapsed" Background="#AAFFFFFF">
+        <Grid x:Name="progress" Visibility="Collapsed" Background="#AA000000">
             <ProgressRing x:Name="progressRing" Height="50" Width="50" IsActive="False"/>
             <TextBlock x:Name="progressStatus" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,100,0,0" Text="Loading apps..." />
         </Grid>
