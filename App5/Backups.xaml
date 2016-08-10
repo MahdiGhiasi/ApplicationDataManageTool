@@ -17,6 +17,11 @@
             <TextBlock Text="BACKUPS" FontFamily="Segoe UI Black" FontWeight="Bold"  Margin="0,2,0,0" />
         </StackPanel>
         <Grid Grid.Row="1">
+            <Grid.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition />
+                </TransitionCollection>
+            </Grid.Transitions>
             <ListView x:Name="backupsList">
                 <ListView.ItemTemplate>
                     <DataTemplate>

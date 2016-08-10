@@ -8,10 +8,22 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel Orientation="Horizontal" Background="#FF222222" Height="54" VerticalAlignment="Top" Padding="24,18,24,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="54" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Background="#FF222222" Height="54" VerticalAlignment="Top" Padding="24,18,24,0" Grid.Row="0">
             <TextBlock Text="&#59718;" FontFamily="Segoe MDL2 Assets" Margin="0,0,12,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontSize="20" />
             <TextBlock Text="ABOUT" FontFamily="Segoe UI Black" FontWeight="Bold"  Margin="0,2,0,0" />
         </StackPanel>
+        <Grid Grid.Row="1">
+            <Grid.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition />
+                </TransitionCollection>
+            </Grid.Transitions>
+
+        </Grid>
 
     </Grid>
 </Page>
