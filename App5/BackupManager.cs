@@ -99,17 +99,17 @@ namespace App5
             {
                 OnBackupProgress(new BackupEventArgs(-1, Math.Min(Math.Max((100.0 * completedCount * totalProgressFactor), 0.0), 100.0), BackupState.Initializing, appName + "Finding files...", log));
             }
-            else if (e.CurrentFiles == 0)
-            {
-                OnBackupProgress(new BackupEventArgs(-1, Math.Min(Math.Max((100.0 * completedCount * totalProgressFactor), 0.0), 100.0), BackupState.CopyingFolders, appName + "Creating Folders...", curLog));
-            }
             else
             {
-                double curProgress = 100.0 * ((double)e.CurrentFiles) / e.TotalFiles;
+                string status = appName + "Copying files...";
+                if (e.CurrentFiles == 0)
+                    status = appName + "Creating folders...";
+
+                double curProgress = 100.0 * ((double)e.CurrentFiles + (double)e.CurrentFolders) / (e.TotalFiles + e.TotalFolders);
                 OnBackupProgress(new BackupEventArgs(Math.Min(Math.Max(curProgress, 0.0), 100.0),
                                                      Math.Min(Math.Max((100.0 * completedCount * totalProgressFactor) + curProgress * totalProgressFactor, 0.0), 100.0),
                                                      BackupState.CopyingFiles,
-                                                     appName + "Copying files...",
+                                                     status,
                                                      curLog));
             }
         }
