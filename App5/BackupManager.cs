@@ -73,7 +73,9 @@ namespace App5
         {
             log = new List<string>();
             string backupPath = System.IO.Path.Combine(App.BackupDestination, name);
+            string packagesBackupPath = System.IO.Path.Combine(backupPath, "Packages");
             await FileOperations.CreateDirectory(backupPath);
+            await FileOperations.CreateDirectory(packagesBackupPath);
             totalProgressFactor = (1.0 / apps.Count) / 2.0;
             for (int i = 0; i < apps.Count; i++)
             {
@@ -81,7 +83,7 @@ namespace App5
 
                 appName = apps[i].DisplayName + ": ";
 
-                FileOperations.FolderCopier copier = new FileOperations.FolderCopier(await StorageFolder.GetFolderFromPathAsync(apps[i].PackageDataFolder), await StorageFolder.GetFolderFromPathAsync(backupPath), apps[i].contents);
+                FileOperations.FolderCopier copier = new FileOperations.FolderCopier(await StorageFolder.GetFolderFromPathAsync(apps[i].PackageDataFolder), await StorageFolder.GetFolderFromPathAsync(packagesBackupPath), apps[i].contents);
 
                 copier.Copying += Copier_Copying;
 
