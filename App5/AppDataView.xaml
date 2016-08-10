@@ -27,7 +27,7 @@
 
     <Page.BottomAppBar>
         <CommandBar x:Name="commandBar">
-            <AppBarButton x:Name="BackupAppBarButton" Label="Backup" Visibility="{Binding IsChecked, Converter={StaticResource BoolToVis}, ElementName=SelectAppBarButton}">
+            <AppBarButton x:Name="BackupAppBarButton" Label="Backup" Visibility="{Binding IsChecked, Converter={StaticResource BoolToVis}, ElementName=SelectAppBarButton}" Tapped="BackupAppBarButton_Tapped">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE8AD;"/>
                 </AppBarButton.Icon>

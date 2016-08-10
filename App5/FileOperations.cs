@@ -165,7 +165,7 @@ namespace App5
 
                 int srcAddressBeginIndex = _source.Path.LastIndexOf('\\') + 1;
 
-                if (_items.Count == 0) //Needs loading
+                if (_items == null) //Needs loading
                 {
                     OnCopying(new CopyingEventArgs(0, 0, 0, 0, log));
                     _items = await FileOperations.GetContents(_source);

@@ -144,9 +144,16 @@ namespace App5
             await StartCreatingBackup(currentApp);
         }
 
-        private void BackupAppBarButton_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void BackupAppBarButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            if (listView.SelectedItems.Count == 0)
+            {
+                MessageDialog md = new MessageDialog("Please select some apps.");
+                await md.ShowAsync();
+                return;
+            }
 
+            await StartCreatingBackup(listView.SelectedItems.Cast<AppData>().ToList());
         }
 
         private async Task StartCreatingBackup(List<AppData> app)
@@ -177,6 +184,8 @@ namespace App5
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
+                Visibility cmdvis = commandBar.Visibility;
+                commandBar.Visibility = Visibility.Collapsed;
                 progress.Visibility = Visibility.Visible;
                 this.IsEnabled = false;
 
@@ -198,6 +207,7 @@ namespace App5
                 finally
                 {
                     progress.Visibility = Visibility.Collapsed;
+                    commandBar.Visibility = cmdvis;
                     this.IsEnabled = true;
                 }
             }
