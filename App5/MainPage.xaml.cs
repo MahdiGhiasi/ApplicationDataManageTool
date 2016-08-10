@@ -65,5 +65,20 @@ namespace App5
         {
             Frame.Navigate(typeof(AppDataView));
         }
+
+        private void appDataBackupsButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Backups));
+        }
+
+        private void appDataSettingsButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Settings));
+        }
+
+        private void appDataAboutButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(About));
+        }
     }
 }
