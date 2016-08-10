@@ -51,7 +51,7 @@
 
         <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="AppDetails" Visibility="Collapsed">
             <StackPanel Orientation="Vertical" Margin="20,20,0,0">
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Margin="-20,-20,0,0" Padding="20,20,0,10" Background="#FF222222">
                     <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}" Margin="5">
                         <Image Source="{Binding Logo}" Width="50" Height="50"></Image>
                     </Grid>
