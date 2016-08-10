@@ -54,7 +54,11 @@ namespace App5
 
                 progress.Visibility = Visibility.Collapsed;
                 progressRing.IsActive = false;
+
+                Frame.Background = Header.Background;
             }
+
+
         }
 
         private void appDataViewButton_Click(object sender, RoutedEventArgs e)
