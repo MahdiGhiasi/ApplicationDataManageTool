@@ -41,13 +41,15 @@
     </Page.BottomAppBar>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        
-        <TextBlock Text="APPS" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24"  />
+        <StackPanel Orientation="Horizontal" Background="#FF222222" Height="54" VerticalAlignment="Top" Padding="24,18,24,0">
+            <TextBlock Text="&#xE8DA;" FontFamily="Segoe MDL2 Assets" Margin="0,0,12,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontSize="20" />
+            <TextBlock Text="APPS" FontFamily="Segoe UI Black" FontWeight="Bold"  Margin="0,2,0,0" />
+        </StackPanel>
         <ListView x:Name="listView" Margin="10,54,10,0" ScrollViewer.HorizontalScrollMode="Auto"
                   ItemTemplate="{StaticResource appsListSmall}" SelectionChanged="listView_SelectionChanged"
                   HorizontalContentAlignment="Stretch" SelectionMode="Single" />
 
-        <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="AppDetails" Visibility="Visible">
+        <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="AppDetails" Visibility="Collapsed">
             <StackPanel Orientation="Vertical" Margin="20,20,0,0">
                 <StackPanel Orientation="Horizontal">
                     <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}" Margin="5">
