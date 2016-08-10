@@ -1,0 +1,34 @@
+﻿<Page
+    x:Class="App5.Backups"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:App5"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="54" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Background="#FF222222" Height="54" VerticalAlignment="Top" Padding="24,18,24,0" Grid.Row="0">
+            <TextBlock Text="&#xE8DA;" FontFamily="Segoe MDL2 Assets" Margin="0,0,12,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontSize="20" />
+            <TextBlock Text="BACKUPS" FontFamily="Segoe UI Black" FontWeight="Bold"  Margin="0,2,0,0" />
+        </StackPanel>
+        <Grid Grid.Row="1">
+            <ListView x:Name="backupsList">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <StackPanel>
+                                <TextBlock FontSize="20" Text="Backup 08-10-2016 06-02PM" />
+                                <TextBlock FontSize="15" Text="Telegram Messenger" Opacity="0.6" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </Grid>
+</Page>
