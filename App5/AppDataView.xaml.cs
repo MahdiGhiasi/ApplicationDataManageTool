@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -28,7 +29,7 @@ namespace App5
     {
 
         ObservableCollection<AppData> appsData = new ObservableCollection<AppData>();
-
+        AppData currentApp = null;
 
         public AppDataView()
         {
@@ -82,6 +83,9 @@ namespace App5
                 commandBar.Visibility = Visibility.Collapsed;
 
                 AppData data = (AppData)listView.SelectedItem;
+
+                currentApp = data;
+
                 await data.CalculateSize();
             }
         }
@@ -133,6 +137,70 @@ namespace App5
         private void SelectAppBarButton_Checked(object sender, RoutedEventArgs e)
         {
             listView.SelectionMode = ListViewSelectionMode.Multiple;
+        }
+
+        private async void CreateBackupButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await StartCreatingBackup(currentApp);
+        }
+
+        private void BackupAppBarButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
+
+        private async Task StartCreatingBackup(List<AppData> app)
+        {
+            List<CompactAppData> l = new List<CompactAppData>();
+            foreach (var item in app)
+            {
+                l.Add(new CompactAppData(item));
+            }
+            await StartCreatingBackup(l);
+        }
+
+        private async Task StartCreatingBackup(AppData app)
+        {
+            await StartCreatingBackup(new CompactAppData(app));
+        }
+
+        private async Task StartCreatingBackup(CompactAppData app)
+        {
+            List<CompactAppData> l = new List<CompactAppData>();
+            l.Add(app);
+            await StartCreatingBackup(l);
+        }
+
+        private async Task StartCreatingBackup(List<CompactAppData> app)
+        {
+            var dialog = new BackupNameDialog(BackupManager.GenerateBackupName());
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                progress.Visibility = Visibility.Visible;
+                this.IsEnabled = false;
+
+                try
+                {
+                    await FileOperations.IsValidBackupName(dialog.Text);
+
+                    Backup backup = new Backup(dialog.Text);
+
+                    backup.Apps.AddRange(app);
+
+                    Frame.Navigate(typeof(BackupProgress), Newtonsoft.Json.JsonConvert.SerializeObject(backup));
+                }
+                catch (Exception ex)
+                {
+                    MessageDialog md = new MessageDialog(ex.Message);
+                    await md.ShowAsync();
+                }
+                finally
+                {
+                    progress.Visibility = Visibility.Collapsed;
+                    this.IsEnabled = true;
+                }
+            }
         }
     }
 }

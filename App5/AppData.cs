@@ -3,6 +3,8 @@ using Windows.Storage;
 using Windows.UI.Xaml.Media;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace App5
 {
@@ -16,9 +18,17 @@ namespace App5
         public string AppDataSize { get; set; } = "Calculating...";
         public string FamilyName { get; set; }
         public bool SizeIsCalculated { get; set; } = false;
+        public List<IStorageItem> contents { get; set; } = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public static AppData FindAppData(string packageId)
+        {
+            foreach (var item in App.appsData)
+                if (item.PackageId == packageId)
+                    return item;
+            return null;
+        }
 
         public async Task CalculateSize()
         {
@@ -28,7 +38,15 @@ namespace App5
 
                 string path = PackageDataFolder;
                 StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(path);//PackageRootFolder.ToLower().Replace("c:\\data\\","u:\\"));
-                AppDataSize = FileOperations.GetFileSizeString(await FileOperations.GetSize(folder));
+
+                contents = await FileOperations.GetContents(folder);
+
+                List<StorageFile> files = (from IStorageItem s in contents
+                                           where s is StorageFile
+                                           select (StorageFile)s).ToList();
+
+                double sizeBytes = await FileOperations.GetSizeOfFiles(files);
+                AppDataSize = FileOperations.GetFileSizeString(sizeBytes);
                 SizeIsCalculated = true;
                 NotifyChange();
             }

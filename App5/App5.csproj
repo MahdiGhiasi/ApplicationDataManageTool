@@ -95,12 +95,26 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="About.xaml.cs">
+      <DependentUpon>About.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppData.cs" />
     <Compile Include="AppDataView.xaml.cs">
       <DependentUpon>AppDataView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Backup.cs" />
+    <Compile Include="BackupManager.cs" />
+    <Compile Include="BackupNameDialog.xaml.cs">
+      <DependentUpon>BackupNameDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BackupProgress.xaml.cs">
+      <DependentUpon>BackupProgress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Backups.xaml.cs">
+      <DependentUpon>Backups.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters.cs" />
     <Compile Include="FileOperations.cs" />
@@ -109,6 +123,9 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TrulyObservableCollection.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +154,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AppDataView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BackupNameDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BackupProgress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Backups.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
