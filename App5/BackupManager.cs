@@ -1,7 +1,4 @@
-﻿using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.Zip;
-using LightBuzz.Archiver;
-using SharpCompress.Archive.Zip;
+﻿using LightBuzz.Archiver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
