@@ -29,18 +29,25 @@ namespace App5
                     throw new Exception("The name you've entered already exists. Please choose another name.");
             }
         }
-
         public static async Task<List<IStorageItem>> GetContents(StorageFolder folder)
         {
             List<IStorageItem> output = new List<IStorageItem>();
-            foreach (var item in await folder.GetFilesAsync())
-            {
-                output.Add(item);
-            }
+            var result = folder.CreateFileQuery(Windows.Storage.Search.CommonFileQuery.OrderByName);
+            output.AddRange(await result.GetFilesAsync());
+
+            output.AddRange(await GetFolders(folder));
+
+            return output;
+        }
+
+        public static async Task<List<StorageFolder>> GetFolders(StorageFolder folder)
+        {
+            List<StorageFolder> output = new List<StorageFolder>();
+
             foreach (var item in await folder.GetFoldersAsync())
             {
                 output.Add(item);
-                output.AddRange(await GetContents(item));
+                output.AddRange(await GetFolders(item));
             }
 
             return output;
