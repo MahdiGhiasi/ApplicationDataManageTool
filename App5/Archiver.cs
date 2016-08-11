@@ -28,6 +28,7 @@ namespace LightBuzz.Archiver
         }
 
         private int _archivedFilesCount = 0;
+        private int _totalFilesCount = 0;
 
         /// <summary>
         /// Compresses a folder, including all of its files and sub-folders.
@@ -36,6 +37,7 @@ namespace LightBuzz.Archiver
         /// <param name="destination">The compressed zip file.</param>
         public async void Compress(StorageFolder source, StorageFile destination, CompressionLevel compressionLevel)
         {
+            _totalFilesCount = await FolderContentsCount(source);
             _archivedFilesCount = 0;
             using (Stream stream = await destination.OpenStreamForWriteAsync())
             {
@@ -66,6 +68,18 @@ namespace LightBuzz.Archiver
                     }
                 }
             }
+        }
+
+        // Returns the number of files in this and all subdirectories
+        private async Task<int> FolderContentsCount(StorageFolder folder)
+        {
+            int result = (await folder.GetFilesAsync()).Count;
+            List<StorageFolder> subFolders = (await folder.GetFoldersAsync()).ToList();
+            foreach (var subFolder in subFolders)
+            {
+                result += await FolderContentsCount(subFolder);
+            }
+            return result;
         }
 
         /// <summary>
@@ -139,7 +153,7 @@ namespace LightBuzz.Archiver
                 }
 
                 _archivedFilesCount++;
-                OnCompressingProgress(new CompressingEventArgs(_archivedFilesCount));
+                OnCompressingProgress(new CompressingEventArgs(_archivedFilesCount, _totalFilesCount));
             }
 
             if (!hasFiles)
@@ -175,10 +189,14 @@ namespace LightBuzz.Archiver
     public class CompressingEventArgs
     {
         public int ArchivedFilesCount { get; set; }
+        public int TotalFilesCount { get; set; }
+        public double Percent { get; set; }
 
-        public CompressingEventArgs(int archivedFilesCount)
+        public CompressingEventArgs(int archivedFilesCount, int totalFilesCount)
         {
             ArchivedFilesCount = archivedFilesCount;
+            TotalFilesCount = totalFilesCount;
+            Percent = Math.Min(Math.Max( ((double)archivedFilesCount) / ((double)TotalFilesCount), 0.0), 1.0);
         }
     }
 }
