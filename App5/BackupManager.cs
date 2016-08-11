@@ -10,36 +10,31 @@ namespace App5
 {
     public enum BackupState
     {
-        Initializing, CopyingFolders, CopyingFiles, Compressing, WritingMetadata, DeletingTemp, Finished
+        Initializing, Compressing, WritingMetadata, Finished
     }
 
 
     public class BackupEventArgs : EventArgs
     {
-        public double Progress1 { get; set; }
-        public double Progress2 { get; set; }
+        public double Progress { get; set; }
         public BackupState State { get; set; }
         public string Message { get; set; }
+        public string Message2 { get; set; }
         public List<string> Log { get; set; }
 
         // Constructor. 
-        public BackupEventArgs(double progress1, double progress2, BackupState state, string message, List<string> log)
+        public BackupEventArgs(double progress, BackupState state, string message, string message2, List<string> log)
         {
-            Progress1 = progress1;
-            Progress2 = progress2;
+            Progress = progress;
             State = state;
             Message = message;
+            Message2 = message2;
             Log = log;
         }
     }
 
     public class BackupManager
     {
-        private const double _CopyPercent = 0.45;
-        private const double _CompressPercent = 0.5;
-        private const double _DeletePercent = 0.04;
-        private const double _WriteMetadataPercent = 0.01;
-
         public delegate void BackupEventHandler(object sender, BackupEventArgs e);
         public event BackupEventHandler BackupProgress;
 
@@ -72,40 +67,36 @@ namespace App5
         }
 
         private List<string> log;
-        private double totalProgressFactor = 0;
-        private string appName = "";
-        private int completedCount = 0;
+        private Dictionary<string, string> familyToDisplayNames;
+        int totalFiles = 1;
         public async Task CreateBackup(List<AppData> apps, string name)
         {
             log = new List<string>();
+            familyToDisplayNames = new Dictionary<string, string>();
             string backupPath = System.IO.Path.Combine(App.BackupDestination, name);
             string packagesBackupPath = System.IO.Path.Combine(backupPath, "Packages");
             await FileOperations.CreateDirectory(backupPath);
-            await FileOperations.CreateDirectory(packagesBackupPath);
-            totalProgressFactor = (1.0 / apps.Count) * _CopyPercent;
+
+            List<StorageFolder> sources = new List<StorageFolder>();
+
+            totalFiles = 0;
             for (int i = 0; i < apps.Count; i++)
             {
-                completedCount = i;
+                var item = apps[i];
+                StorageFolder fol = await StorageFolder.GetFolderFromPathAsync(item.PackageDataFolder);
 
-                appName = apps[i].DisplayName + ": ";
+                OnBackupProgress(new BackupEventArgs(-1, BackupState.Initializing, item.DisplayName + ": Looking for files...", apps.Count == 1 ? "" : ((i + 1).ToString() + " / " + apps.Count), log));
+                totalFiles += await FileOperations.FolderContentsCount(fol);
 
-                FileOperations.FolderCopier copier = new FileOperations.FolderCopier(await StorageFolder.GetFolderFromPathAsync(apps[i].PackageDataFolder), await StorageFolder.GetFolderFromPathAsync(packagesBackupPath), apps[i].contents);
+                sources.Add(fol);
 
-                copier.Copying += Copier_Copying;
-
-                log.AddRange(await copier.Copy());
-
-                copier.Copying -= Copier_Copying;
+                familyToDisplayNames.Add(item.FamilyName, item.DisplayName);
             }
 
-            OnBackupProgress(new BackupEventArgs(-1, _CopyPercent * 100.0, BackupState.Compressing, "Creating archive...", log));
-            StorageFolder packagesBackupFolder = await StorageFolder.GetFolderFromPathAsync(packagesBackupPath);
-            await CreateZip(packagesBackupFolder, System.IO.Path.Combine(backupPath, "data.zip"), System.IO.Compression.CompressionLevel.Optimal);
+            OnBackupProgress(new BackupEventArgs(0, BackupState.Compressing, "Copying...", "", log));
+            await CreateZip(sources, System.IO.Path.Combine(backupPath, "data.zip"), System.IO.Compression.CompressionLevel.NoCompression);
             
-            OnBackupProgress(new BackupEventArgs(-1, (_CopyPercent + _CompressPercent) * 100.0, BackupState.DeletingTemp, "Deleting Temporary data...", log));
-            await packagesBackupFolder.DeleteAsync();
-
-            OnBackupProgress(new BackupEventArgs(-1, (_CopyPercent + _CompressPercent + _DeletePercent) * 100.0, BackupState.WritingMetadata, "Creating metadata...", log));
+            OnBackupProgress(new BackupEventArgs(100.0, BackupState.WritingMetadata, "Creating metadata...", "", log));
 
             Backup currentBackup = new Backup(name);
             foreach (var item in apps)
@@ -115,7 +106,7 @@ namespace App5
 
             await WriteMetaData(currentBackup, System.IO.Path.Combine(backupPath, "metadata.json"));
 
-            OnBackupProgress(new BackupEventArgs(0, 100.0, BackupState.Finished, "Finalizing...", log));
+            OnBackupProgress(new BackupEventArgs(100.0, BackupState.Finished, "Finalizing...", totalFiles.ToString() + " / " + totalFiles.ToString(), log));
         }
 
         private async Task WriteMetaData(Backup backup, string metadataFile)
@@ -127,43 +118,24 @@ namespace App5
             await FileIO.WriteTextAsync(metadata, data);
         }
 
-        private void Copier_Copying(object sender, FileOperations.CopyingEventArgs e)
-        {
-            List<string> curLog = new List<string>(log);
-            curLog.AddRange(e.Log);
-            if ((e.CurrentFiles + e.CurrentFolders + e.TotalFiles + e.TotalFolders) == 0)
-            {
-                OnBackupProgress(new BackupEventArgs(-1, Math.Min(Math.Max((100.0 * completedCount * totalProgressFactor), 0.0), 100.0), BackupState.Initializing, appName + "Finding files...", log));
-            }
-            else
-            {
-                string status = appName + "Copying files...";
-                if (e.CurrentFiles == 0)
-                    status = appName + "Creating folders...";
-
-                double curProgress = 100.0 * ((double)e.CurrentFiles + (double)e.CurrentFolders) / (e.TotalFiles + e.TotalFolders);
-                OnBackupProgress(new BackupEventArgs(Math.Min(Math.Max(curProgress, 0.0), 100.0),
-                                                     Math.Min(Math.Max((100.0 * completedCount * totalProgressFactor) + curProgress * totalProgressFactor, 0.0), 100.0),
-                                                     BackupState.CopyingFiles,
-                                                     status,
-                                                     curLog));
-            }
-        }
-        
-
-        public async Task CreateZip(StorageFolder backupFolder, string zipFileName, System.IO.Compression.CompressionLevel compressionLevel)
+        public async Task CreateZip(List<StorageFolder> folders, string zipFileName, System.IO.Compression.CompressionLevel compressionLevel)
         {
             ArchiverPlus archiver = new ArchiverPlus();
             archiver.CompressingProgress += Archiver_CompressingProgress;
 
-            await archiver.Compress(backupFolder, await (await StorageFolder.GetFolderFromPathAsync(System.IO.Path.GetDirectoryName(zipFileName))).CreateFileAsync(System.IO.Path.GetFileName(zipFileName)), compressionLevel);
+            await archiver.Compress(folders, await (await StorageFolder.GetFolderFromPathAsync(System.IO.Path.GetDirectoryName(zipFileName))).CreateFileAsync(System.IO.Path.GetFileName(zipFileName)), compressionLevel);
 
             archiver.CompressingProgress -= Archiver_CompressingProgress;
         }
 
         private void Archiver_CompressingProgress(object sender, CompressingEventArgs e)
         {
-            OnBackupProgress(new BackupEventArgs(e.Percent * 100.0, (_CopyPercent + e.Percent * _CompressPercent) * 100.0, BackupState.Compressing, "Creating archive...", log));
+            double percent = (100.0 * e.ProcessedFilesCount) / totalFiles;
+            string status = "Copying...";
+            if (familyToDisplayNames.ContainsKey(e.CurrentRootFolder))
+                status = familyToDisplayNames[e.CurrentRootFolder] + ": Copying...";
+            OnBackupProgress(new BackupEventArgs(percent, BackupState.Compressing, status, e.ProcessedFilesCount.ToString() + " / " + totalFiles.ToString() , e.Log));
+            log = e.Log;
         }
 
         public void Restore(Backup backup)

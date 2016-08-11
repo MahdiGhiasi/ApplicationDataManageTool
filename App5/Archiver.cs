@@ -27,8 +27,9 @@ namespace LightBuzz.Archiver
                 CompressingProgress(this, e);
         }
 
-        private int _archivedFilesCount = 0;
-        private int _totalFilesCount = 0;
+        private int _processedFilesCount = 0;
+        private string curRoot = "";
+        private List<string> log;
 
         /// <summary>
         /// Compresses a folder, including all of its files and sub-folders.
@@ -37,13 +38,26 @@ namespace LightBuzz.Archiver
         /// <param name="destination">The compressed zip file.</param>
         public async Task Compress(StorageFolder source, StorageFile destination, CompressionLevel compressionLevel)
         {
-            _totalFilesCount = await FolderContentsCount(source);
-            _archivedFilesCount = 0;
+            List<StorageFolder> l = new List<StorageFolder>();
+            l.Add(source);
+
+            await Compress(l, destination, compressionLevel);
+        }
+
+        public async Task Compress(List<StorageFolder> sources, StorageFile destination, CompressionLevel compressionLevel)
+        {
+            log = new List<string>();
+
+            _processedFilesCount = 0;
             using (Stream stream = await destination.OpenStreamForWriteAsync())
             {
                 using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Create))
                 {
-                    await AddFolderToArchive(source, archive, "", compressionLevel);
+                    foreach (var item in sources)
+                    {
+                        curRoot = item.Name;
+                        await AddFolderToArchive(item, archive, item.Name + "/", compressionLevel);
+                    }
                 }
             }
         }
@@ -68,18 +82,6 @@ namespace LightBuzz.Archiver
                     }
                 }
             }
-        }
-
-        // Returns the number of files in this and all subdirectories
-        private async Task<int> FolderContentsCount(StorageFolder folder)
-        {
-            int result = (await folder.GetFilesAsync()).Count;
-            List<StorageFolder> subFolders = (await folder.GetFoldersAsync()).ToList();
-            foreach (var subFolder in subFolders)
-            {
-                result += await FolderContentsCount(subFolder);
-            }
-            return result;
         }
 
         /// <summary>
@@ -143,17 +145,27 @@ namespace LightBuzz.Archiver
             bool hasFiles = false;
             foreach (StorageFile file in await folder.GetFilesAsync())
             {
-                hasFiles = true;
-                ZipArchiveEntry entry = archive.CreateEntry(separator + file.Name, compLevel);
-
-                using (Stream stream = entry.Open())
+                try
                 {
-                    byte[] buffer = await ConvertToBinary(file);
-                    stream.Write(buffer, 0, buffer.Length);
-                }
+                    ZipArchiveEntry entry = archive.CreateEntry(separator + file.Name, compLevel);
 
-                _archivedFilesCount++;
-                OnCompressingProgress(new CompressingEventArgs(_archivedFilesCount, _totalFilesCount));
+                    using (Stream stream = entry.Open())
+                    {
+                        byte[] buffer = await ConvertToBinary(file);
+                        stream.Write(buffer, 0, buffer.Length);
+                    }
+
+                    hasFiles = true;
+                }
+                catch (Exception ex)
+                {
+                    log.Add(ex.Message + " (" + separator + file.Name + ")");
+                }
+                finally
+                {
+                    _processedFilesCount++;
+                    OnCompressingProgress(new CompressingEventArgs(_processedFilesCount, curRoot, log));
+                }
             }
 
             if (!hasFiles)
@@ -188,15 +200,15 @@ namespace LightBuzz.Archiver
 
     public class CompressingEventArgs
     {
-        public int ArchivedFilesCount { get; set; }
-        public int TotalFilesCount { get; set; }
-        public double Percent { get; set; }
+        public int ProcessedFilesCount { get; set; }
+        public string CurrentRootFolder { get; set; }
+        public List<string> Log { get; set; }
 
-        public CompressingEventArgs(int archivedFilesCount, int totalFilesCount)
+        public CompressingEventArgs(int processedFilesCount, string curRootFolder, List<string> log)
         {
-            ArchivedFilesCount = archivedFilesCount;
-            TotalFilesCount = totalFilesCount;
-            Percent = Math.Min(Math.Max( ((double)archivedFilesCount) / ((double)TotalFilesCount), 0.0), 1.0);
+            ProcessedFilesCount = processedFilesCount;
+            CurrentRootFolder = curRootFolder;
+            Log = log;
         }
     }
 }
