@@ -105,6 +105,7 @@
     <Compile Include="AppDataView.xaml.cs">
       <DependentUpon>AppDataView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Archiver.cs" />
     <Compile Include="Backup.cs" />
     <Compile Include="BackupManager.cs" />
     <Compile Include="BackupNameDialog.xaml.cs">
