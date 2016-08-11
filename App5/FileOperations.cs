@@ -46,6 +46,18 @@ namespace App5
             return output;
         }
 
+        // Returns the number of files in this and all subdirectories
+        public static async Task<int> FolderContentsCount(StorageFolder folder)
+        {
+            int result = (await folder.GetFilesAsync()).Count;
+            List<StorageFolder> subFolders = (await folder.GetFoldersAsync()).ToList();
+            foreach (var subFolder in subFolders)
+            {
+                result += await FolderContentsCount(subFolder);
+            }
+            return result;
+        }
+
         public static string GetFileSizeString(double byteCount)
         {
             string size = "0 Bytes";
