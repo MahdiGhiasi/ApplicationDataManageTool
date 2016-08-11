@@ -45,7 +45,6 @@ namespace App5
             await backupManager.CreateBackup(appDatas, backup.Name);
 
             progressBar1.Value = 100.0;
-            progressBar2.Value = 100.0;
             messageTextBlock.Text = "Backup completed.";
             HeaderText.Text = "DONE";
             progressRing.IsActive = false;
@@ -53,24 +52,31 @@ namespace App5
             ((App)App.Current).BackRequested -= BackupProgress_BackRequested;
         }
 
+        private DateTime lastUpdate = DateTime.MinValue;
         private void BackupManager_BackupProgress(object sender, BackupEventArgs e)
         {
-            messageTextBlock.Text = e.Message;
+            if ((e.State == BackupState.Compressing) && ((DateTime.Now - lastUpdate) < TimeSpan.FromMilliseconds(100)))
+                return;
 
-            if (e.Progress1 < 0)
+            messageTextBlock.Text = e.Message;
+            message2TextBlock.Text = e.Message2;
+
+            if (e.Progress < 0)
                 progressBar1.IsIndeterminate = true;
             else {
                 if (progressBar1.IsIndeterminate)
                     progressBar1.IsIndeterminate = false;
-                progressBar1.Value = e.Progress1;
+                progressBar1.Value = e.Progress;
             }
-            progressBar2.Value = e.Progress2;
+            
             if (e.Log.Count != LogsView.Items.Count)
             { //Refresh the list
                 for (int i = LogsView.Items.Count; i < e.Log.Count; i++)
                     LogsView.Items.Add(e.Log[i]);
                 LogsView.ScrollIntoView(LogsView.Items[LogsView.Items.Count - 1]);
             }
+
+            lastUpdate = DateTime.Now;
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
