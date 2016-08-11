@@ -18,6 +18,17 @@ namespace LightBuzz.Archiver
     /// </summary>
     public class ArchiverPlus
     {
+        public delegate void CompressingEventHandler(object sender, CompressingEventArgs e);
+        public event CompressingEventHandler CompressingProgress;
+
+        protected virtual void OnCompressingProgress(CompressingEventArgs e)
+        {
+            if (CompressingProgress != null)
+                CompressingProgress(this, e);
+        }
+
+        private int _archivedFilesCount = 0;
+
         /// <summary>
         /// Compresses a folder, including all of its files and sub-folders.
         /// </summary>
@@ -25,6 +36,7 @@ namespace LightBuzz.Archiver
         /// <param name="destination">The compressed zip file.</param>
         public async void Compress(StorageFolder source, StorageFile destination, CompressionLevel compressionLevel)
         {
+            _archivedFilesCount = 0;
             using (Stream stream = await destination.OpenStreamForWriteAsync())
             {
                 using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Create))
@@ -125,6 +137,9 @@ namespace LightBuzz.Archiver
                     byte[] buffer = await ConvertToBinary(file);
                     stream.Write(buffer, 0, buffer.Length);
                 }
+
+                _archivedFilesCount++;
+                OnCompressingProgress(new CompressingEventArgs(_archivedFilesCount));
             }
 
             if (!hasFiles)
@@ -154,6 +169,16 @@ namespace LightBuzz.Archiver
 
                 return buffer;
             }
+        }
+    }
+
+    public class CompressingEventArgs
+    {
+        public int ArchivedFilesCount { get; set; }
+
+        public CompressingEventArgs(int archivedFilesCount)
+        {
+            ArchivedFilesCount = archivedFilesCount;
         }
     }
 }
