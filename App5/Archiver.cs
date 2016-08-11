@@ -14,8 +14,9 @@ namespace LightBuzz.Archiver
 {
     /// <summary>
     /// Compresses and decompresses single files and folders.
+    /// Modified by Mahdi Ghiasi
     /// </summary>
-    public class Archiver
+    public class ArchiverPlus
     {
         /// <summary>
         /// Compresses a folder, including all of its files and sub-folders.
@@ -113,8 +114,10 @@ namespace LightBuzz.Archiver
         /// <param name="separator">The directory separator character.</param>
         private async Task AddFolderToArchive(StorageFolder folder, ZipArchive archive, string separator)
         {
+            bool hasFiles = false;
             foreach (StorageFile file in await folder.GetFilesAsync())
             {
+                hasFiles = true;
                 ZipArchiveEntry entry = archive.CreateEntry(separator + file.Name);
 
                 using (Stream stream = entry.Open())
@@ -123,6 +126,9 @@ namespace LightBuzz.Archiver
                     stream.Write(buffer, 0, buffer.Length);
                 }
             }
+
+            if (!hasFiles)
+                archive.CreateEntry(separator + "/");
 
             foreach (var storageFolder in await folder.GetFoldersAsync())
             {
