@@ -35,7 +35,7 @@ namespace LightBuzz.Archiver
         /// </summary>
         /// <param name="source">The folder containing the files to compress.</param>
         /// <param name="destination">The compressed zip file.</param>
-        public async void Compress(StorageFolder source, StorageFile destination, CompressionLevel compressionLevel)
+        public async Task Compress(StorageFolder source, StorageFile destination, CompressionLevel compressionLevel)
         {
             _totalFilesCount = await FolderContentsCount(source);
             _archivedFilesCount = 0;
