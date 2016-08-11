@@ -23,13 +23,13 @@ namespace LightBuzz.Archiver
         /// </summary>
         /// <param name="source">The folder containing the files to compress.</param>
         /// <param name="destination">The compressed zip file.</param>
-        public async void Compress(StorageFolder source, StorageFile destination)
+        public async void Compress(StorageFolder source, StorageFile destination, CompressionLevel compressionLevel)
         {
             using (Stream stream = await destination.OpenStreamForWriteAsync())
             {
                 using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Create))
                 {
-                    await AddFolderToArchive(source, archive, "");
+                    await AddFolderToArchive(source, archive, "", compressionLevel);
                 }
             }
         }
@@ -39,13 +39,13 @@ namespace LightBuzz.Archiver
         /// </summary>
         /// <param name="source">The file to compress.</param>
         /// <param name="destination">The compressed zip file.</param>
-        public async void Compress(StorageFile source, StorageFile destination)
+        public async void Compress(StorageFile source, StorageFile destination, CompressionLevel compressionLevel)
         {
             using (Stream stream = await destination.OpenStreamForWriteAsync())
             {
                 using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Create))
                 {
-                    ZipArchiveEntry entry = archive.CreateEntry(source.Name);
+                    ZipArchiveEntry entry = archive.CreateEntry(source.Name, compressionLevel);
 
                     using (Stream data = entry.Open())
                     {
@@ -112,13 +112,13 @@ namespace LightBuzz.Archiver
         /// <param name="folder">The folder to add.</param>
         /// <param name="archive">The zip archive.</param>
         /// <param name="separator">The directory separator character.</param>
-        private async Task AddFolderToArchive(StorageFolder folder, ZipArchive archive, string separator)
+        private async Task AddFolderToArchive(StorageFolder folder, ZipArchive archive, string separator, CompressionLevel compLevel)
         {
             bool hasFiles = false;
             foreach (StorageFile file in await folder.GetFilesAsync())
             {
                 hasFiles = true;
-                ZipArchiveEntry entry = archive.CreateEntry(separator + file.Name);
+                ZipArchiveEntry entry = archive.CreateEntry(separator + file.Name, compLevel);
 
                 using (Stream stream = entry.Open())
                 {
@@ -132,7 +132,7 @@ namespace LightBuzz.Archiver
 
             foreach (var storageFolder in await folder.GetFoldersAsync())
             {
-                await AddFolderToArchive(storageFolder, archive, separator + storageFolder.Name + "/");
+                await AddFolderToArchive(storageFolder, archive, separator + storageFolder.Name + "/", compLevel);
             }
         }
 
