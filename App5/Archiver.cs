@@ -90,7 +90,7 @@ namespace LightBuzz.Archiver
         /// </summary>
         /// <param name="source">The compressed zip file.</param>
         /// <param name="destination">The folder where the file will be decompressed.</param>
-        public async void Decompress(StorageFile source, StorageFolder destination)
+        public async Task Decompress(StorageFile source, StorageFolder destination)
         {
             using (Stream stream = await source.OpenStreamForReadAsync())
             {
