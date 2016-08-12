@@ -26,5 +26,10 @@ namespace App5
         {
             this.InitializeComponent();
         }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            backupsList.ItemsSource = BackupManager.currentBackups;
+        }
     }
 }
