@@ -96,6 +96,22 @@ namespace LightBuzz.Archiver
             {
                 using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Read))
                 {
+
+                    //Create empty folders too.
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    {
+                        if (!string.IsNullOrEmpty(entry.FullName))
+                        {
+                            if (entry.FullName.EndsWith("/"))
+                            {
+                                string folderName = entry.FullName.Replace("/", "\\");
+
+                                if ((await destination.TryGetItemAsync(folderName)) == null)
+                                    await destination.CreateFolderAsync(folderName);
+                            }
+                        }
+                    }
+
                     foreach (ZipArchiveEntry entry in archive.Entries)
                     {
                         if (!string.IsNullOrEmpty(entry.FullName))
