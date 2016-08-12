@@ -193,11 +193,11 @@ namespace App5
                 {
                     await FileOperations.IsValidBackupName(dialog.Text);
 
-                    Backup backup = new Backup(dialog.Text, Backup.GenerateAppSubtitle(apps));
+                    Backup b = new Backup(dialog.Text, Backup.GenerateAppSubtitle(apps));
 
-                    backup.Apps.AddRange(apps);
+                    b.Apps.AddRange(apps);
 
-                    Frame.Navigate(typeof(BackupProgress), Newtonsoft.Json.JsonConvert.SerializeObject(backup));
+                    Frame.Navigate(typeof(BackupProgress), Newtonsoft.Json.JsonConvert.SerializeObject(new BackupProgressMessage() { backup = b, IsRestore = false }));
                 }
                 catch (Exception ex)
                 {
