@@ -29,12 +29,20 @@ namespace App5
     {
         Dictionary<string, AppData> AppNames = new Dictionary<string, AppData>();
         LoadAppData loadAppData = new LoadAppData();
+        BackupManager.BackupLoader backupLoader = new BackupManager.BackupLoader();
 
         public MainPage()
         {
             this.InitializeComponent();
 
             loadAppData.LoadingProgress += LoadAppData_LoadingProgress;
+            backupLoader.LoadBackupsProgress += BackupLoader_LoadBackupsProgress;
+        }
+
+        private void BackupLoader_LoadBackupsProgress(object sender, LoadingEventArgs e)
+        {
+            int percent = (int)Math.Round((100.0 * e.Current) / e.Total);
+            progressStatus.Text = "Loading current backups " + percent.ToString() + "%";
         }
 
         private void LoadAppData_LoadingProgress(object sender, LoadingEventArgs e)
@@ -51,6 +59,8 @@ namespace App5
                 progressRing.IsActive = true;
 
                 App.appsData = await loadAppData.LoadApps();
+
+                await backupLoader.LoadCurrentBackups();
 
                 progress.Visibility = Visibility.Collapsed;
                 progressRing.IsActive = false;
