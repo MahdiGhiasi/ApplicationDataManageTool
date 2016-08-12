@@ -8,34 +8,110 @@
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
+    <Page.Resources>
+        <local:DateFormatConverter x:Name="DateToStringFormatConverter"/>
+        <local:CompactAppDataListToStringConverter x:Name="AppsToStringConverter" />
+    </Page.Resources>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="54" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Background="#FF222222" Height="54" VerticalAlignment="Top" Padding="24,18,24,0" Grid.Row="0">
-            <TextBlock Text="&#xE8DA;" FontFamily="Segoe MDL2 Assets" Margin="0,0,12,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontSize="20" />
-            <TextBlock Text="BACKUPS" FontFamily="Segoe UI Black" FontWeight="Bold"  Margin="0,2,0,0" />
-        </StackPanel>
-        <Grid Grid.Row="1" Padding="20,0,20,0">
-            <Grid.Transitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition />
-                </TransitionCollection>
-            </Grid.Transitions>
-            
-            <ListView x:Name="backupsList" Padding="0,10,0,0">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <StackPanel Margin="0,10,0,10">
-                                <TextBlock FontSize="20" Text="{Binding Name}" />
-                                <TextBlock FontSize="15" Text="{Binding Subtitle}" Opacity="0.6" />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="54" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Background="#FF222222" Height="54" VerticalAlignment="Top" Padding="24,18,24,0" Grid.Row="0">
+                <TextBlock Text="&#xE8DA;" FontFamily="Segoe MDL2 Assets" Margin="0,0,12,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontSize="20" />
+                <TextBlock Text="BACKUPS" FontFamily="Segoe UI Black" FontWeight="Bold"  Margin="0,2,0,0" />
+            </StackPanel>
+            <Grid Grid.Row="1" Padding="20,0,20,0">
+                <Grid.Transitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition />
+                    </TransitionCollection>
+                </Grid.Transitions>
+
+                <ListView x:Name="backupsList" Padding="0,10,0,0" SelectionChanged="backupsList_SelectionChanged">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <StackPanel Margin="0,10,0,10">
+                                    <TextBlock FontSize="20" Text="{Binding Name}" />
+                                    <TextBlock FontSize="15" Text="{Binding Subtitle}" Opacity="0.6" />
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </Grid>
+        <Grid x:Name="BackupDetails" Visibility="Visible"  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="54" />
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Background="#FF222222" Height="54" VerticalAlignment="Top" Padding="24,18,24,0" Grid.Row="0">
+                <TextBlock Text="BACKUP DETAILS" FontFamily="Segoe UI Black" FontWeight="Bold"  Margin="0,2,0,0" />
+            </StackPanel>
+            <Grid Grid.Row="1" Padding="20,0,20,0">
+                <ScrollViewer>
+                    <StackPanel Padding="0,10,0,10">
+                        <TextBlock Text="Backup" FontSize="22" TextWrapping="Wrap" />
+
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="A backup of" FontSize="14" Opacity="0.7" Grid.Column="0" />
+                            <TextBlock Text="{Binding Apps, Converter={StaticResource AppsToStringConverter}}" FontSize="14" Grid.Column="1" Margin="5,0,0,0" />
+                        </Grid>
+                        
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Created On" FontSize="14" Opacity="0.7" Grid.Column="0" />
+                            <StackPanel Grid.Column="1" Padding="5,0,0,0">
+                                <TextBlock Text="{Binding DeviceName}" FontSize="14" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding DeviceModel}" TextWrapping="Wrap" />
                             </StackPanel>
                         </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Created At" FontSize="14" Opacity="0.7" Grid.Column="0" />
+                            <TextBlock Text="{Binding CreationDate, Converter={StaticResource DateToStringFormatConverter}}" FontSize="14" TextWrapping="Wrap" Grid.Column="1" Margin="5,0,0,0" />
+                        </Grid>
+                        
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Backup Size" FontSize="14" Opacity="0.7" Grid.Column="0" />
+                            <TextBlock x:Name="BackupSizeText" Text="Checking..." FontSize="14" TextWrapping="Wrap" Grid.Column="1" Margin="5,0,0,0" />
+                        </Grid>
+                        
+                        
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+            <CommandBar Grid.Row="2">
+                <AppBarButton Label="Restore">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE724;" />
+                    </AppBarButton.Icon>                    
+                </AppBarButton>
+            </CommandBar>
         </Grid>
     </Grid>
 </Page>
