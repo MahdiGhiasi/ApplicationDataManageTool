@@ -88,8 +88,8 @@
                         <ColumnDefinition />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Content="Reset app" HorizontalAlignment="Stretch" Margin="0,0,10,0" IsEnabled="{Binding SizeIsCalculated}" />
-                    <Button Grid.Column="1" Content="Create backup" HorizontalAlignment="Stretch" Margin="0,0,20,0" IsEnabled="{Binding SizeIsCalculated}" Tapped="CreateBackupButton_Tapped" />
+                    <Button Grid.Column="0" Content="Reset app" HorizontalAlignment="Stretch" Margin="0,0,10,0" />
+                    <Button Grid.Column="1" Content="Create backup" HorizontalAlignment="Stretch" Margin="0,0,20,0" Tapped="CreateBackupButton_Tapped" />
                 </Grid>
                 <StackPanel Orientation="Vertical" Margin="0,20,20,0">
                     <TextBlock Text="Available backups:" FontWeight="SemiBold" Margin="0,0,0,10" />
