@@ -46,11 +46,51 @@ namespace App5
                 BackupProgress(this, e);
         }
 
-        public static void loadCurrentBackups()
+        public class BackupLoader
         {
-            currentBackups = new List<Backup>();
+            public delegate void LoadBackupsEventHandler(object sender, LoadingEventArgs e);
+            public event LoadBackupsEventHandler LoadBackupsProgress;
 
-            //TODO
+            protected virtual void OnBackupProgress(LoadingEventArgs e)
+            {
+                if (LoadBackupsProgress != null)
+                    LoadBackupsProgress(this, e);
+            }
+
+            public async Task LoadCurrentBackups()
+            {
+                currentBackups = new List<Backup>();
+
+                StorageFolder backupLocation;
+
+                try {
+                     backupLocation = await StorageFolder.GetFolderFromPathAsync(App.BackupDestination);
+                }
+                catch
+                {
+                    return;
+                }
+
+                var backups = await backupLocation.GetFoldersAsync();
+
+                for (int i = 0; i < backups.Count; i++)
+                {
+                    OnBackupProgress(new LoadingEventArgs(i, backups.Count));
+
+                    StorageFolder folder = backups[i];
+                    StorageFile metadata = await folder.TryGetItemAsync("metadata.json") as StorageFile;
+                    StorageFile data = await folder.TryGetItemAsync("data.zip") as StorageFile;
+
+                    if ((metadata != null) && (data != null)) //It's a valid backup.
+                    {
+                        string metadataText = await FileIO.ReadTextAsync(metadata);
+
+                        Backup b = Newtonsoft.Json.JsonConvert.DeserializeObject<Backup>(metadataText);
+                        currentBackups.Add(b);
+                    }
+                }
+                OnBackupProgress(new LoadingEventArgs(backups.Count, backups.Count));
+            }
         }
 
         public static string GenerateBackupName()
@@ -98,7 +138,8 @@ namespace App5
             
             OnBackupProgress(new BackupEventArgs(100.0, BackupState.WritingMetadata, "Creating metadata...", "", log));
 
-            Backup currentBackup = new Backup(name);
+            Backup currentBackup = new Backup(name, Backup.GenerateAppSubtitle(apps));
+            currentBackup.SetDeviceInfo();
             foreach (var item in apps)
             {
                 currentBackup.Apps.Add(new CompactAppData(item));
@@ -107,6 +148,8 @@ namespace App5
             await WriteMetaData(currentBackup, System.IO.Path.Combine(backupPath, "metadata.json"));
 
             OnBackupProgress(new BackupEventArgs(100.0, BackupState.Finished, "Finalizing...", totalFiles.ToString() + " / " + totalFiles.ToString(), log));
+
+            currentBackups.Add(currentBackup);
         }
 
         private async Task WriteMetaData(Backup backup, string metadataFile)
