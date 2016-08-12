@@ -9,6 +9,7 @@ namespace App5
 {
     static class FileOperations
     {
+        private static Dictionary<string, List<IStorageItem>> getContentsCache = new Dictionary<string, List<IStorageItem>>();
 
         public static async Task IsValidBackupName(string name)
         {
@@ -32,6 +33,9 @@ namespace App5
 
         public static async Task<List<IStorageItem>> GetContents(StorageFolder folder)
         {
+            if (getContentsCache.ContainsKey(folder.Path))
+                return getContentsCache[folder.Path];
+
             List<IStorageItem> output = new List<IStorageItem>();
             foreach (var item in await folder.GetFilesAsync())
             {
@@ -43,19 +47,22 @@ namespace App5
                 output.AddRange(await GetContents(item));
             }
 
+            try
+            {
+                getContentsCache.Add(folder.Path, output);
+            }
+            catch { } //Avoid any possible concurrency problems :P
+
             return output;
         }
 
         // Returns the number of files in this and all subdirectories
         public static async Task<int> FolderContentsCount(StorageFolder folder)
         {
-            int result = (await folder.GetFilesAsync()).Count;
-            List<StorageFolder> subFolders = (await folder.GetFoldersAsync()).ToList();
-            foreach (var subFolder in subFolders)
-            {
-                result += await FolderContentsCount(subFolder);
-            }
-            return result;
+            return (from IStorageItem s in await GetContents(folder)
+                    where s is StorageFile
+                    select s).Count();
+            
         }
 
         public static string GetFileSizeString(double byteCount)

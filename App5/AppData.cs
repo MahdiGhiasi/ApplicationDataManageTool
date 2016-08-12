@@ -18,7 +18,6 @@ namespace App5
         public string AppDataSize { get; set; } = "Calculating...";
         public string FamilyName { get; set; }
         public bool SizeIsCalculated { get; set; } = false;
-        public List<IStorageItem> contents { get; set; } = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -39,7 +38,7 @@ namespace App5
                 string path = PackageDataFolder;
                 StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(path);//PackageRootFolder.ToLower().Replace("c:\\data\\","u:\\"));
 
-                contents = await FileOperations.GetContents(folder);
+                List<IStorageItem> contents = await FileOperations.GetContents(folder);
 
                 List<StorageFile> files = (from IStorageItem s in contents
                                            where s is StorageFile
