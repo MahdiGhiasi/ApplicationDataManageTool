@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LightBuzz.Archiver;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace App5
     {
         Backup backup;
         BackupManager backupManager = new BackupManager();
+        ObservableCollection<ArchiverError> log = new ObservableCollection<ArchiverError>();
 
         public BackupProgress()
         {
@@ -37,6 +39,8 @@ namespace App5
             ((App)App.Current).BackRequested += BackupProgress_BackRequested;
             backupManager.BackupProgress += BackupManager_BackupProgress;
 
+            LogsView.ItemsSource = log;
+
             base.OnNavigatedTo(e);
 
             List<AppData> appDatas = (from CompactAppData c in backup.Apps
@@ -47,6 +51,8 @@ namespace App5
             progressBar1.Value = 100.0;
             messageTextBlock.Text = "Backup completed.";
             HeaderText.Text = "DONE";
+            WarningMessage.Visibility = Visibility.Collapsed;
+            FinalMessage.Visibility = Visibility.Visible;
             progressRing.IsActive = false;
             progressRing.Visibility = Visibility.Collapsed;
             ((App)App.Current).BackRequested -= BackupProgress_BackRequested;
@@ -70,10 +76,10 @@ namespace App5
             }
             
             if (e.Log.Count != LogsView.Items.Count)
-            { //Refresh the list
+            { //Update the list
                 for (int i = LogsView.Items.Count; i < e.Log.Count; i++)
-                    LogsView.Items.Add(e.Log[i]);
-                LogsView.ScrollIntoView(LogsView.Items[LogsView.Items.Count - 1]);
+                     log.Insert(0,e.Log[i]);
+                
             }
 
             lastUpdate = DateTime.Now;

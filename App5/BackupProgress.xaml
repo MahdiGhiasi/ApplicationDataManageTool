@@ -26,15 +26,17 @@
                 <TextBlock x:Name="messageTextBlock" Text="Initializing..." Margin="0,10,0,10" TextWrapping="Wrap" />
                 <ProgressBar Minimum="0" Maximum="100" x:Name="progressBar1" />
                 <TextBlock x:Name="message2TextBlock" Text="" TextAlignment="Right" />
-                <TextBlock Text="Please stay in the app until this process finished, otherwise your backup files might be corrupted." FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,32,0,0" Opacity="0.8" />
+                <TextBlock x:Name="WarningMessage" Text="Please stay in the app until this process finished, otherwise your backup files might be corrupted." FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,32,0,0" Opacity="0.8" />
+                <TextBlock x:Name="FinalMessage" Visibility="Collapsed" Text="Press back button to continue." FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,32,0,0" Opacity="0.8" />
             </StackPanel>
             <Grid Grid.Row="1" Padding="0,30,0,0">
                 <ListView x:Name="LogsView">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,0,0,20" />
-                            </Grid>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,0,0,5" FontSize="11" />
+                                <TextBlock Text="{Binding File}" TextWrapping="Wrap" Margin="0,0,0,20" FontSize="9" Opacity="0.7" />
+                            </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

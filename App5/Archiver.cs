@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace LightBuzz.Archiver
 
         private int _processedFilesCount = 0;
         private string curRoot = "";
-        private List<string> log;
+        private List<ArchiverError> log;
 
         /// <summary>
         /// Compresses a folder, including all of its files and sub-folders.
@@ -46,7 +47,7 @@ namespace LightBuzz.Archiver
 
         public async Task Compress(List<StorageFolder> sources, StorageFile destination, CompressionLevel compressionLevel)
         {
-            log = new List<string>();
+            log = new List<ArchiverError>();
 
             _processedFilesCount = 0;
             using (Stream stream = await destination.OpenStreamForWriteAsync())
@@ -159,7 +160,7 @@ namespace LightBuzz.Archiver
                 }
                 catch (Exception ex)
                 {
-                    log.Add(ex.Message + " (" + separator + file.Name + ")");
+                    log.Add(new ArchiverError(ex.Message,separator + file.Name));
                 }
                 finally
                 {
@@ -198,13 +199,27 @@ namespace LightBuzz.Archiver
         }
     }
 
+    public class ArchiverError : INotifyPropertyChanged
+    {
+        public string Message { get; }
+        public string File { get; }
+
+        public ArchiverError(string message, string file)
+        {
+            Message = message;
+            File = file;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+    }
+
     public class CompressingEventArgs
     {
         public int ProcessedFilesCount { get; set; }
         public string CurrentRootFolder { get; set; }
-        public List<string> Log { get; set; }
+        public List<ArchiverError> Log { get; set; }
 
-        public CompressingEventArgs(int processedFilesCount, string curRootFolder, List<string> log)
+        public CompressingEventArgs(int processedFilesCount, string curRootFolder, List<ArchiverError> log)
         {
             ProcessedFilesCount = processedFilesCount;
             CurrentRootFolder = curRootFolder;

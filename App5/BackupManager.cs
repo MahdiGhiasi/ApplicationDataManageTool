@@ -20,10 +20,10 @@ namespace App5
         public BackupState State { get; set; }
         public string Message { get; set; }
         public string Message2 { get; set; }
-        public List<string> Log { get; set; }
+        public List<ArchiverError> Log { get; set; }
 
         // Constructor. 
-        public BackupEventArgs(double progress, BackupState state, string message, string message2, List<string> log)
+        public BackupEventArgs(double progress, BackupState state, string message, string message2, List<ArchiverError> log)
         {
             Progress = progress;
             State = state;
@@ -66,12 +66,12 @@ namespace App5
             await CreateBackup(l, name);
         }
 
-        private List<string> log;
+        private List<ArchiverError> log;
         private Dictionary<string, string> familyToDisplayNames;
         int totalFiles = 1;
         public async Task CreateBackup(List<AppData> apps, string name)
         {
-            log = new List<string>();
+            log = new List<ArchiverError>();
             familyToDisplayNames = new Dictionary<string, string>();
             string backupPath = System.IO.Path.Combine(App.BackupDestination, name);
             string packagesBackupPath = System.IO.Path.Combine(backupPath, "Packages");
