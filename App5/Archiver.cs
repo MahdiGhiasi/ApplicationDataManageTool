@@ -92,6 +92,7 @@ namespace LightBuzz.Archiver
         /// <param name="destination">The folder where the file will be decompressed.</param>
         public async Task Decompress(StorageFile source, StorageFolder destination)
         {
+            log = new List<ArchiverError>();
             using (Stream stream = await source.OpenStreamForReadAsync())
             {
                 using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Read))
@@ -101,12 +102,20 @@ namespace LightBuzz.Archiver
                         if (!string.IsNullOrEmpty(entry.FullName))
                         {
                             if (entry.FullName.EndsWith("/"))
-                            {                   
+                            {
                                 //Create empty folders too.
                                 string folderName = entry.FullName.Replace("/", "\\");
 
+
                                 if ((await destination.TryGetItemAsync(folderName)) == null)
-                                    await destination.CreateFolderAsync(folderName);
+                                    try
+                                    {
+                                        await destination.CreateFolderAsync(folderName);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        log.Add(new ArchiverError("Folder creation failed: " + ex.Message, folderName));
+                                    }
                             }
                             else
                             {
@@ -130,8 +139,9 @@ namespace LightBuzz.Archiver
                                             }
                                         }
                                     }
-                                    catch
+                                    catch (Exception ex)
                                     {
+                                        log.Add(new ArchiverError(ex.Message, fileName));
                                     }
                                 }
                             }
@@ -168,7 +178,7 @@ namespace LightBuzz.Archiver
                 }
                 catch (Exception ex)
                 {
-                    log.Add(new ArchiverError(ex.Message,separator + file.Name));
+                    log.Add(new ArchiverError(ex.Message, separator + file.Name));
                 }
                 finally
                 {
