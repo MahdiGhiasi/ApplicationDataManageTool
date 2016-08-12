@@ -178,7 +178,7 @@ namespace App5
             await StartCreatingBackup(l);
         }
 
-        private async Task StartCreatingBackup(List<CompactAppData> app)
+        private async Task StartCreatingBackup(List<CompactAppData> apps)
         {
             var dialog = new BackupNameDialog(BackupManager.GenerateBackupName());
             var result = await dialog.ShowAsync();
@@ -193,9 +193,9 @@ namespace App5
                 {
                     await FileOperations.IsValidBackupName(dialog.Text);
 
-                    Backup backup = new Backup(dialog.Text);
+                    Backup backup = new Backup(dialog.Text, Backup.GenerateAppSubtitle(apps));
 
-                    backup.Apps.AddRange(app);
+                    backup.Apps.AddRange(apps);
 
                     Frame.Navigate(typeof(BackupProgress), Newtonsoft.Json.JsonConvert.SerializeObject(backup));
                 }
