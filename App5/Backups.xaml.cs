@@ -120,6 +120,9 @@ namespace AppDataManageTool
                 await Task.Delay(100);
                 BackupDetails.Visibility = Visibility.Collapsed;
                 backupsList.ItemsSource = BackupManager.currentBackups;
+
+                if (isJustForDetails)
+                    Frame.GoBack();
             }
         }
     }
