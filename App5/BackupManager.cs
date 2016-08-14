@@ -237,6 +237,8 @@ namespace AppDataManageTool
             await archiver.DecompressSpecial(file, dests);
 
             archiver.DecompressingProgress -= Archiver_DecompressingProgress;
+
+            OnBackupProgress(new BackupEventArgs(100.0, BackupState.Finished, "Restore completed.", "", restoreLog));
         }
 
         private void Archiver_DecompressingProgress(object sender, DecompressingEventArgs e)
