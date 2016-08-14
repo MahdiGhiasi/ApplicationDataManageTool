@@ -74,7 +74,7 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Text="Created On" FontSize="14" Opacity="0.7" Grid.Column="0" />
+                            <TextBlock Text="Created on" FontSize="14" Opacity="0.7" Grid.Column="0" />
                             <StackPanel Grid.Column="1" Padding="5,0,0,0">
                                 <TextBlock Text="{Binding DeviceName}" FontSize="14" TextWrapping="Wrap" />
                                 <TextBlock Text="{Binding DeviceModel}" TextWrapping="Wrap" />
@@ -87,7 +87,7 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Text="Created At" FontSize="14" Opacity="0.7" Grid.Column="0" />
+                            <TextBlock Text="Created at" FontSize="14" Opacity="0.7" Grid.Column="0" />
                             <TextBlock Text="{Binding CreationDate, Converter={StaticResource DateToStringFormatConverter}}" FontSize="14" TextWrapping="Wrap" Grid.Column="1" Margin="5,0,0,0" />
                         </Grid>
                         
@@ -97,7 +97,7 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Text="Backup Size" FontSize="14" Opacity="0.7" Grid.Column="0" />
+                            <TextBlock Text="Backup size" FontSize="14" Opacity="0.7" Grid.Column="0" />
                             <TextBlock x:Name="BackupSizeText" Text="Checking..." FontSize="14" TextWrapping="Wrap" Grid.Column="1" Margin="5,0,0,0" />
                         </Grid>
                         <TextBlock Margin="0,20,0,0" Foreground="Green" Text="For best results, please reboot your phone before restoring data." TextWrapping="Wrap" />
