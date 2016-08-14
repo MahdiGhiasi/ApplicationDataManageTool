@@ -39,6 +39,34 @@ namespace AppDataManageTool
             backupLoader.LoadBackupsProgress += BackupLoader_LoadBackupsProgress;
 
             ((App)App.Current).BackRequested += MainPage_BackRequested;
+
+            InitSettings();
+        }
+
+        private async void InitSettings()
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+            if ((localSettings.Values["allowCompress"] != null) && (localSettings.Values["allowCompress"].GetType() == typeof(bool)))
+            {
+                App.AllowCompress = (bool)localSettings.Values["allowCompress"];
+            }
+            else
+            {
+                localSettings.Values["allowCompress"] = App.AllowCompress;
+            }
+
+
+            if ((localSettings.Values["backupDest"] != null) && (localSettings.Values["backupDest"].GetType() == typeof(string)))
+            {
+                App.BackupDestination = (string)localSettings.Values["backupDest"];
+            }
+            else
+            {
+                localSettings.Values["backupDest"] = App.BackupDestination;
+            }
+
+            await FileOperations.CreateDirectory(App.BackupDestination);
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
