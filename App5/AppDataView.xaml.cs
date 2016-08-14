@@ -38,11 +38,19 @@ namespace AppDataManageTool
             this.InitializeComponent();
 
             AppDetails.Visibility = Visibility.Collapsed;
+            AdvancedDetails.Visibility = Visibility.Collapsed;
+            ShowAdvancedDetails.Visibility = Visibility.Visible;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ((App)App.Current).BackRequested += AppDataView_BackRequested;
+
+            if ((PageStatus_CurrentApp != null) && (PageStatus_IsShowingDetails))
+            {
+                AppDetails.Visibility = Visibility.Visible;
+                commandBar.Visibility = Visibility.Collapsed;
+            }
 
             listView.ItemsSource = appsData;
             foreach (var item in App.appsData)
