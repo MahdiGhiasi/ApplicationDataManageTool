@@ -5,7 +5,8 @@
     xmlns:local="using:AppDataManageTool"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel Orientation="Horizontal" Background="#FF222222" Height="54" VerticalAlignment="Top" Padding="24,18,24,0">
@@ -24,11 +25,11 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
-                <TextBox IsReadOnly="True" Grid.Column="0" />
-                <Button Content="..." Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,0,0,0" />
+                <TextBox IsReadOnly="True" Grid.Column="0" x:Name="backupFolder" />
+                <Button Content="..." Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,0,0,0" Click="PickBackupFolder_Click" />
             </Grid>
 
-            <CheckBox Margin="0,24,0,0">
+            <CheckBox Margin="0,24,0,0" x:Name="compressArchives" Checked="compressArchives_CheckedChanged" Unchecked="compressArchives_CheckedChanged">
                 <CheckBox.Content>
                     <StackPanel>
                         <TextBlock Text="Compress backup archives" />

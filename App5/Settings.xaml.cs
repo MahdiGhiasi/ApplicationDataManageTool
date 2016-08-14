@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -25,6 +27,32 @@ namespace AppDataManageTool
         public Settings()
         {
             this.InitializeComponent();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+            compressArchives.IsChecked = (bool)localSettings.Values["allowCompress"];
+            backupFolder.Text = (string)localSettings.Values["backupDest"];
+        }
+
+        private void compressArchives_CheckedChanged(object sender, RoutedEventArgs e)
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+            localSettings.Values["allowCompress"] = compressArchives.IsChecked;
+        }
+
+        private async void PickBackupFolder_Click(object sender, RoutedEventArgs e)
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+            FolderPicker fp = new FolderPicker();
+            StorageFolder folder = await fp.PickSingleFolderAsync();
+
+            backupFolder.Text = folder.Path;
+            localSettings.Values["backupDest"] = folder.Path;
         }
     }
 }
