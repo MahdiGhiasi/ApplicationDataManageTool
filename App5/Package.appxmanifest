@@ -4,7 +4,7 @@
   <mp:PhoneIdentity PhoneProductId="524695aa-9557-4be3-8b64-d9fd6aae21aa" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>App Data Manage Tool (Beta)</DisplayName>
-    <PublisherDisplayName>ghias</PublisherDisplayName>
+    <PublisherDisplayName>Mahdi Ghiasi</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
