@@ -16,7 +16,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid Background="#FF222222" x:Name="Header" Height="54" Grid.Row="0">
-                <TextBlock Text="APPLICATION DATA MANAGE TOOL" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24,18,24,0" />
+                <TextBlock Text="APP DATA MANAGE TOOL (BETA)" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24,18,24,0" />
             </Grid>
             <ScrollViewer Grid.Row="1">
                 <StackPanel>
