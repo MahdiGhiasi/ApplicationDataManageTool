@@ -25,6 +25,7 @@ namespace AppDataManageTool
     {
         public static List<AppData> appsData = null;
         public static string BackupDestination = @"C:\Data\Users\Public\Backups";
+        public static bool AllowCompress = false;
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
