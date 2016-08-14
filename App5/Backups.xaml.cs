@@ -56,7 +56,7 @@ namespace AppDataManageTool
 
         private void ShowBackup(Backup backup)
         {
-            currentBackup = (Backup)backupsList.SelectedItem;
+            currentBackup = (Backup)backup;
 
             BackupDetails.DataContext = backup;
             BackupDetails.Visibility = Visibility.Visible;
