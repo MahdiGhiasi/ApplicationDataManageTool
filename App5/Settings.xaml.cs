@@ -51,8 +51,34 @@ namespace AppDataManageTool
             FolderPicker fp = new FolderPicker();
             StorageFolder folder = await fp.PickSingleFolderAsync();
 
-            backupFolder.Text = folder.Path;
-            localSettings.Values["backupDest"] = folder.Path;
+            if (folder != null)
+            {
+                progress.Visibility = Visibility.Visible;
+
+                backupFolder.Text = folder.Path;
+                localSettings.Values["backupDest"] = folder.Path;
+                App.BackupDestination = folder.Path;
+
+                BackupManager.BackupLoader bl = new BackupManager.BackupLoader();
+                bl.LoadBackupsProgress += Bl_LoadBackupsProgress;
+                await bl.LoadCurrentBackups();
+                bl.LoadBackupsProgress -= Bl_LoadBackupsProgress;
+
+                progress.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void Bl_LoadBackupsProgress(object sender, LoadingEventArgs e)
+        {
+            if (e.Current == 0)
+            {
+                progressStatus.Text = "Loading backups...";
+            }
+            else
+            {
+                int percent = (int)Math.Round((100.0 * e.Current) / e.Total);
+                progressStatus.Text = "Loading backups " + percent.ToString() + "%";
+            }
         }
     }
 }
