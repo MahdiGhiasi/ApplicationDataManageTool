@@ -68,7 +68,8 @@ namespace App5
                 Frame.Background = Header.Background;
             }
 
-
+            AppDataView.PageStatus_CurrentApp = null;
+            AppDataView.PageStatus_IsShowingDetails = false;
         }
 
         private void appDataViewButton_Click(object sender, RoutedEventArgs e)

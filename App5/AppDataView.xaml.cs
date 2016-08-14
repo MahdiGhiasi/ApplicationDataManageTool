@@ -27,6 +27,8 @@ namespace App5
     /// </summary>
     public sealed partial class AppDataView : Page
     {
+        public static AppData PageStatus_CurrentApp = null;
+        public static bool PageStatus_IsShowingDetails = false;
 
         ObservableCollection<AppData> appsData = new ObservableCollection<AppData>();
         AppData currentApp = null;
@@ -38,7 +40,7 @@ namespace App5
             AppDetails.Visibility = Visibility.Collapsed;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ((App)App.Current).BackRequested += AppDataView_BackRequested;
 
@@ -46,6 +48,17 @@ namespace App5
             foreach (var item in App.appsData)
             {
                 appsData.Add(item);
+            }
+
+            await Task.Delay(50);
+
+            if (PageStatus_CurrentApp != null)
+            {
+                listView.ScrollIntoView(PageStatus_CurrentApp);
+                if (PageStatus_IsShowingDetails)
+                {
+                    listView.SelectedItem = PageStatus_CurrentApp;
+                }
             }
         }
 
@@ -187,6 +200,9 @@ namespace App5
 
         private async Task StartCreatingBackup(List<CompactAppData> apps)
         {
+            PageStatus_CurrentApp = App.appsData.First(x => x.PackageId == apps.OrderBy(y => y.DisplayName).Last().PackageId);
+            PageStatus_IsShowingDetails = AppDetails.Visibility == Visibility.Visible;
+
             var dialog = new BackupNameDialog(BackupManager.GenerateBackupName());
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
@@ -245,6 +261,9 @@ namespace App5
 
         private void backupsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            PageStatus_CurrentApp = currentApp;
+            PageStatus_IsShowingDetails = true;
+
             Frame.Navigate(typeof(Backups), backupsList.SelectedItem);
         }
     }
