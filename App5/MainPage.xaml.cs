@@ -41,8 +41,15 @@ namespace App5
 
         private void BackupLoader_LoadBackupsProgress(object sender, LoadingEventArgs e)
         {
-            int percent = (int)Math.Round((100.0 * e.Current) / e.Total);
-            progressStatus.Text = "Loading current backups " + percent.ToString() + "%";
+            if (e.Current == 0)
+            {
+                progressStatus.Text = "Loading current backups...";
+            }
+            else
+            {
+                int percent = (int)Math.Round((100.0 * e.Current) / e.Total);
+                progressStatus.Text = "Loading current backups " + percent.ToString() + "%";
+            }
         }
 
         private void LoadAppData_LoadingProgress(object sender, LoadingEventArgs e)
