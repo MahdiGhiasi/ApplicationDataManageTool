@@ -26,5 +26,20 @@ namespace AppDataManageTool
         {
             this.InitializeComponent();
         }
+
+        private void Secret1_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            App.secretCodeCounter++;
+            if (App.secretCodeCounter > 3)
+                App.secretCodeCounter = 0;
+        }
+
+        private void Secret2_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if ((App.secretCodeCounter == 3) || (App.secretCodeCounter == 6))
+                App.secretCodeCounter *= 2;
+            else
+                App.secretCodeCounter = 0;
+        }
     }
 }

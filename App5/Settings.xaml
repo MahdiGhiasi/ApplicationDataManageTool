@@ -9,7 +9,7 @@
     Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel Orientation="Horizontal" Background="#FF222222" Height="54" VerticalAlignment="Top" Padding="24,18,24,0">
+        <StackPanel Orientation="Horizontal" Background="#FF222222" Height="54" VerticalAlignment="Top" Padding="24,18,24,0" Tapped="Secret4_Tapped">
             <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" Margin="0,0,12,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontSize="20" />
             <TextBlock Text="SETTINGS" FontFamily="Segoe UI Black" FontWeight="Bold"  Margin="0,2,0,0" />
         </StackPanel>

@@ -7,6 +7,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -79,6 +80,21 @@ namespace AppDataManageTool
                 int percent = (int)Math.Round((100.0 * e.Current) / e.Total);
                 progressStatus.Text = "Loading backups " + percent.ToString() + "%";
             }
+        }
+
+        private async void Secret4_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if ((App.secretCodeCounter == 1200) || (App.secretCodeCounter == 1201) || (App.secretCodeCounter == 1202) || (App.secretCodeCounter == 1203) || (App.secretCodeCounter == 1204))
+                App.secretCodeCounter++;
+            else if (App.secretCodeCounter == 1205)
+            {
+                App.hiddenMode = true;
+
+                MessageDialog md = new MessageDialog("Hidden features enabled :)");
+                await md.ShowAsync();
+            }
+            else
+                App.secretCodeCounter = 0;
         }
     }
 }

@@ -15,7 +15,7 @@
                 <RowDefinition Height="54" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Grid Background="#FF222222" x:Name="Header" Height="54" Grid.Row="0">
+            <Grid Background="#FF222222" x:Name="Header" Height="54" Grid.Row="0" Tapped="Secret3_Tapped">
                 <TextBlock Text="APP DATA MANAGE TOOL (BETA)" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24,18,24,0" />
             </Grid>
             <ScrollViewer Grid.Row="1">
