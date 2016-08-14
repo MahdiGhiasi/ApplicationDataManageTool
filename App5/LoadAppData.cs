@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace App5
+namespace AppDataManageTool
 {
 
     public class LoadingEventArgs : EventArgs

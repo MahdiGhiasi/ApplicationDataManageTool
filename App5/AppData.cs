@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace App5
+namespace AppDataManageTool
 {
     public class AppData : INotifyPropertyChanged
     {

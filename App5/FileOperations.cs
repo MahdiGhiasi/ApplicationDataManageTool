@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace App5
+namespace AppDataManageTool
 {
     static class FileOperations
     {

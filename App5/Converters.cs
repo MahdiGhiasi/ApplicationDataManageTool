@@ -8,7 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
-namespace App5
+namespace AppDataManageTool
 {
     public class BoolToVisConverter : IValueConverter
     {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.Networking.Connectivity;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 
-namespace App5
+namespace AppDataManageTool
 {
     public class Backup
     {

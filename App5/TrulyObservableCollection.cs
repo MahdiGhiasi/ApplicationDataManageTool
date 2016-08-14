@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App5
+namespace AppDataManageTool
 {
     public sealed class ObservableCollection<T> : System.Collections.ObjectModel.ObservableCollection<T>
         where T : INotifyPropertyChanged

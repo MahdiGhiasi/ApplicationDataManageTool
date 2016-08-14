@@ -7,8 +7,8 @@
     <ProjectGuid>{CE6D9443-4BD3-4435-9683-8057E719F716}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>App5</RootNamespace>
-    <AssemblyName>App5</AssemblyName>
+    <RootNamespace>AppDataManageTool</RootNamespace>
+    <AssemblyName>AppDataManageTool</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
