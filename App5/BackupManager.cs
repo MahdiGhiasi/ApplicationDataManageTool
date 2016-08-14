@@ -135,7 +135,7 @@ namespace AppDataManageTool
             }
 
             OnBackupProgress(new BackupEventArgs(0, BackupState.Compressing, "Copying...", "", log));
-            await CreateZip(sources, System.IO.Path.Combine(backupPath, "data.zip"), System.IO.Compression.CompressionLevel.NoCompression);
+            await CreateZip(sources, System.IO.Path.Combine(backupPath, "data.zip"), App.AllowCompress ? System.IO.Compression.CompressionLevel.Optimal : System.IO.Compression.CompressionLevel.NoCompression);
             
             OnBackupProgress(new BackupEventArgs(100.0, BackupState.WritingMetadata, "Creating metadata...", "", log));
 
