@@ -29,7 +29,7 @@
                         <EntranceThemeTransition />
                     </TransitionCollection>
                 </Grid.Transitions>
-
+                <TextBlock x:Name="noBackups" Text="No backups yet :)" Margin="0,20,0,0" FontStyle="Italic" Opacity="0.7" />
                 <ListView x:Name="backupsList" Padding="0,10,0,0" SelectionChanged="backupsList_SelectionChanged">
                     <ListView.ItemTemplate>
                         <DataTemplate>

@@ -38,6 +38,8 @@ namespace AppDataManageTool
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             backupsList.ItemsSource = BackupManager.currentBackups;
+            noBackups.Visibility = BackupManager.currentBackups.Count == 0 ? Visibility.Visible : Visibility.Collapsed;         
+
             ((App)App.Current).BackRequested += Backups_BackRequested;
         }
 
