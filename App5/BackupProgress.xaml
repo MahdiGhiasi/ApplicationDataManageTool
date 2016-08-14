@@ -11,6 +11,7 @@
         <StackPanel Orientation="Horizontal" Background="#FF222222" Height="54" VerticalAlignment="Top" Padding="24,18,24,0">
             <ProgressRing IsActive="True" Margin="0,-15,10,0" Width="25" Height="25" x:Name="progressRing" />
             <TextBlock Text="CREATING BACKUP..." FontFamily="Segoe UI Black" FontWeight="Bold"  Margin="0,2,0,0" x:Name="HeaderText" />
+            <TextBlock Text="RESTORING DATA..." FontFamily="Segoe UI Black" FontWeight="Bold"  Margin="0,2,0,0" x:Name="HeaderText2" Visibility="Collapsed" />
         </StackPanel>
         <Grid Margin="20,64,20,0">
             <Grid.Transitions>
@@ -27,6 +28,7 @@
                 <ProgressBar Minimum="0" Maximum="100" x:Name="progressBar1" />
                 <TextBlock x:Name="message2TextBlock" Text="" TextAlignment="Right" />
                 <TextBlock x:Name="WarningMessage" Text="Please stay in the app until this process finished, otherwise your backup files might be corrupted." FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,32,0,0" Opacity="0.8" />
+                <TextBlock x:Name="WarningMessage2" Text="Please stay in the app until this process finished, otherwise your application data might get corrupted." FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,32,0,0" Opacity="0.8" Visibility="Collapsed" />
                 <TextBlock x:Name="FinalMessage" Visibility="Collapsed" Text="Press back button to continue." FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,32,0,0" Opacity="0.8" />
             </StackPanel>
             <Grid Grid.Row="1" Padding="0,30,0,0">

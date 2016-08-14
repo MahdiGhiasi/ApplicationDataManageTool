@@ -34,27 +34,59 @@ namespace App5
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            backup = Newtonsoft.Json.JsonConvert.DeserializeObject<Backup>(e.Parameter.ToString());
-
-            ((App)App.Current).BackRequested += BackupProgress_BackRequested;
-            backupManager.BackupProgress += BackupManager_BackupProgress;
-
-            LogsView.ItemsSource = log;
-
             base.OnNavigatedTo(e);
 
-            List<AppData> appDatas = (from CompactAppData c in backup.Apps
-                                      select AppData.FindAppData(c.PackageId)).ToList();
+            var message = Newtonsoft.Json.JsonConvert.DeserializeObject<BackupProgressMessage>(e.Parameter.ToString());
 
-            await backupManager.CreateBackup(appDatas, backup.Name);
+            if (message.IsRestore)
+            {
+                HeaderText.Visibility = Visibility.Collapsed;
+                HeaderText2.Visibility = Visibility.Visible;
+                WarningMessage.Visibility = Visibility.Collapsed;
+                WarningMessage2.Visibility = Visibility.Visible;
 
-            progressBar1.Value = 100.0;
-            messageTextBlock.Text = "Backup completed.";
-            HeaderText.Text = "DONE";
-            WarningMessage.Visibility = Visibility.Collapsed;
-            FinalMessage.Visibility = Visibility.Visible;
-            progressRing.IsActive = false;
-            progressRing.Visibility = Visibility.Collapsed;
+                backup = message.backup;
+
+                ((App)App.Current).BackRequested += BackupProgress_BackRequested;
+                backupManager.BackupProgress += BackupManager_BackupProgress;
+
+                LogsView.ItemsSource = log;
+
+                List<AppData> appDatas = (from CompactAppData c in backup.Apps
+                                          select AppData.FindAppData(c.PackageId)).ToList();
+
+                await backupManager.Restore(backup);
+
+                progressBar1.Value = 100.0;
+                messageTextBlock.Text = "Restore completed.";
+                HeaderText2.Text = "DONE";
+                WarningMessage2.Visibility = Visibility.Collapsed;
+                FinalMessage.Visibility = Visibility.Visible;
+                progressRing.IsActive = false;
+                progressRing.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                backup = message.backup;
+
+                ((App)App.Current).BackRequested += BackupProgress_BackRequested;
+                backupManager.BackupProgress += BackupManager_BackupProgress;
+
+                LogsView.ItemsSource = log;
+
+                List<AppData> appDatas = (from CompactAppData c in backup.Apps
+                                          select AppData.FindAppData(c.PackageId)).ToList();
+
+                await backupManager.CreateBackup(appDatas, backup.Name);
+
+                progressBar1.Value = 100.0;
+                messageTextBlock.Text = "Backup completed.";
+                HeaderText.Text = "DONE";
+                WarningMessage.Visibility = Visibility.Collapsed;
+                FinalMessage.Visibility = Visibility.Visible;
+                progressRing.IsActive = false;
+                progressRing.Visibility = Visibility.Collapsed;
+            }
             ((App)App.Current).BackRequested -= BackupProgress_BackRequested;
         }
 
@@ -97,5 +129,11 @@ namespace App5
         {
             e.Handled = true;
         }
+    }
+
+    class BackupProgressMessage
+    {
+        public Backup backup { get; set; }
+        public bool IsRestore { get; set; }
     }
 }

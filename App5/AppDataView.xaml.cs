@@ -86,6 +86,13 @@ namespace App5
 
                 currentApp = data;
 
+                List<Backup> backupsContainingThisApp = (from Backup b in BackupManager.currentBackups
+                                                         where b.Apps.Any(x => x.PackageId == currentApp.PackageId)
+                                                         select b).ToList();
+
+                noBackupsAvailable.Visibility = backupsContainingThisApp.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+                backupsList.ItemsSource = backupsContainingThisApp;
+
                 await data.CalculateSize();
             }
         }
@@ -211,6 +218,34 @@ namespace App5
                     this.IsEnabled = true;
                 }
             }
+        }
+
+        private async void ResetAppButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            MessageDialog md = new MessageDialog("The data will be permanently lost. Consider creating a backup before this.\r\n\r\nNote: Doing this on 'system apps' is not safe, and might cause your phone to stop working.", "Are you sure you want to reset the state of this app?");
+            md.Commands.Add(new UICommand("Yes") { Id = 1 });
+            md.Commands.Add(new UICommand("No") { Id = 0 });
+            md.DefaultCommandIndex = 1;
+            md.CancelCommandIndex = 0;
+
+            var result = await md.ShowAsync();
+
+            if (((int)result.Id) == 1)
+            {
+                progress.Visibility = Visibility.Visible;
+                BackupManager bm = new BackupManager();
+                await bm.ResetAppData(currentApp);
+                FileOperations.RemoveFromGetContentsCache(currentApp.FamilyName);
+
+                currentApp.SizeIsCalculated = false;
+                await currentApp.CalculateSize();
+                progress.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void backupsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Frame.Navigate(typeof(Backups), backupsList.SelectedItem);
         }
     }
 }

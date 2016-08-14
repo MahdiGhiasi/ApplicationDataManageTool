@@ -92,7 +92,7 @@ namespace App5
                     data.PackageId = item.Id.FullName;
                     data.PackageRootFolder = item.InstalledLocation.Path;
                     data.FamilyName = item.Id.FamilyName;
-                    data.PackageDataFolder = "C:\\Data\\Users\\DefApps\\APPDATA\\Local\\Packages\\" + data.FamilyName;
+                    data.PackageDataFolder = GetDataFolder(data);
 
                     list.Add(data);
                 }
@@ -110,6 +110,20 @@ namespace App5
             return list;
         }
 
+        internal static string GetDataFolder(AppData data)
+        {
+            return "C:\\Data\\Users\\DefApps\\APPDATA\\Local\\Packages\\" + data.FamilyName;
+        }
+
+        internal static string GetDataFolder(CompactAppData data)
+        {
+            return GetDataFolder(GetAppDataFromCompactAppData(data));
+        }
+
+        internal static AppData GetAppDataFromCompactAppData(CompactAppData data)
+        {
+            return App.appsData.FirstOrDefault(x => x.PackageId == data.PackageId);
+        }
 
         public List<AppData> LoadAppNamesRegistry()
         {
@@ -138,5 +152,6 @@ namespace App5
 
             return list;
         }
+
     }
 }

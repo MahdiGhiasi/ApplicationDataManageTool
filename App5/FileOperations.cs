@@ -56,6 +56,26 @@ namespace App5
             return output;
         }
 
+        public static void RemoveFromGetContentsCache(string path)
+        {
+            path = path.ToLower();
+
+            List<string> keysToBeRemoved = new List<string>();
+
+            foreach (var item in getContentsCache.Keys)
+            {
+                if (item.ToLower().Contains(path))
+                {
+                    keysToBeRemoved.Add(item);
+                }
+            }
+
+            foreach (var item in keysToBeRemoved)
+            {
+                getContentsCache.Remove(item);
+            }
+        }
+
         // Returns the number of files in this and all subdirectories
         public static async Task<int> FolderContentsCount(StorageFolder folder)
         {

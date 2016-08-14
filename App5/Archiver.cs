@@ -22,10 +22,19 @@ namespace LightBuzz.Archiver
         public delegate void CompressingEventHandler(object sender, CompressingEventArgs e);
         public event CompressingEventHandler CompressingProgress;
 
+        public delegate void DecompressingEventHandler(object sender, DecompressingEventArgs e);
+        public event DecompressingEventHandler DecompressingProgress;
+
         protected virtual void OnCompressingProgress(CompressingEventArgs e)
         {
             if (CompressingProgress != null)
                 CompressingProgress(this, e);
+        }
+
+        protected virtual void OnDecompressingProgress(DecompressingEventArgs e)
+        {
+            if (DecompressingProgress != null)
+                DecompressingProgress(this, e);
         }
 
         private int _processedFilesCount = 0;
@@ -151,6 +160,77 @@ namespace LightBuzz.Archiver
             }
         }
 
+        public async Task DecompressSpecial(StorageFile source, Dictionary<string, StorageFolder> destinations)
+        {
+            log = new List<ArchiverError>();
+            using (Stream stream = await source.OpenStreamForReadAsync())
+            {
+                using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Read))
+                {
+                    int counter = 0;
+                    int total = archive.Entries.Count;
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    {   
+                        if (!string.IsNullOrEmpty(entry.FullName))
+                        {
+                            StorageFolder destination;
+
+                            string destName = entry.FullName.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)[0];
+                            destination = destinations[destName];
+
+                            OnDecompressingProgress(new DecompressingEventArgs(counter, total, log, destName));
+
+                            if (entry.FullName.EndsWith("/"))
+                            {
+                                //Create empty folders too.
+                                string folderName = entry.FullName.Replace("/", "\\");
+
+
+                                if ((await destination.TryGetItemAsync(folderName)) == null)
+                                    try
+                                    {
+                                        await destination.CreateFolderAsync(folderName);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        log.Add(new ArchiverError("Folder creation failed: " + ex.Message, folderName));
+                                    }
+                            }
+                            else
+                            {
+                                string fileName = entry.FullName.Replace("/", "\\");
+
+                                using (Stream entryStream = entry.Open())
+                                {
+                                    byte[] buffer = new byte[entry.Length];
+                                    entryStream.Read(buffer, 0, buffer.Length);
+
+                                    try
+                                    {
+                                        StorageFile file = await destination.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+
+                                        using (IRandomAccessStream uncompressedFileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                                        {
+                                            using (Stream data = uncompressedFileStream.AsStreamForWrite())
+                                            {
+                                                data.Write(buffer, 0, buffer.Length);
+                                                data.Flush();
+                                            }
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        log.Add(new ArchiverError(ex.Message, fileName));
+                                    }
+                                }
+                            }
+                        }
+                        counter++;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Adds the specified folder, along with its files and sub-folders, to the specified archive.
         /// Creadits to Jin Yanyun
@@ -242,6 +322,24 @@ namespace LightBuzz.Archiver
             ProcessedFilesCount = processedFilesCount;
             CurrentRootFolder = curRootFolder;
             Log = log;
+        }
+    }
+
+    public class DecompressingEventArgs
+    {
+        public int ProcessedEntries { get; }
+        public int TotalEntries { get; }
+        public double Percent { get; }
+        public List<ArchiverError> Log { get; set; }
+        public string CurrentRootFolder { get; set; }
+
+        public DecompressingEventArgs(int processed, int total, List<ArchiverError> log, string curRoot)
+        {
+            ProcessedEntries = processed;
+            TotalEntries = total;
+            Percent = Math.Min(Math.Max((100.0 * processed) / total, 0.0), 100.0);
+            Log = log;
+            CurrentRootFolder = curRoot;
         }
     }
 }

@@ -44,7 +44,7 @@
                 </ListView>
             </Grid>
         </Grid>
-        <Grid x:Name="BackupDetails" Visibility="Visible"  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid x:Name="BackupDetails" Visibility="Collapsed" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="54" />
                 <RowDefinition />
@@ -100,16 +100,21 @@
                             <TextBlock Text="Backup Size" FontSize="14" Opacity="0.7" Grid.Column="0" />
                             <TextBlock x:Name="BackupSizeText" Text="Checking..." FontSize="14" TextWrapping="Wrap" Grid.Column="1" Margin="5,0,0,0" />
                         </Grid>
-                        
-                        
+                        <TextBlock Margin="0,20,0,0" Foreground="Green" Text="For best results, please reboot your phone before restoring data." TextWrapping="Wrap" />
+
                     </StackPanel>
                 </ScrollViewer>
             </Grid>
             <CommandBar Grid.Row="2">
-                <AppBarButton Label="Restore">
+                <AppBarButton Label="Delete" Tapped="DeleteButton_Tapped">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE74D;" />
+                    </AppBarButton.Icon>                    
+                </AppBarButton>
+                <AppBarButton Label="Restore" Tapped="RestoreButton_Tapped">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE724;" />
-                    </AppBarButton.Icon>                    
+                    </AppBarButton.Icon>
                 </AppBarButton>
             </CommandBar>
         </Grid>

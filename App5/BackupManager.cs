@@ -10,7 +10,8 @@ namespace App5
 {
     public enum BackupState
     {
-        Initializing, Compressing, WritingMetadata, Finished
+        Initializing, Compressing, WritingMetadata, Finished,
+        ResettingAppData, Decompressing
     }
 
 
@@ -181,9 +182,77 @@ namespace App5
             log = e.Log;
         }
 
-        public void Restore(Backup backup)
+        public async Task ResetAppData(AppData app)
         {
+            StorageFolder dataFolder = await StorageFolder.GetFolderFromPathAsync(app.PackageDataFolder);
+            List<StorageFile> files = (from IStorageItem s in (await FileOperations.GetContents(dataFolder))
+                                        where s is StorageFile
+                                        select (StorageFile)s).ToList();
 
+
+            foreach (var item in files)
+            {
+                try
+                {
+                    await item.DeleteAsync();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message + " :: " + item.Path);
+                }
+            }
+        }
+
+        List<ArchiverError> restoreLog = new List<ArchiverError>();
+
+        public async Task Restore(Backup backup)
+        {
+            int counter = 1;
+            foreach (var item in backup.Apps)
+            {
+                OnBackupProgress(new BackupEventArgs(-1, BackupState.ResettingAppData, "Clearing current state of " + item.DisplayName, counter.ToString() + " / " + backup.Apps.Count.ToString(), restoreLog));
+                await ResetAppData(LoadAppData.GetAppDataFromCompactAppData(item));
+                counter++;
+            }
+            OnBackupProgress(new BackupEventArgs(-1, BackupState.Initializing, "Loading backup file...", "", restoreLog));
+            StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.Combine(App.BackupDestination, backup.Name));
+            StorageFile file = await folder.GetFileAsync("data.zip");
+            ArchiverPlus archiver = new ArchiverPlus();
+
+
+            Dictionary<string, StorageFolder> dests = new Dictionary<string, StorageFolder>();
+            familyToDisplayNames = new Dictionary<string, string>();
+
+            foreach (var item in backup.Apps)
+            {
+                FileOperations.RemoveFromGetContentsCache(item.FamilyName);
+
+                dests[item.FamilyName] = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.GetDirectoryName(LoadAppData.GetDataFolder(item)));
+
+                familyToDisplayNames.Add(item.FamilyName, item.DisplayName);
+            }
+
+            archiver.DecompressingProgress += Archiver_DecompressingProgress;
+
+            await archiver.DecompressSpecial(file, dests);
+
+            archiver.DecompressingProgress -= Archiver_DecompressingProgress;
+        }
+
+        private void Archiver_DecompressingProgress(object sender, DecompressingEventArgs e)
+        {
+            string status = "Restoring...";
+            if (familyToDisplayNames.ContainsKey(e.CurrentRootFolder))
+                status = familyToDisplayNames[e.CurrentRootFolder] + ": Restoring...";
+            OnBackupProgress(new BackupEventArgs(e.Percent, BackupState.ResettingAppData,status, e.ProcessedEntries.ToString() + " / " + e.TotalEntries, e.Log));
+            restoreLog = e.Log;
+        }
+
+
+        internal static async Task DeleteBackup(Backup currentBackup)
+        {
+            await (await StorageFolder.GetFolderFromPathAsync(System.IO.Path.Combine(App.BackupDestination, currentBackup.Name))).DeleteAsync();
+            currentBackups.Remove(currentBackup);
         }
     }
 }

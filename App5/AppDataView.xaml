@@ -88,13 +88,24 @@
                         <ColumnDefinition />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Content="Reset app" HorizontalAlignment="Stretch" Margin="0,0,10,0" />
+                    <Button Grid.Column="0" Content="Reset app" HorizontalAlignment="Stretch" Margin="0,0,10,0" Tapped="ResetAppButton_Tapped" />
                     <Button Grid.Column="1" Content="Create backup" HorizontalAlignment="Stretch" Margin="0,0,20,0" Tapped="CreateBackupButton_Tapped" />
                 </Grid>
                 <StackPanel Orientation="Vertical" Margin="0,20,20,0">
                     <TextBlock Text="Available backups:" FontWeight="SemiBold" Margin="0,0,0,10" />
                     <TextBlock x:Name="noBackupsAvailable" Margin="5,0,0,0" Text="No backups." TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" FontStyle="Italic" Opacity="0.5" />
-                    <ListView x:Name="backups" Margin="5,0,0,0"></ListView>
+                    <ListView x:Name="backupsList" Padding="0,10,0,0" SelectionChanged="backupsList_SelectionChanged">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <StackPanel Margin="0,10,0,10">
+                                        <TextBlock FontSize="20" Text="{Binding Name}" />
+                                        <TextBlock FontSize="15" Text="{Binding Subtitle}" Opacity="0.6" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
