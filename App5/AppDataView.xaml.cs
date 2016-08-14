@@ -78,6 +78,11 @@ namespace AppDataManageTool
                 commandBar.Visibility = Visibility.Visible;
                 e.Handled = true;
             }
+            else if (listView.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                SelectAppBarButton.IsChecked = false;
+                e.Handled = true;
+            }
         }
 
         private async void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
