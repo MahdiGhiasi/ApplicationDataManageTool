@@ -66,7 +66,7 @@ namespace AppDataManageTool
                 localSettings.Values["backupDest"] = App.BackupDestination;
             }
 
-            await FileOperations.CreateDirectory(App.BackupDestination);
+            await FileOperations.CreateDirectoryIfNotExists(App.BackupDestination);
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)

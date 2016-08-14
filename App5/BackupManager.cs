@@ -116,7 +116,7 @@ namespace AppDataManageTool
             familyToDisplayNames = new Dictionary<string, string>();
             string backupPath = System.IO.Path.Combine(App.BackupDestination, name);
             string packagesBackupPath = System.IO.Path.Combine(backupPath, "Packages");
-            await FileOperations.CreateDirectory(backupPath);
+            await FileOperations.CreateDirectoryIfNotExists(backupPath);
 
             List<StorageFolder> sources = new List<StorageFolder>();
 

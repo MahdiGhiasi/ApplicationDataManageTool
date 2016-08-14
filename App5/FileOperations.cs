@@ -20,7 +20,7 @@ namespace AppDataManageTool
             StorageFolder destPath = await GetFolder(App.BackupDestination);
             if (destPath == null)
             {
-                await CreateDirectory(App.BackupDestination);
+                await CreateDirectoryIfNotExists(App.BackupDestination);
                 destPath = await GetFolder(App.BackupDestination);
             }
 
@@ -130,7 +130,7 @@ namespace AppDataManageTool
             return folder;
         }
 
-        internal static async Task CreateDirectory(string path)
+        internal static async Task CreateDirectoryIfNotExists(string path)
         {
             string curPath = path;
             List<string> directoriesToBeCreated = new List<string>();
