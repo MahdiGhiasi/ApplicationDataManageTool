@@ -124,7 +124,7 @@ namespace AppDataManageTool
         {
             return App.appsData.FirstOrDefault(x => x.PackageId == data.PackageId);
         }
-
+        /**
         public List<AppData> LoadAppNamesRegistry()
         {
             List<AppData> list = new List<AppData>();
@@ -152,6 +152,6 @@ namespace AppDataManageTool
 
             return list;
         }
-
+        /**/
     }
 }

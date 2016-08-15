@@ -134,7 +134,7 @@ namespace AppDataManageTool
             MessageDialog md = new MessageDialog("Copied to clipboard");
             await md.ShowAsync();
         }
-
+        /**
         public void TestStorage()
         {
 
@@ -150,7 +150,7 @@ namespace AppDataManageTool
                 await md.ShowAsync();
             }
         }
-
+        /**/
         private void HideAdvancedDetails_Tapped(object sender, TappedRoutedEventArgs e)
         {
             AdvancedDetails.Visibility = Visibility.Collapsed;

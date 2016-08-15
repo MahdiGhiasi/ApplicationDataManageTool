@@ -182,34 +182,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="DevProgram, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Downloads\InteropTools_Beta_1.8_0.0.160.0_arm\InteropToolsApp_0.0.160.0_ARM\DevProgram.winmd</HintPath>
-    </Reference>
-    <Reference Include="LGRuntimeComponent, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Downloads\InteropTools_Beta_1.8_0.0.160.0_arm\InteropToolsApp_0.0.160.0_ARM\LGRuntimeComponent.winmd</HintPath>
-    </Reference>
-    <Reference Include="Nokia.SilentInstaller.Runtime">
-      <HintPath>..\..\..\..\..\Downloads\Compressed\DHTUpgradeAdvisor_1.1.4.0_arm_Debug\DHTUpgradeAdvisor_1.1.4.0_arm_Debug\DHTUpgradeAdvisor_1.1.4.0_ARM_Debug\Nokia.SilentInstaller.Runtime.winmd</HintPath>
-    </Reference>
-    <Reference Include="OEMSharedFolderAccessLib, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Downloads\InteropTools_Beta_1.8_0.0.160.0_arm\InteropToolsApp_0.0.160.0_ARM\OEMSharedFolderAccessLib.winmd</HintPath>
-    </Reference>
-    <Reference Include="RegistryHelper">
-      <HintPath>..\..\..\..\..\Downloads\InteropTools_Beta_1.8_0.0.160.0_arm\InteropToolsApp_0.0.160.0_ARM\RegistryHelper.winmd</HintPath>
-    </Reference>
-    <Reference Include="RPCComponent, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Downloads\InteropTools_Beta_1.8_0.0.160.0_arm\InteropToolsApp_0.0.160.0_ARM\RPCComponent.winmd</HintPath>
-    </Reference>
-    <Reference Include="WinPRTUtils, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Downloads\InteropTools_Beta_1.8_0.0.160.0_arm\InteropToolsApp_0.0.160.0_ARM\WinPRTUtils.winmd</HintPath>
-    </Reference>
-  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
