@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="Converters.cs" />
     <Compile Include="FileOperations.cs" />
+    <Compile Include="HiddenThings.cs" />
     <Compile Include="LoadAppData.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

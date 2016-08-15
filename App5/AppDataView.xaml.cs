@@ -40,6 +40,8 @@ namespace AppDataManageTool
             AppDetails.Visibility = Visibility.Collapsed;
             AdvancedDetails.Visibility = Visibility.Collapsed;
             ShowAdvancedDetails.Visibility = Visibility.Visible;
+
+            hiddenButtons.Visibility = App.hiddenMode ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -278,6 +280,30 @@ namespace AppDataManageTool
             PageStatus_IsShowingDetails = true;
 
             Frame.Navigate(typeof(Backups), backupsList.SelectedItem);
+        }
+
+        private async void ZipFromInstallFilesAppButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            HiddenThings ht = new HiddenThings();
+
+            progress.Visibility = Visibility.Visible;
+
+            string fileName = currentApp.FamilyName + DateTime.Now.ToString("yyyyddM HHmmss") + ".zip";
+
+            ht.Progress += Ht_Progress;
+            await ht.BackupPath(currentApp.PackageRootFolder, Path.Combine(App.BackupDestination, fileName));
+            ht.Progress -= Ht_Progress;
+
+            MessageDialog md = new MessageDialog("Saved to " + Path.Combine(App.BackupDestination, fileName));
+            await md.ShowAsync();
+
+            progressText.Text = "";
+            progress.Visibility = Visibility.Collapsed;
+        }
+
+        private void Ht_Progress(object sender, string message)
+        {
+            progressText.Text = message;
         }
     }
 }

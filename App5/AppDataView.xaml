@@ -91,6 +91,9 @@
                     <Button Grid.Column="0" Content="Reset app" HorizontalAlignment="Stretch" Margin="0,0,10,0" Tapped="ResetAppButton_Tapped" />
                     <Button Grid.Column="1" Content="Create backup" HorizontalAlignment="Stretch" Margin="0,0,20,0" Tapped="CreateBackupButton_Tapped" />
                 </Grid>
+                <Grid x:Name="hiddenButtons" Margin="0,10,10,0">
+                    <Button Content="Create zip from app install files" HorizontalAlignment="Stretch" Margin="0,0,10,0" Tapped="ZipFromInstallFilesAppButton_Tapped" />
+                </Grid>
                 <StackPanel Orientation="Vertical" Margin="0,20,20,0">
                     <TextBlock Text="Available backups:" FontWeight="SemiBold" Margin="0,0,0,10" />
                     <TextBlock x:Name="noBackupsAvailable" Margin="5,0,0,0" Text="No backups." TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" FontStyle="Italic" Opacity="0.5" />
@@ -111,6 +114,7 @@
         </ScrollViewer>
         <Grid x:Name="progress" Visibility="Collapsed" Background="#AA000000">
             <ProgressRing x:Name="progressRing" Height="50" Width="50" IsActive="True"/>
+            <TextBlock x:Name="progressText" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,100,0,0" TextAlignment="Center" />
         </Grid>
 
     </Grid>

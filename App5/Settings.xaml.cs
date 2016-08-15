@@ -82,11 +82,11 @@ namespace AppDataManageTool
             }
         }
 
-        private async void Secret4_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void Secret4_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if ((App.secretCodeCounter == 1200) || (App.secretCodeCounter == 1201) || (App.secretCodeCounter == 1202) || (App.secretCodeCounter == 1203) || (App.secretCodeCounter == 1204))
+            if ((App.secretCodeCounter == 1200) || (App.secretCodeCounter == 1201) || (App.secretCodeCounter == 1202) || (App.secretCodeCounter == 1203))
                 App.secretCodeCounter++;
-            else if (App.secretCodeCounter == 1205)
+            else if (App.secretCodeCounter == 1204)
             {
                 App.hiddenMode = true;
 
@@ -95,6 +95,8 @@ namespace AppDataManageTool
             }
             else
                 App.secretCodeCounter = 0;
+
+            System.Diagnostics.Debug.WriteLine("SECRET4");
         }
     }
 }

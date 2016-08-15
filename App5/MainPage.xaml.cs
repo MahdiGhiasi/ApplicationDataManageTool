@@ -140,12 +140,14 @@ namespace AppDataManageTool
             Frame.Navigate(typeof(About));
         }
 
-        private void Secret3_Tapped(object sender, TappedRoutedEventArgs e)
+        private void Secret3_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             if ((App.secretCodeCounter == 12) || (App.secretCodeCounter == 120))
                 App.secretCodeCounter *= 10;
             else
                 App.secretCodeCounter = 0;
+
+            System.Diagnostics.Debug.WriteLine("SECRET3");
         }
     }
 }
