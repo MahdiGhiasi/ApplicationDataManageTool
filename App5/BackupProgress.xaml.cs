@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -52,10 +53,31 @@ namespace AppDataManageTool
 
                 LogsView.ItemsSource = log;
 
-                List<AppData> appDatas = (from CompactAppData c in backup.Apps
-                                          select AppData.FindAppData(c.PackageId)).ToList();
+                List<CompactAppData> skipApps = new List<CompactAppData>();
+                foreach (var item in backup.Apps)
+                {
+                    AppData appd = AppData.FindAppData(item.FamilyName);
+                    if (appd.PackageId != item.PackageId)
+                    {
+                        MessageDialog md = new MessageDialog("Current installed version: " + appd.PackageId + "\r\n" + 
+                                                             "Backup: " + item.PackageId + "\r\n\r\n" +
+                                                             "Do you want to restore this app?", 
+                                                             appd.DisplayName + " - Version mismatch");
+                        md.Commands.Add(new UICommand("Restore") { Id = 1 });
+                        md.Commands.Add(new UICommand("Don't restore") { Id = 0 });
+                        md.DefaultCommandIndex = 1;
+                        md.CancelCommandIndex = 0;
 
-                await backupManager.Restore(backup);
+                        var result = await md.ShowAsync();
+
+                        if (((int)result.Id) == 0)
+                        {
+                            skipApps.Add(item);
+                        }
+                    }   
+                }
+
+                await backupManager.Restore(backup, skipApps);
 
                 progressBar1.Value = 100.0;
                 messageTextBlock.Text = "Restore completed.";
@@ -75,7 +97,7 @@ namespace AppDataManageTool
                 LogsView.ItemsSource = log;
 
                 List<AppData> appDatas = (from CompactAppData c in backup.Apps
-                                          select AppData.FindAppData(c.PackageId)).ToList();
+                                          select AppData.FindAppData(c.FamilyName)).ToList();
 
                 await backupManager.CreateBackup(appDatas, backup.Name);
 

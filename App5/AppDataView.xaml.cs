@@ -115,7 +115,7 @@ namespace AppDataManageTool
                 currentApp = data;
 
                 List<Backup> backupsContainingThisApp = (from Backup b in BackupManager.currentBackups
-                                                         where b.Apps.Any(x => x.PackageId == currentApp.PackageId)
+                                                         where b.Apps.Any(x => x.FamilyName == currentApp.FamilyName)
                                                          select b).ToList();
 
                 noBackupsAvailable.Visibility = backupsContainingThisApp.Count == 0 ? Visibility.Visible : Visibility.Collapsed;

@@ -122,7 +122,7 @@ namespace AppDataManageTool
 
         internal static AppData GetAppDataFromCompactAppData(CompactAppData data)
         {
-            return App.appsData.FirstOrDefault(x => x.PackageId == data.PackageId);
+            return App.appsData.FirstOrDefault(x => x.FamilyName == data.FamilyName);
         }
         /**
         public List<AppData> LoadAppNamesRegistry()

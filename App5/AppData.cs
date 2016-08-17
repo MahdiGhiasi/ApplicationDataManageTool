@@ -21,10 +21,10 @@ namespace AppDataManageTool
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public static AppData FindAppData(string packageId)
+        public static AppData FindAppData(string family)
         {
             foreach (var item in App.appsData)
-                if (item.PackageId == packageId)
+                if (item.FamilyName == family)
                     return item;
             return null;
         }

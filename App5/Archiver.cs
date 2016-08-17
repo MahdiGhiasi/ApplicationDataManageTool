@@ -178,6 +178,13 @@ namespace LightBuzz.Archiver
                             string destName = entry.FullName.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)[0];
                             destination = destinations[destName];
 
+                            if (destination == null)
+                            {
+                                //Skip this entry
+                                counter++;
+                                continue;
+                            }
+
                             OnDecompressingProgress(new DecompressingEventArgs(counter, total, log, destName));
 
                             if (entry.FullName.EndsWith("/"))

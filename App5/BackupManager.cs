@@ -205,13 +205,16 @@ namespace AppDataManageTool
 
         List<ArchiverError> restoreLog = new List<ArchiverError>();
 
-        public async Task Restore(Backup backup)
+        public async Task Restore(Backup backup, List<CompactAppData> skipApps)
         {
             int counter = 1;
             foreach (var item in backup.Apps)
             {
-                OnBackupProgress(new BackupEventArgs(-1, BackupState.ResettingAppData, "Clearing current state of " + item.DisplayName, counter.ToString() + " / " + backup.Apps.Count.ToString(), restoreLog));
-                await ResetAppData(LoadAppData.GetAppDataFromCompactAppData(item));
+                if (!skipApps.Contains(item))
+                {
+                    OnBackupProgress(new BackupEventArgs(-1, BackupState.ResettingAppData, "Clearing current state of " + item.DisplayName, counter.ToString() + " / " + backup.Apps.Count.ToString(), restoreLog));
+                    await ResetAppData(LoadAppData.GetAppDataFromCompactAppData(item));
+                }
                 counter++;
             }
             OnBackupProgress(new BackupEventArgs(-1, BackupState.Initializing, "Loading backup file...", "", restoreLog));
@@ -225,11 +228,18 @@ namespace AppDataManageTool
 
             foreach (var item in backup.Apps)
             {
-                FileOperations.RemoveFromGetContentsCache(item.FamilyName);
+                if (!skipApps.Contains(item))
+                {
+                    FileOperations.RemoveFromGetContentsCache(item.FamilyName);
 
-                dests[item.FamilyName] = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.GetDirectoryName(LoadAppData.GetDataFolder(item)));
+                    dests[item.FamilyName] = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.GetDirectoryName(LoadAppData.GetDataFolder(item)));
 
-                familyToDisplayNames.Add(item.FamilyName, item.DisplayName);
+                    familyToDisplayNames.Add(item.FamilyName, item.DisplayName);
+                }
+                else
+                {
+                    dests[item.FamilyName] = null; //Skip
+                }
             }
 
             archiver.DecompressingProgress += Archiver_DecompressingProgress;
