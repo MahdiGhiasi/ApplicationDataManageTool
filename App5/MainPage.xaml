@@ -27,9 +27,9 @@
                     </StackPanel.Transitions>
 
                     <StackPanel Padding="24,12,24,24" Background="#FF1A1A1A">
-                        <TextBlock Text="This tool allows you to reset apps and games, and backup their current state to restore later." Margin="0,0,0,0" TextWrapping="WrapWholeWords" />
+                        <TextBlock Text="This tool allows you to backup the current state of your apps and games and restore them later, and also reseting the state of the app." Margin="0,0,0,0" TextWrapping="WrapWholeWords" />
                         <TextBlock Text="Also, you can move these backups to another device, or use it to restore apps and games data after a factory reset." Margin="0,12,0,0" TextWrapping="WrapWholeWords" />
-                        <TextBlock Text="It's advised to reboot your phone before using this tool, to make sure files are not in use." Margin="0,12,0,0" TextWrapping="WrapWholeWords" />
+                        <TextBlock Text="It's advised to reboot your phone before using this tool, to make sure files are not in use." Margin="0,12,0,0" TextWrapping="WrapWholeWords" FontStyle="Italic" FontWeight="SemiBold" />
                         <TextBlock Text="Select an option to get started." Margin="0,12,0,0" TextWrapping="WrapWholeWords" />
                     </StackPanel>
                     <StackPanel Margin="16,0,16,0">
