@@ -33,7 +33,7 @@
                 <CheckBox.Content>
                     <StackPanel>
                         <TextBlock Text="Compress backup archives" />
-                        <TextBlock Text="Creating backups will take a longer time but will be less in size if you enable this option." TextWrapping="WrapWholeWords" Opacity="0.7" Margin="0,5,0,0" />
+                        <TextBlock Text="Creating backups will take a longer time but the result will be less in size if you enable this option." TextWrapping="WrapWholeWords" Opacity="0.7" Margin="0,5,0,0" />
                     </StackPanel>
                 </CheckBox.Content>
             </CheckBox>
