@@ -44,7 +44,7 @@
                 </ListView>
             </Grid>
         </Grid>
-        <Grid x:Name="BackupDetails" Visibility="Collapsed" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid x:Name="BackupDetails" Visibility="Visible" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="54" />
                 <RowDefinition />
@@ -56,7 +56,7 @@
             <Grid Grid.Row="1" Padding="20,0,20,0">
                 <ScrollViewer>
                     <StackPanel Padding="0,10,0,10">
-                        <TextBlock Text="Backup" FontSize="22" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding Name}" FontSize="22" TextWrapping="Wrap" />
 
                         <Grid Margin="0,20,0,0">
                             <Grid.ColumnDefinitions>
