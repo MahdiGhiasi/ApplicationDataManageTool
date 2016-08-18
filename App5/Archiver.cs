@@ -168,8 +168,15 @@ namespace LightBuzz.Archiver
                 using (ZipArchive archive = new ZipArchive(stream, ZipArchiveMode.Read))
                 {
                     int counter = 0;
-                    int total = archive.Entries.Count;
-                    foreach (ZipArchiveEntry entry in archive.Entries)
+
+                    IEnumerable<ZipArchiveEntry> notSkippedEntries = from ZipArchiveEntry z in archive.Entries
+                                                                     let dest = destinations[z.FullName.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)[0]]
+                                                                     where dest != null
+                                                                     select z;
+
+                    int total = notSkippedEntries.Count();
+
+                    foreach (ZipArchiveEntry entry in notSkippedEntries)
                     {   
                         if (!string.IsNullOrEmpty(entry.FullName))
                         {
@@ -177,14 +184,7 @@ namespace LightBuzz.Archiver
 
                             string destName = entry.FullName.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)[0];
                             destination = destinations[destName];
-
-                            if (destination == null)
-                            {
-                                //Skip this entry
-                                counter++;
-                                continue;
-                            }
-
+                            
                             OnDecompressingProgress(new DecompressingEventArgs(counter, total, log, destName));
 
                             if (entry.FullName.EndsWith("/"))
