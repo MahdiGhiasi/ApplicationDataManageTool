@@ -59,28 +59,56 @@ namespace AppDataManageTool
                 LogsView.ItemsSource = log;
 
                 List<CompactAppData> skipApps = new List<CompactAppData>();
+
+                string notAvailableNames = "";
                 foreach (var item in backup.Apps)
                 {
-                    AppData appd = AppData.FindAppData(item.FamilyName);
-                    if (appd.PackageId != item.PackageId)
+                    if (App.appsData.Count(x => x.FamilyName == item.FamilyName) == 0)
                     {
-                        MessageDialog md = new MessageDialog("Current installed version doesn't match the version backup was created from.\r\n\r\n" +
-                                                             "Current installed version: " + appd.PackageId + "\r\n\r\n" + 
-                                                             "Backup: " + item.PackageId + "\r\n\r\n\r\n" +
-                                                             "Do you want to restore this app?", 
-                                                             appd.DisplayName + ": Version mismatch");
-                        md.Commands.Add(new UICommand("Restore") { Id = 1 });
-                        md.Commands.Add(new UICommand("Don't restore") { Id = 0 });
-                        md.DefaultCommandIndex = 1;
-                        md.CancelCommandIndex = 0;
+                        skipApps.Add(item);
+                        if (notAvailableNames.Length > 0)
+                            notAvailableNames += "\r\n";
+                        notAvailableNames += item.DisplayName;
+                    }
+                }
 
-                        var result = await md.ShowAsync();
+                if (skipApps.Count > 0)
+                {
+                    string notAvailableMessage;
+                    if (skipApps.Count == 1)
+                        notAvailableMessage = notAvailableNames + " is not installed on this device, so the data related to it will not be restored.";
+                    else
+                        notAvailableMessage = "The following apps are not installed on this device, so the data related to them will not be restored:\r\n\r\n" + notAvailableNames;
 
-                        if (((int)result.Id) == 0)
+                    MessageDialog md = new MessageDialog(notAvailableMessage);
+                    await md.ShowAsync();
+                }
+
+                foreach (var item in backup.Apps)
+                {
+                    if (!skipApps.Contains(item))
+                    { 
+                        AppData appd = AppData.FindAppData(item.FamilyName);
+                        if (appd.PackageId != item.PackageId)
                         {
-                            skipApps.Add(item);
+                            MessageDialog md = new MessageDialog("Current installed version doesn't match the version backup was created from.\r\n\r\n" +
+                                                                 "Current installed version: " + appd.PackageId + "\r\n\r\n" +
+                                                                 "Backup: " + item.PackageId + "\r\n\r\n\r\n" +
+                                                                 "Do you want to restore this app?",
+                                                                 appd.DisplayName + ": Version mismatch");
+                            md.Commands.Add(new UICommand("Restore") { Id = 1 });
+                            md.Commands.Add(new UICommand("Don't restore") { Id = 0 });
+                            md.DefaultCommandIndex = 1;
+                            md.CancelCommandIndex = 0;
+
+                            var result = await md.ShowAsync();
+
+                            if (((int)result.Id) == 0)
+                            {
+                                skipApps.Add(item);
+                            }
                         }
-                    }   
+                    }
                 }
 
                 await backupManager.Restore(backup, skipApps);
@@ -136,12 +164,12 @@ namespace AppDataManageTool
                     progressBar1.IsIndeterminate = false;
                 progressBar1.Value = e.Progress;
             }
-            
+
             if (e.Log.Count != LogsView.Items.Count)
             { //Update the list
                 for (int i = LogsView.Items.Count; i < e.Log.Count; i++)
-                     log.Insert(0,e.Log[i]);
-                
+                    log.Insert(0, e.Log[i]);
+
             }
 
             lastUpdate = DateTime.Now;
