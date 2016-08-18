@@ -212,10 +212,10 @@ namespace AppDataManageTool
             {
                 if (!skipApps.Contains(item))
                 {
-                    OnBackupProgress(new BackupEventArgs(-1, BackupState.ResettingAppData, "Clearing current state of " + item.DisplayName, counter.ToString() + " / " + backup.Apps.Count.ToString(), restoreLog));
+                    OnBackupProgress(new BackupEventArgs(-1, BackupState.ResettingAppData, "Clearing current state of " + item.DisplayName, counter.ToString() + " / " + (backup.Apps.Count - skipApps.Count).ToString(), restoreLog));
                     await ResetAppData(LoadAppData.GetAppDataFromCompactAppData(item));
+                    counter++;
                 }
-                counter++;
             }
             OnBackupProgress(new BackupEventArgs(-1, BackupState.Initializing, "Loading backup file...", "", restoreLog));
             StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.Combine(App.BackupDestination, backup.Name));
