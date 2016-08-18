@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System.Display;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -27,6 +28,7 @@ namespace AppDataManageTool
         Backup backup;
         BackupManager backupManager = new BackupManager();
         ObservableCollection<ArchiverError> log = new ObservableCollection<ArchiverError>();
+        DisplayRequest displayRequest;
 
         public BackupProgress()
         {
@@ -36,6 +38,9 @@ namespace AppDataManageTool
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+
+            displayRequest = new DisplayRequest();
+            displayRequest.RequestActive();
 
             var message = Newtonsoft.Json.JsonConvert.DeserializeObject<BackupProgressMessage>(e.Parameter.ToString());
 
@@ -110,7 +115,9 @@ namespace AppDataManageTool
                 progressRing.IsActive = false;
                 progressRing.Visibility = Visibility.Collapsed;
             }
+
             ((App)App.Current).BackRequested -= BackupProgress_BackRequested;
+            displayRequest.RequestRelease();
         }
 
         private DateTime lastUpdate = DateTime.MinValue;
