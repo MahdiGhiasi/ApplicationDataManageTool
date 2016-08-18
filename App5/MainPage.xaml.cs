@@ -8,6 +8,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.System.Display;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -30,6 +31,7 @@ namespace AppDataManageTool
         Dictionary<string, AppData> AppNames = new Dictionary<string, AppData>();
         LoadAppData loadAppData = new LoadAppData();
         BackupManager.BackupLoader backupLoader = new BackupManager.BackupLoader();
+        DisplayRequest displayRequest;
 
         public MainPage()
         {
@@ -103,6 +105,9 @@ namespace AppDataManageTool
         {
             if (App.appsData == null)
             {
+                displayRequest = new DisplayRequest();
+                displayRequest.RequestActive();
+
                 progress.Visibility = Visibility.Visible;
                 progressRing.IsActive = true;
 
@@ -114,6 +119,8 @@ namespace AppDataManageTool
                 progressRing.IsActive = false;
 
                 Frame.Background = Header.Background;
+
+                displayRequest.RequestRelease();
             }
 
             AppDataView.PageStatus_CurrentApp = null;
