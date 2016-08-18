@@ -59,10 +59,11 @@ namespace AppDataManageTool
                     AppData appd = AppData.FindAppData(item.FamilyName);
                     if (appd.PackageId != item.PackageId)
                     {
-                        MessageDialog md = new MessageDialog("Current installed version: " + appd.PackageId + "\r\n" + 
-                                                             "Backup: " + item.PackageId + "\r\n\r\n" +
+                        MessageDialog md = new MessageDialog("Current installed version doesn't match the version backup was created from.\r\n\r\n" +
+                                                             "Current installed version: " + appd.PackageId + "\r\n\r\n" + 
+                                                             "Backup: " + item.PackageId + "\r\n\r\n\r\n" +
                                                              "Do you want to restore this app?", 
-                                                             appd.DisplayName + " - Version mismatch");
+                                                             appd.DisplayName + ": Version mismatch");
                         md.Commands.Add(new UICommand("Restore") { Id = 1 });
                         md.Commands.Add(new UICommand("Don't restore") { Id = 0 });
                         md.DefaultCommandIndex = 1;
