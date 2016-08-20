@@ -202,6 +202,7 @@ namespace AppDataManageTool
                 }
             }
 
+            app.AppDataSize = "Calculating...";
             app.SizeIsCalculated = false;
         }
 
