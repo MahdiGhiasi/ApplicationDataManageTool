@@ -114,12 +114,18 @@ namespace AppDataManageTool
 
             if (((int)result.Id) == 1)
             {
+                RestoreAppBarButton.IsEnabled = false;
+                DeleteAppBarButton.IsEnabled = false;
+
                 await BackupManager.DeleteBackup(currentBackup);
 
                 backupsList.ItemsSource = null;
                 await Task.Delay(100);
                 BackupDetails.Visibility = Visibility.Collapsed;
                 backupsList.ItemsSource = BackupManager.currentBackups;
+
+                RestoreAppBarButton.IsEnabled = true;
+                DeleteAppBarButton.IsEnabled = true;
 
                 if (isJustForDetails)
                     Frame.GoBack();

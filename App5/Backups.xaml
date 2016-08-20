@@ -106,12 +106,12 @@
                 </ScrollViewer>
             </Grid>
             <CommandBar Grid.Row="2">
-                <AppBarButton Label="Delete" Tapped="DeleteButton_Tapped">
+                <AppBarButton Label="Delete" Tapped="DeleteButton_Tapped" x:Name="DeleteAppBarButton">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE74D;" />
                     </AppBarButton.Icon>                    
                 </AppBarButton>
-                <AppBarButton Label="Restore" Tapped="RestoreButton_Tapped">
+                <AppBarButton Label="Restore" Tapped="RestoreButton_Tapped" x:Name="RestoreAppBarButton">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE724;" />
                     </AppBarButton.Icon>
