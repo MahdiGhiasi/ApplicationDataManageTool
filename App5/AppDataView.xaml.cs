@@ -145,9 +145,6 @@ namespace AppDataManageTool
                 AppDetails.DataContext = listView.SelectedItem;
                 AppDetails.Visibility = Visibility.Visible;
 
-                //AppDetailsContent.Opacity = 0;
-                ShowDetailsAnimation.Begin();
-
                 commandBar.Visibility = Visibility.Collapsed;
 
                 AppData data = (AppData)listView.SelectedItem;
