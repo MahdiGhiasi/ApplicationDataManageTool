@@ -201,6 +201,8 @@ namespace AppDataManageTool
                     System.Diagnostics.Debug.WriteLine(ex.Message + " :: " + item.Path);
                 }
             }
+
+            app.SizeIsCalculated = false;
         }
 
         List<ArchiverError> restoreLog = new List<ArchiverError>();

@@ -268,7 +268,6 @@ namespace AppDataManageTool
                 await bm.ResetAppData(currentApp);
                 FileOperations.RemoveFromGetContentsCache(currentApp.FamilyName);
 
-                currentApp.SizeIsCalculated = false;
                 await currentApp.CalculateSize();
                 progress.Visibility = Visibility.Collapsed;
             }
