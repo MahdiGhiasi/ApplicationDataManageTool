@@ -9,6 +9,8 @@
     Loaded="Page_Loaded">
 
     <Page.Resources>
+        <local:NotBoolToVisConverter x:Key="NotBoolToVis" />
+        <local:BoolToVisConverter x:Key="BoolToVis" />
         <DataTemplate x:Name="appsListSmall">
             <Grid>
                 <StackPanel Orientation="Horizontal">
@@ -16,9 +18,12 @@
                         <Image Source="{Binding Logo}" Width="50" Height="50"></Image>
                     </Grid>
                     <StackPanel>
-                        <TextBlock Margin="4,8,0,0"
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="4,8,0,0"
                                            Text="{Binding DisplayName}"
                                            TextWrapping="WrapWholeWords" />
+                            <TextBlock Text="*" Margin="4,8,0,0" Visibility="{Binding IsLegacyApp, Converter={StaticResource BoolToVis}}" Opacity="0.5" />
+                        </StackPanel>
                         <TextBlock Margin="4,0,0,0" Opacity="0.6"
                                            Text="{Binding Publisher}"
                                            TextWrapping="WrapWholeWords" />
@@ -26,8 +31,6 @@
                 </StackPanel>
             </Grid>
         </DataTemplate>
-        <local:NotBoolToVisConverter x:Key="NotBoolToVis" />
-        <local:BoolToVisConverter x:Key="BoolToVis" />
     </Page.Resources>
 
     <Page.BottomAppBar>
