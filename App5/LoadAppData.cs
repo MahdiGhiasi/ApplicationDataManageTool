@@ -41,6 +41,8 @@ namespace AppDataManageTool
         public event LoadingEventHandler LoadingProgress;
         public event EventHandler LoadCompleted;
 
+        LegacyBridge.LegacyAppTools legacyTools = new LegacyBridge.LegacyAppTools();
+
         protected virtual void OnLoadingProgress(LoadingEventArgs e)
         {
             if (LoadingProgress != null)
@@ -72,57 +74,37 @@ namespace AppDataManageTool
         {
             List<AppData> list = new List<AppData>();
 
+            //Modern apps
             Windows.Management.Deployment.PackageManager packageManager = new Windows.Management.Deployment.PackageManager();
-
             IEnumerable<Windows.ApplicationModel.Package> packages = (IEnumerable<Windows.ApplicationModel.Package>)packageManager.FindPackagesForUser("");
 
-            int count = packages.Count();
+            //Legacy apps
+            StorageFolder programsFolder = await StorageFolder.GetFolderFromPathAsync(@"C:\Data\Programs");
+            IEnumerable<StorageFolder> programs = await programsFolder.GetFoldersAsync();
+
+            int count = packages.Count() + programs.Count();
             int progress = 0;
 
             foreach (var item in packages)
             {
-                AppData data = new AppData();
-                try
-                {
-                    var x = await item.GetAppListEntriesAsync();
-                    data.DisplayName = (x.First().DisplayInfo.DisplayName);
+                AppData appD = await LoadModernAppData(item);
+                if (appD != null)
+                    list.Add(appD);
 
-                    BitmapImage bmp = new BitmapImage();
-                    bmp.SetSource(await x.First().DisplayInfo.GetLogo(new Size(50, 50)).OpenReadAsync());
-                    data.Logo = bmp;
+                progress++;
+                OnLoadingProgress(new LoadingEventArgs(progress, count));
+            }
 
-                    data.PackageId = item.Id.FullName;
-                    data.PackageRootFolder = item.InstalledLocation.Path;
-                    data.FamilyName = item.Id.FamilyName;
-                    data.PackageDataFolder = GetDataFolder(data);
-                    data.IsLegacyApp = false;
+            System.Diagnostics.Debug.WriteLine("Now loading legacy apps...");
 
-                    try
-                    {
-                        var appxManifest = await item.InstalledLocation.TryGetItemAsync("AppxManifest.xml");
-                        if ((appxManifest != null) && (appxManifest is StorageFile))
-                        {
-                            string appxManifestData = await FileIO.ReadTextAsync((StorageFile)appxManifest);
+            foreach (StorageFolder item in programs)
+            {
+                AppData appD = await LoadLegacyAppData(item);
+                if (appD != null)
+                    list.Add(appD);
 
-                            string publisher = appxManifestData.Substring(appxManifestData.IndexOf("<PublisherDisplayName>") + "<PublisherDisplayName>".Length);
-                            publisher = publisher.Substring(0, publisher.IndexOf("</PublisherDisplayName>"));
-
-                            if ((publisher.Length > "ms-resource:".Length) && (publisher.Substring(0, "ms-resource:".Length) == "ms-resource:"))
-                                publisher = "";
-
-                            data.Publisher = publisher;
-                        }
-                    }
-                    catch { }
-
-                    list.Add(data);
-                }
-                catch { }
-                finally
-                {
-                    progress++;
-                    OnLoadingProgress(new LoadingEventArgs(progress, count));
-                }
+                progress++;
+                OnLoadingProgress(new LoadingEventArgs(progress, count));
             }
 
             list = list.OrderBy(x => x.DisplayName).ToList();
@@ -131,32 +113,9 @@ namespace AppDataManageTool
             return list;
         }
 
-        internal static string GetDataFolder(AppData data)
+        private async Task<AppData> LoadLegacyAppData(StorageFolder item)
         {
-            if (data.IsLegacyApp)
-                return "C:\\Data\\Users\\DefApps\\AppData\\" + data.FamilyName;
-            else
-                return "C:\\Data\\Users\\DefApps\\APPDATA\\Local\\Packages\\" + data.FamilyName;
-        }
-
-        internal static string GetDataFolder(CompactAppData data)
-        {
-            return GetDataFolder(GetAppDataFromCompactAppData(data));
-        }
-
-        internal static AppData GetAppDataFromCompactAppData(CompactAppData data)
-        {
-            return App.appsData.FirstOrDefault(x => x.FamilyName == data.FamilyName);
-        }
-
-        internal async Task<List<AppData>> LoadLegacyApps()
-        {
-            LegacyBridge.LegacyAppTools legacyTools = new LegacyBridge.LegacyAppTools();
-
-            List<AppData> output = new List<AppData>();
-
-            StorageFolder programsFolder = await StorageFolder.GetFolderFromPathAsync(@"C:\Data\Programs");
-            foreach (StorageFolder item in await programsFolder.GetFoldersAsync())
+            try
             {
                 IStorageItem s = await item.TryGetItemAsync("Install");
                 if ((s != null) && (s is StorageFolder))
@@ -186,15 +145,13 @@ namespace AppDataManageTool
 
                             appName = appTag.Substring(appTag.IndexOf(@"Title=""") + @"Title=""".Length);
                             appName = appName.Substring(0, appName.IndexOf("\""));
-                            appName = await GetString(appName);
+                            appName = GetNameStringFromManifestFormat(appName);
 
                             publisherName = appTag.Substring(appTag.IndexOf(@"Publisher=""") + @"Publisher=""".Length);
                             publisherName = publisherName.Substring(0, publisherName.IndexOf("\""));
-                            publisherName = await GetString(publisherName);
+                            publisherName = GetNameStringFromManifestFormat(publisherName);
                         }
-
-
-
+                        
                         AppData app = new AppData()
                         {
                             DisplayName = appName,
@@ -208,7 +165,8 @@ namespace AppDataManageTool
                         app.PackageDataFolder = GetDataFolder(app);
 
                         string iconPathTag;
-                        try {
+                        try
+                        {
                             iconPathTag = text.Substring(text.IndexOf("<IconPath "));
                             iconPathTag = iconPathTag.Substring(iconPathTag.IndexOf(">") + 1);
                             iconPathTag = iconPathTag.Substring(0, iconPathTag.IndexOf("</IconPath>"));
@@ -221,39 +179,104 @@ namespace AppDataManageTool
                             iconPathTag = "";
                         }
 
-                        output.Add(app);
+                        return app;
                     }
                 }
             }
+            catch { }
 
-            return output;
+            return null;
         }
 
-        static async Task<string> GetString(string inputS/*, StorageFolder curPath*/)
+        private async Task<AppData> LoadModernAppData(Windows.ApplicationModel.Package item)
         {
+            AppData data = new AppData();
+            try
+            {
+                var x = await item.GetAppListEntriesAsync();
 
+                if (x.Count == 0)
+                    return null;
+
+                data.DisplayName = (x.First().DisplayInfo.DisplayName);
+
+                BitmapImage bmp = new BitmapImage();
+                bmp.SetSource(await x.First().DisplayInfo.GetLogo(new Size(50, 50)).OpenReadAsync());
+                data.Logo = bmp;
+
+                data.PackageId = item.Id.FullName;
+                data.PackageRootFolder = item.InstalledLocation.Path;
+                data.FamilyName = item.Id.FamilyName;
+                data.PackageDataFolder = GetDataFolder(data);
+                data.IsLegacyApp = false;
+
+                try
+                {
+                    var appxManifest = await item.InstalledLocation.TryGetItemAsync("AppxManifest.xml");
+                    if ((appxManifest != null) && (appxManifest is StorageFile))
+                    {
+                        string appxManifestData = await FileIO.ReadTextAsync((StorageFile)appxManifest);
+
+                        string publisher = appxManifestData.Substring(appxManifestData.IndexOf("<PublisherDisplayName>") + "<PublisherDisplayName>".Length);
+                        publisher = publisher.Substring(0, publisher.IndexOf("</PublisherDisplayName>"));
+
+                        if ((publisher.Length > "ms-resource:".Length) && (publisher.Substring(0, "ms-resource:".Length) == "ms-resource:"))
+                            publisher = "";
+
+                        data.Publisher = publisher;
+                    }
+                }
+                catch { }
+
+                return data;
+            }
+            catch { }
+
+            return null;
+        }
+
+        internal static string GetDataFolder(AppData data)
+        {
+            if (data.IsLegacyApp)
+                return "C:\\Data\\Users\\DefApps\\AppData\\" + data.FamilyName;
+            else
+                return "C:\\Data\\Users\\DefApps\\APPDATA\\Local\\Packages\\" + data.FamilyName;
+        }
+
+        internal static string GetDataFolder(CompactAppData data)
+        {
+            return GetDataFolder(GetAppDataFromCompactAppData(data));
+        }
+
+        internal static AppData GetAppDataFromCompactAppData(CompactAppData data)
+        {
+            return App.appsData.FirstOrDefault(x => x.FamilyName == data.FamilyName);
+        }
+        
+        static string GetNameStringFromManifestFormat(string inputS/*, StorageFolder curPath*/)
+        {
             if (inputS.Length < 1)
                 return inputS;
             else if (inputS[0] != '@')
                 return inputS;
             else
                 return "Unknown";
-           /* try
-            {
-                string s = inputS.Substring(1);
+            /* try
+             {
+                 string s = inputS.Substring(1);
 
-                string[] parts = s.Split(',');
+                 string[] parts = s.Split(',');
 
-                StorageFile file = await curPath.GetFileAsync(parts[0]);
-                await file.CopyAsync(await StorageFolder.GetFolderFromPathAsync("C:\\Data\\Users\\Public"), parts[0], NameCollisionOption.ReplaceExisting);
+                 StorageFile file = await curPath.GetFileAsync(parts[0]);
+                 await file.CopyAsync(await StorageFolder.GetFolderFromPathAsync("C:\\Data\\Users\\Public"), parts[0], NameCollisionOption.ReplaceExisting);
 
-                return GetStringResource(System.IO.Path.Combine("C:\\Data\\Users\\Public", parts[0]), (uint)Math.Abs(int.Parse(parts[1])));
-            }
-            catch (Exception ex)
-            {
-                return inputS;
-            }
-            */
+                 return GetStringResource(System.IO.Path.Combine("C:\\Data\\Users\\Public", parts[0]), (uint)Math.Abs(int.Parse(parts[1])));
+             }
+             catch (Exception ex)
+             {
+                 return inputS;
+             }
+             */
         }
         /**
         static string GetStringResource(string dllPath, uint resourceId)

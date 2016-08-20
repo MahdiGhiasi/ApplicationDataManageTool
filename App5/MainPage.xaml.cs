@@ -116,10 +116,6 @@ namespace AppDataManageTool
 
                 App.appsData = await loadAppData.LoadApps();
 
-                progressStatus.Text = "Loading legacy apps...";
-
-                App.appsData.AddRange(await loadAppData.LoadLegacyApps());
-
                 App.appsData = App.appsData.OrderBy(x => x.DisplayName).ToList();
 
                 await backupLoader.LoadCurrentBackups();
