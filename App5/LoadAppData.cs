@@ -201,7 +201,11 @@ namespace AppDataManageTool
                 data.DisplayName = (x.First().DisplayInfo.DisplayName);
 
                 BitmapImage bmp = new BitmapImage();
-                bmp.SetSource(await x.First().DisplayInfo.GetLogo(new Size(50, 50)).OpenReadAsync());
+                try
+                {
+                    bmp.SetSource(await x.First().DisplayInfo.GetLogo(new Size(50, 50)).OpenReadAsync());
+                }
+                catch { }
                 data.Logo = bmp;
 
                 data.PackageId = item.Id.FullName;
