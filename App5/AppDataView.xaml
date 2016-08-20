@@ -60,6 +60,26 @@
         <local:AppListEmptyOrFullSelector x:Key="SemanticOuterSelector" 
                                           Full="{StaticResource SemanticEnabledItem}" 
                                           Empty="{StaticResource SemanticDisabledItem}" />
+
+
+        <Storyboard x:Name="ShowDetailsAnimation">
+            <DoubleAnimation Storyboard.TargetName="AppDetailsContent"
+                                 Storyboard.TargetProperty="(UIElement.Opacity)"
+                                 From="0"
+                                 To="1"
+                                 BeginTime="0:0:0.0"
+                                 Duration="00:00:00.200"
+                                 AutoReverse="False">
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="AppDetailsContentTransform" 
+                                Storyboard.TargetProperty="Y"
+                                BeginTime="0:0:0.0"
+                                Duration="0:0:0.3" From="16" To="0" >
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase  EasingMode="EaseOut"  />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
     </Page.Resources>
 
     <Page.BottomAppBar>
@@ -89,7 +109,7 @@
                           ItemTemplate="{StaticResource appsListSmall}"
                           HorizontalContentAlignment="Stretch" SelectionMode="Single"
                           ItemsSource="{Binding Source={StaticResource collection}}">
-                    
+
                     <ListView.GroupStyle>
                         <GroupStyle HidesIfEmpty="True">
                             <GroupStyle.HeaderTemplate>
@@ -111,7 +131,8 @@
         </SemanticZoom>
 
 
-        <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="AppDetails" Visibility="Collapsed">
+        <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="AppDetails" Visibility="Visible">
+
             <StackPanel Orientation="Vertical" Margin="20,20,0,0">
                 <StackPanel Orientation="Horizontal" Margin="-20,-20,0,0" Padding="20,20,0,10" Background="#FF222222">
                     <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}" Margin="5">
@@ -126,56 +147,61 @@
                                            TextWrapping="WrapWholeWords" />
                     </StackPanel>
                 </StackPanel>
+                <StackPanel x:Name="AppDetailsContent">
+                    <StackPanel.RenderTransform>
+                        <TranslateTransform x:Name="AppDetailsContentTransform" Y="16"></TranslateTransform>
+                    </StackPanel.RenderTransform>
 
-                <StackPanel Orientation="Vertical" Margin="0,20,20,0">
-                    <TextBlock Text="Package Id:" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding PackageId}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"   />
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Margin="0,20,20,0">
-                    <TextBlock Text="App data size:" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding AppDataSize}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
-                    <Grid Height="5" Margin="0,4,0,0">
-                        <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=SizeIsCalculated, Converter={StaticResource NotBoolToVis}}" />
-                    </Grid>
-                </StackPanel>
-                <StackPanel Visibility="Visible" x:Name="AdvancedDetails">
-                    <StackPanel Orientation="Vertical" Margin="0,15,20,0">
-                        <TextBlock Text="Data Path:" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding PackageDataFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
+                    <StackPanel Orientation="Vertical" Margin="0,20,20,0">
+                        <TextBlock Text="Package Id:" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding PackageId}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"   />
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Margin="0,20,20,0">
-                        <TextBlock Text="Installation Path:" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding PackageRootFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
+                        <TextBlock Text="App data size:" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding AppDataSize}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
+                        <Grid Height="5" Margin="0,4,0,0">
+                            <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=SizeIsCalculated, Converter={StaticResource NotBoolToVis}}" />
+                        </Grid>
                     </StackPanel>
-                    <TextBlock Text="Hide advanced details" Margin="0,15,20,0" x:Name="HideAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="HideAdvancedDetails_Tapped" />
-                </StackPanel>
-                <TextBlock Text="Show advanced details" Margin="0,15,20,0" x:Name="ShowAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="ShowAdvancedDetails_Tapped" />
-                <Grid Margin="0,40,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Content="Reset app" HorizontalAlignment="Stretch" Margin="0,0,10,0" Tapped="ResetAppButton_Tapped" />
-                    <Button Grid.Column="1" Content="Create backup" HorizontalAlignment="Stretch" Margin="0,0,20,0" Tapped="CreateBackupButton_Tapped" />
-                </Grid>
-                <Grid x:Name="hiddenButtons" Margin="0,10,10,0">
-                    <Button Content="Create zip from app install files" HorizontalAlignment="Stretch" Margin="0,0,10,0" Tapped="ZipFromInstallFilesAppButton_Tapped" />
-                </Grid>
-                <StackPanel Orientation="Vertical" Margin="0,20,20,0">
-                    <TextBlock Text="Available backups:" FontWeight="SemiBold" Margin="0,0,0,10" />
-                    <TextBlock x:Name="noBackupsAvailable" Margin="5,0,0,0" Text="No backups." TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" FontStyle="Italic" Opacity="0.5" />
-                    <ListView x:Name="backupsList" Padding="0,10,0,0" SelectionChanged="backupsList_SelectionChanged">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <StackPanel Margin="0,10,0,10">
-                                        <TextBlock FontSize="20" Text="{Binding Name}" />
-                                        <TextBlock FontSize="15" Text="{Binding Subtitle}" Opacity="0.6" />
-                                    </StackPanel>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                    <StackPanel Visibility="Visible" x:Name="AdvancedDetails">
+                        <StackPanel Orientation="Vertical" Margin="0,15,20,0">
+                            <TextBlock Text="Data Path:" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding PackageDataFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Margin="0,20,20,0">
+                            <TextBlock Text="Installation Path:" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding PackageRootFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
+                        </StackPanel>
+                        <TextBlock Text="Hide advanced details" Margin="0,15,20,0" x:Name="HideAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="HideAdvancedDetails_Tapped" />
+                    </StackPanel>
+                    <TextBlock Text="Show advanced details" Margin="0,15,20,0" x:Name="ShowAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="ShowAdvancedDetails_Tapped" />
+                    <Grid Margin="0,40,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Content="Reset app" HorizontalAlignment="Stretch" Margin="0,0,10,0" Tapped="ResetAppButton_Tapped" />
+                        <Button Grid.Column="1" Content="Create backup" HorizontalAlignment="Stretch" Margin="0,0,20,0" Tapped="CreateBackupButton_Tapped" />
+                    </Grid>
+                    <Grid x:Name="hiddenButtons" Margin="0,10,10,0">
+                        <Button Content="Create zip from app install files" HorizontalAlignment="Stretch" Margin="0,0,10,0" Tapped="ZipFromInstallFilesAppButton_Tapped" />
+                    </Grid>
+                    <StackPanel Orientation="Vertical" Margin="0,20,20,0">
+                        <TextBlock Text="Available backups:" FontWeight="SemiBold" Margin="0,0,0,10" />
+                        <TextBlock x:Name="noBackupsAvailable" Margin="5,0,0,0" Text="No backups." TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" FontStyle="Italic" Opacity="0.5" />
+                        <ListView x:Name="backupsList" Padding="0,10,0,0" SelectionChanged="backupsList_SelectionChanged">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <StackPanel Margin="0,10,0,10">
+                                            <TextBlock FontSize="20" Text="{Binding Name}" />
+                                            <TextBlock FontSize="15" Text="{Binding Subtitle}" Opacity="0.6" />
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
