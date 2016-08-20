@@ -94,7 +94,7 @@
                         <GroupStyle HidesIfEmpty="True">
                             <GroupStyle.HeaderTemplate>
                                 <DataTemplate>
-                                    <Grid Height="40">
+                                    <Grid Height="32">
                                         <TextBlock Text="{Binding Name}" VerticalAlignment="Bottom" FontSize="18" />
                                     </Grid>
                                 </DataTemplate>
