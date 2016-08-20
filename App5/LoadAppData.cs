@@ -41,7 +41,7 @@ namespace AppDataManageTool
         public event LoadingEventHandler LoadingProgress;
         public event EventHandler LoadCompleted;
 
-        LegacyBridge.LegacyAppTools legacyTools = new LegacyBridge.LegacyAppTools();
+        LegacyBridge.LegacyAppTools legacyTools;
 
         protected virtual void OnLoadingProgress(LoadingEventArgs e)
         {
@@ -72,6 +72,8 @@ namespace AppDataManageTool
 
         public async Task<List<AppData>> LoadApps()
         {
+            legacyTools = new LegacyBridge.LegacyAppTools();
+
             List<AppData> list = new List<AppData>();
 
             //Modern apps
