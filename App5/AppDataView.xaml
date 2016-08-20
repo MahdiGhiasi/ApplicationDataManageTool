@@ -31,35 +31,6 @@
                 </StackPanel>
             </Grid>
         </DataTemplate>
-
-        <DataTemplate x:Key="JumpTemplate">
-            <Border Padding="5">
-                <Border Background="{Binding Converter={StaticResource BackgroundConverter}}" 
-                    Width="82" Height="82" HorizontalAlignment="Left">
-                    <TextBlock Text="{Binding Group.Key}" 
-                           Foreground="{Binding Converter={StaticResource ForegroundConverter}}" 
-                           FontSize="48" Padding="6" 
-                           HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                </Border>
-            </Border>
-        </DataTemplate>
-
-        <CollectionViewSource x:Name="collection" IsSourceGrouped="True" ItemsPath="Items" />
-
-        <DataTemplate x:Key="SemanticEnabledItem">
-            <Grid Height="60" Width="60">
-                <TextBlock Text="{Binding}" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center" />
-            </Grid>
-        </DataTemplate>
-        <DataTemplate x:Key="SemanticDisabledItem">
-            <Grid Height="60" Width="60">
-                <TextBlock Text="{Binding}" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center" />
-            </Grid>
-        </DataTemplate>
-
-        <local:AppListEmptyOrFullSelector x:Key="SemanticOuterSelector" 
-                                          Full="{StaticResource SemanticEnabledItem}" 
-                                          Empty="{StaticResource SemanticDisabledItem}" />
     </Page.Resources>
 
     <Page.BottomAppBar>
@@ -82,36 +53,11 @@
             <TextBlock Text="&#xE8DA;" FontFamily="Segoe MDL2 Assets" Margin="0,0,12,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontSize="20" />
             <TextBlock Text="APPS" FontFamily="Segoe UI Black" FontWeight="Bold"  Margin="0,2,0,0" />
         </StackPanel>
+        <ListView x:Name="listView" Margin="10,54,10,0" ScrollViewer.HorizontalScrollMode="Auto"
+                  ItemTemplate="{StaticResource appsListSmall}" SelectionChanged="listView_SelectionChanged"
+                  HorizontalContentAlignment="Stretch" SelectionMode="Single" />
 
-        <SemanticZoom>
-            <SemanticZoom.ZoomedInView>
-                <ListView x:Name="listView" Margin="10,54,10,0" ScrollViewer.HorizontalScrollMode="Auto"
-                          ItemTemplate="{StaticResource appsListSmall}"
-                          HorizontalContentAlignment="Stretch" SelectionMode="Single"
-                          ItemsSource="{Binding Source={StaticResource collection}}">
-                    
-                    <ListView.GroupStyle>
-                        <GroupStyle HidesIfEmpty="True">
-                            <GroupStyle.HeaderTemplate>
-                                <DataTemplate>
-                                    <Grid Height="40">
-                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Bottom" FontSize="18" />
-                                    </Grid>
-                                </DataTemplate>
-                            </GroupStyle.HeaderTemplate>
-                        </GroupStyle>
-                    </ListView.GroupStyle>
-                </ListView>
-            </SemanticZoom.ZoomedInView>
-            <SemanticZoom.ZoomedOutView>
-                <GridView Margin="0,32,0,0" ItemsSource="{Binding Source={StaticResource collection}, Path=CollectionGroups}" 
-                          ItemTemplateSelector="{StaticResource SemanticOuterSelector}"
-                          MaxWidth="280" VerticalAlignment="Center" HorizontalAlignment="Center" />
-            </SemanticZoom.ZoomedOutView>
-        </SemanticZoom>
-
-
-        <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="AppDetails" Visibility="Collapsed">
+        <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="AppDetails" Visibility="Visible">
             <StackPanel Orientation="Vertical" Margin="20,20,0,0">
                 <StackPanel Orientation="Horizontal" Margin="-20,-20,0,0" Padding="20,20,0,10" Background="#FF222222">
                     <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}" Margin="5">
