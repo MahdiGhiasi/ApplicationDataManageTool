@@ -54,11 +54,47 @@ namespace AppDataManageTool
                 commandBar.Visibility = Visibility.Collapsed;
             }
 
-            listView.ItemsSource = appsData;
-            foreach (var item in App.appsData)
+            List<AppData> appsPlus = new List<AppData>(App.appsData);
+            for (char i = 'A'; i <= 'Z'; i++)
             {
-                appsData.Add(item);
+                appsPlus.Add(new AppData()
+                {
+                    DisplayName = i.ToString(),
+                    FamilyName = "",
+                });
             }
+            appsPlus.Add(new AppData() { DisplayName = "0", FamilyName = "" });
+            appsPlus.Add(new AppData() { DisplayName = "زبان دیگر", FamilyName = "" });
+
+            appsPlus = appsPlus.OrderBy(x => x.DisplayName).ToList();
+
+            var groupedData = appsPlus.GroupBy( (d) =>
+            {
+                if (d.DisplayName.Length == 0)
+                    return "#";
+                else if ("0123456789".Contains(d.DisplayName[0]))
+                    return "#";
+                else if ("abcdefghijklmnopqrstuvwxyz".Contains(d.DisplayName[0].ToString().ToLower()))
+                    return d.DisplayName[0].ToString().ToUpper();
+                else
+                    return "...";
+            }, (key, items) => new DataGroup()
+            {
+                Name = key,
+                Items = items.ToList()
+            }).ToList();
+
+            foreach (var item in groupedData)
+            {
+                item.Items = (from AppData x in item.Items
+                              where x.FamilyName.Length > 0
+                              select x).ToList();
+            }
+
+            collection.Source = groupedData;
+
+            listView.SelectedIndex = -1;
+            listView.SelectionChanged += listView_SelectionChanged;
 
             await Task.Delay(50);
 
@@ -75,6 +111,7 @@ namespace AppDataManageTool
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             ((App)App.Current).BackRequested -= AppDataView_BackRequested;
+            listView.SelectionChanged -= listView_SelectionChanged;
 
             base.OnNavigatingFrom(e);
         }
@@ -303,6 +340,26 @@ namespace AppDataManageTool
         private void Ht_Progress(object sender, string message)
         {
             progressText.Text = message;
+        }
+    }
+
+    internal class DataGroup
+    {
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        public List<AppData> Items
+        {
+            get;
+            set;
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }
