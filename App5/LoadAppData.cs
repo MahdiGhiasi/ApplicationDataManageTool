@@ -151,6 +151,8 @@ namespace AppDataManageTool
 
         internal async Task<List<AppData>> LoadLegacyApps()
         {
+            LegacyBridge.LegacyAppTools legacyTools = new LegacyBridge.LegacyAppTools();
+
             List<AppData> output = new List<AppData>();
 
             StorageFolder programsFolder = await StorageFolder.GetFolderFromPathAsync(@"C:\Data\Programs");
@@ -164,21 +166,32 @@ namespace AppDataManageTool
                     IStorageItem m = await installFolder.TryGetItemAsync("WMAppManifest.xml");
                     if ((m != null) && (m is StorageFile))
                     {
+                        string appName, publisherName;
+
                         StorageFile manifest = (StorageFile)m;
 
                         string text = await FileIO.ReadTextAsync(manifest);
 
-                        string appTag = text.Substring(text.IndexOf("<App "));
-                        appTag = appTag.Substring(0, appTag.IndexOf(">"));
+                        var appData = legacyTools.GetAppData(item.Name);
 
-                        string appName = appTag.Substring(appTag.IndexOf(@"Title=""") + @"Title=""".Length);
-                        appName = appName.Substring(0, appName.IndexOf("\""));
-                        appName = await GetString(appName);
+                        if (appData != null)
+                        {
+                            appName = appData.Name;
+                            publisherName = appData.Publisher;
+                        }
+                        else
+                        {
+                            string appTag = text.Substring(text.IndexOf("<App "));
+                            appTag = appTag.Substring(0, appTag.IndexOf(">"));
 
-                        string publisherName = appTag.Substring(appTag.IndexOf(@"Publisher=""") + @"Publisher=""".Length);
-                        publisherName = publisherName.Substring(0, publisherName.IndexOf("\""));
-                        publisherName = await GetString(publisherName);
+                            appName = appTag.Substring(appTag.IndexOf(@"Title=""") + @"Title=""".Length);
+                            appName = appName.Substring(0, appName.IndexOf("\""));
+                            appName = await GetString(appName);
 
+                            publisherName = appTag.Substring(appTag.IndexOf(@"Publisher=""") + @"Publisher=""".Length);
+                            publisherName = publisherName.Substring(0, publisherName.IndexOf("\""));
+                            publisherName = await GetString(publisherName);
+                        }
 
 
 

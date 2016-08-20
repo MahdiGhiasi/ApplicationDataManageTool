@@ -186,6 +186,12 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LegacyBridge\LegacyBridge.csproj">
+      <Project>{95859dda-6415-41dc-afdb-e9b7b41e9cb1}</Project>
+      <Name>LegacyBridge</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
