@@ -74,6 +74,10 @@ namespace AppDataManageTool
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             ((App)App.Current).BackRequested -= MainPage_BackRequested;
+
+            loadAppData.LoadingProgress -= LoadAppData_LoadingProgress;
+            backupLoader.LoadBackupsProgress -= BackupLoader_LoadBackupsProgress;
+
             base.OnNavigatingFrom(e);
         }
 
@@ -115,8 +119,6 @@ namespace AppDataManageTool
                 progressRing.IsActive = true;
 
                 App.appsData = await loadAppData.LoadApps();
-
-                App.appsData = App.appsData.OrderBy(x => x.DisplayName).ToList();
 
                 await backupLoader.LoadCurrentBackups();
 
