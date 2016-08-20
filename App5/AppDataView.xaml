@@ -74,8 +74,8 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="0,20,20,0">
-                    <TextBlock Text="Family name:" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding FamilyName}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"   />
+                    <TextBlock Text="Package Id:" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding PackageId}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"   />
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Margin="0,20,20,0">
                     <TextBlock Text="App data size:" FontWeight="SemiBold" />
@@ -85,10 +85,6 @@
                     </Grid>
                 </StackPanel>
                 <StackPanel Visibility="Visible" x:Name="AdvancedDetails">
-                    <StackPanel Orientation="Vertical" Margin="0,15,20,0">
-                        <TextBlock Text="Package Id:" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding PackageId}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"   />
-                    </StackPanel>
                     <StackPanel Orientation="Vertical" Margin="0,15,20,0">
                         <TextBlock Text="Data Path:" FontWeight="SemiBold" />
                         <TextBlock Text="{Binding PackageDataFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
