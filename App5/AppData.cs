@@ -18,6 +18,8 @@ namespace AppDataManageTool
         public string AppDataSize { get; set; } = "Calculating...";
         public string FamilyName { get; set; }
         public bool SizeIsCalculated { get; set; } = false;
+        public string Publisher { get; set; } = "";
+        public bool IsLegacyApp { get; set; } = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
 

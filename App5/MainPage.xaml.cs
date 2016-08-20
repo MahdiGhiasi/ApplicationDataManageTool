@@ -84,6 +84,8 @@ namespace AppDataManageTool
 
         private void BackupLoader_LoadBackupsProgress(object sender, LoadingEventArgs e)
         {
+            progressStatus.Text = "Loading current backups...";
+            /**
             if (e.Current == 0)
             {
                 progressStatus.Text = "Loading current backups...";
@@ -93,6 +95,7 @@ namespace AppDataManageTool
                 int percent = (int)Math.Round((100.0 * e.Current) / e.Total);
                 progressStatus.Text = "Loading current backups " + percent.ToString() + "%";
             }
+            /**/
         }
 
         private void LoadAppData_LoadingProgress(object sender, LoadingEventArgs e)
@@ -112,6 +115,12 @@ namespace AppDataManageTool
                 progressRing.IsActive = true;
 
                 App.appsData = await loadAppData.LoadApps();
+
+                progressStatus.Text = "Loading legacy apps...";
+
+                App.appsData.AddRange(await loadAppData.LoadLegacyApps());
+
+                App.appsData = App.appsData.OrderBy(x => x.DisplayName).ToList();
 
                 await backupLoader.LoadCurrentBackups();
 
