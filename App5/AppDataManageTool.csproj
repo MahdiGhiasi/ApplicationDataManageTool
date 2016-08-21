@@ -135,6 +135,7 @@
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="TrulyObservableCollection.cs" />
+    <Compile Include="UpdateChecker.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

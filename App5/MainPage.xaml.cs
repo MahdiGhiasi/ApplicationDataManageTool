@@ -112,6 +112,8 @@ namespace AppDataManageTool
         {
             if (App.appsData == null)
             {
+                UpdateChecker.CheckForUpdates();
+
                 displayRequest = new DisplayRequest();
                 displayRequest.RequestActive();
 
