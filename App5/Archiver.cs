@@ -214,7 +214,7 @@ namespace LightBuzz.Archiver
 
                                     try
                                     {
-                                        StorageFile file = await destination.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                                        StorageFile file = await destination.CreateFileAsync(fileName, CreationCollisionOption.FailIfExists);
 
                                         using (IRandomAccessStream uncompressedFileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
                                         {

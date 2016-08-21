@@ -41,6 +41,8 @@ namespace AppDataManageTool
 
         public static List<Backup> currentBackups;
 
+        public static readonly string[] deletableFolders = new string[] { "AC", "AppData", "LocalCache", "LocalState", "RoamingState", "Settings", "SystemAppData", "TempState" };
+
         protected virtual void OnBackupProgress(BackupEventArgs e)
         {
             if (BackupProgress != null)
@@ -194,7 +196,14 @@ namespace AppDataManageTool
             {
                 try
                 {
-                    await item.DeleteAsync();
+                    string relativePath = item.Path.Substring(app.PackageDataFolder.Length + 1).Replace('/', '\\');
+                    if (!relativePath.Contains("\\"))
+                        continue;
+
+                    relativePath = relativePath.Substring(0, relativePath.IndexOf("\\"));
+
+                    if (deletableFolders.Contains(relativePath))
+                        await item.DeleteAsync();
                 }
                 catch (Exception ex)
                 {
