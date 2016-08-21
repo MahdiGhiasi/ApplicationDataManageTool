@@ -25,6 +25,8 @@ namespace AppDataManageTool
         public About()
         {
             this.InitializeComponent();
+
+            VersionNameText.Text = UpdateChecker.GetAppVersionString(false);
         }
 
         private void Secret1_PointerPressed(object sender, PointerRoutedEventArgs e)
