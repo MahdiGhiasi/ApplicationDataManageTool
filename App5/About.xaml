@@ -27,7 +27,7 @@
                     <TextBlock Text="App Data Manage Tool" FontWeight="SemiBold" FontSize="22" PointerPressed="Secret1_PointerPressed" />
                     <StackPanel Orientation="Horizontal" PointerPressed="Secret1_PointerPressed">
                         <TextBlock Text="Version " FontSize="18" Opacity="0.7" />
-                        <TextBlock Text="1.4" FontSize="18" Opacity="0.7" Margin="4,0,0,0" x:Name="VersionNameText" />
+                        <TextBlock Text="0" FontSize="18" Opacity="0.7" Margin="4,0,0,0" x:Name="VersionNameText" />
                         <TextBlock Text="(Beta)" FontSize="18" Opacity="0.7" Margin="8,0,0,0" />
                     </StackPanel>
                     <TextBlock Text="Created by Mahdi Ghiasi" Margin="0,12,0,0" FontWeight="SemiBold" />
