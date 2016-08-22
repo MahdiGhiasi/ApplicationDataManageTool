@@ -48,9 +48,8 @@ namespace AppDataManageTool
             if ((e.Parameter != null) && (e.Parameter.GetType() == typeof(Backup)))
             {
                 isJustForDetails = true;
-                currentBackup = (Backup)e.Parameter;
 
-                ShowBackup(currentBackup);
+                ShowBackup((Backup)e.Parameter);
             }
 
             base.OnNavigatedTo(e);
@@ -58,6 +57,8 @@ namespace AppDataManageTool
 
         private void ShowBackup(Backup backup)
         {
+            currentBackup = backup;
+
             BackupDetails.DataContext = backup;
             BackupDetails.Visibility = Visibility.Visible;
 
