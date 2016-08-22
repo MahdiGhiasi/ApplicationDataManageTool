@@ -258,6 +258,15 @@ namespace AppDataManageTool
         {
             return App.appsData.FirstOrDefault(x => x.FamilyName == data.FamilyName);
         }
+
+        internal static void ResetAppSizes()
+        {
+            foreach (AppData item in App.appsData)
+            {
+                item.ResetSizeData();
+            }
+        }
+
         
         static string GetNameStringFromManifestFormat(string inputS/*, StorageFolder curPath*/)
         {

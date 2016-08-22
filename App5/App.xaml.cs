@@ -39,8 +39,21 @@ namespace AppDataManageTool
                 Microsoft.ApplicationInsights.WindowsCollectors.Session);
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            this.Resuming += OnResuming;
+        }
 
-            
+        private void OnResuming(object sender, object e)
+        {
+            Frame rootFrame = (Frame)Window.Current.Content;
+
+            if (rootFrame.CurrentSourcePageType == typeof(Backups))
+            {
+                Backups thePage = (Backups)rootFrame.Content;
+                thePage.RefreshCurrentBackupDataIfNecessary();
+            }
+
+            FileOperations.ClearGetContentsCache();
+            LoadAppData.ResetAppSizes();
         }
 
         /// <summary>

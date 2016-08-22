@@ -10,7 +10,9 @@
 
     <Page.Resources>
         <local:DateFormatConverter x:Name="DateToStringFormatConverter"/>
-        <local:CompactAppDataListToStringConverter x:Name="AppsToStringConverter" />
+
+        <local:NotBoolToVisConverter x:Key="NotBoolToVis" />
+        <local:BoolToVisConverter x:Key="BoolToVis" />
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -57,16 +59,6 @@
                 <ScrollViewer>
                     <StackPanel Padding="0,10,0,10">
                         <TextBlock Text="{Binding Name}" FontSize="22" TextWrapping="Wrap" />
-
-                        <Grid Margin="0,20,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Text="A backup of" FontSize="14" Opacity="0.7" Grid.Column="0" />
-                            <TextBlock Text="{Binding Apps, Converter={StaticResource AppsToStringConverter}}" FontSize="14" Grid.Column="1" Margin="5,0,0,0" />
-                        </Grid>
                         
                         <Grid Margin="0,20,0,0">
                             <Grid.ColumnDefinitions>
@@ -100,7 +92,50 @@
                             <TextBlock Text="Backup size" FontSize="14" Opacity="0.7" Grid.Column="0" />
                             <TextBlock x:Name="BackupSizeText" Text="Checking..." FontSize="14" TextWrapping="Wrap" Grid.Column="1" Margin="5,0,0,0" />
                         </Grid>
-                        <TextBlock Margin="0,20,0,0" Foreground="Green" Text="For best results, please reboot your phone before restoring data." TextWrapping="Wrap" />
+
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Apps" FontSize="14" Opacity="0.7" Grid.Column="0" />
+
+                            <ListView x:Name="appsList" Grid.Column="1" SelectionChanged="appsList_SelectionChanged" SelectionMode="Single" Margin="20,0,0,0">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,0,0,10" HorizontalAlignment="Stretch">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding AppName}" TextWrapping="Wrap" />
+                                                <Grid Visibility="{Binding IsInstalled, Converter={StaticResource NotBoolToVis}}">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="Not installed." Opacity="0.6" Grid.Column="0" Foreground="Red" />
+                                                    <TextBlock Text="Get it from Store"
+                                                               Grid.Column="1" 
+                                                               Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                                               HorizontalAlignment="Right"
+                                                               Margin="0,-10,0,-10"
+                                                               Padding="10,10,10,10"
+                                                               TextWrapping="Wrap" />
+                                                </Grid>
+                                                <Grid Visibility="{Binding IsInstalled, Converter={StaticResource BoolToVis}}">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{Binding Publisher}" Opacity="0.6" Grid.Column="0" />
+                                                </Grid>
+                                            </StackPanel>
+                                            <ListView></ListView>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Grid>
+
+                        <TextBlock Margin="0,20,0,0" Foreground="White" Text="For best results, please reboot your phone before restoring data." TextWrapping="Wrap" Opacity="0.6" />
 
                     </StackPanel>
                 </ScrollViewer>

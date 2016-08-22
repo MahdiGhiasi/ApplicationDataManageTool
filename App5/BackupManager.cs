@@ -211,8 +211,7 @@ namespace AppDataManageTool
                 }
             }
 
-            app.AppDataSize = "Calculating...";
-            app.SizeIsCalculated = false;
+            app.ResetSizeData();
         }
 
         List<ArchiverError> restoreLog = new List<ArchiverError>();

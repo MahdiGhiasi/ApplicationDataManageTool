@@ -56,6 +56,11 @@ namespace AppDataManageTool
             return output;
         }
 
+        public static void ClearGetContentsCache()
+        {
+            getContentsCache.Clear();
+        }
+
         public static void RemoveFromGetContentsCache(string path)
         {
             path = path.ToLower();

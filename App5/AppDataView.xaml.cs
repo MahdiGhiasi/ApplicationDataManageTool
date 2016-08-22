@@ -139,6 +139,8 @@ namespace AppDataManageTool
 
             if (listView.SelectionMode == ListViewSelectionMode.Single)
             {
+                AppDetails.DataContext = null;
+
                 AdvancedDetails.Visibility = Visibility.Collapsed;
                 ShowAdvancedDetails.Visibility = Visibility.Visible;
 

@@ -61,5 +61,11 @@ namespace AppDataManageTool
         {
             PropertyChanged(this, new PropertyChangedEventArgs(""));
         }
+
+        internal void ResetSizeData()
+        {
+            AppDataSize = "Calculating...";
+            SizeIsCalculated = false;
+        }
     }
 }

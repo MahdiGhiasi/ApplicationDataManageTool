@@ -43,12 +43,27 @@ namespace AppDataManageTool
             ((App)App.Current).BackRequested += Backups_BackRequested;
         }
 
+        public async void RefreshCurrentBackupDataIfNecessary()
+        {
+            if (currentBackup != null)
+            {
+                appsList.ItemsSource = null;
+                BackupDetails.DataContext = null;
+
+                await Task.Delay(50);
+
+                ShowBackup(currentBackup);
+            }
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if ((e.Parameter != null) && (e.Parameter.GetType() == typeof(Backup)))
             {
                 isJustForDetails = true;
-                ShowBackup((Backup)e.Parameter);
+                currentBackup = (Backup)e.Parameter;
+
+                ShowBackup(currentBackup);
             }
 
             base.OnNavigatedTo(e);
@@ -56,12 +71,32 @@ namespace AppDataManageTool
 
         private void ShowBackup(Backup backup)
         {
-            currentBackup = (Backup)backup;
-
             BackupDetails.DataContext = backup;
             BackupDetails.Visibility = Visibility.Visible;
 
             LoadBackupSize((Backup)backup);
+
+            List<BackupListOfApps> listOfApps = new List<BackupListOfApps>();
+            foreach (var item in backup.Apps)
+            {
+                BackupListOfApps b = new BackupListOfApps();
+                b.AppName = item.DisplayName;
+                b.cAppData = item;
+
+                AppData appd = LoadAppData.GetAppDataFromCompactAppData(item);
+
+                if (appd == null)
+                    b.IsInstalled = false;
+                else
+                {
+                    b.Publisher = appd.Publisher;
+                    b.IsInstalled = true;
+                }
+
+                listOfApps.Add(b);
+            }
+
+            appsList.ItemsSource = listOfApps;
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -131,5 +166,35 @@ namespace AppDataManageTool
                     Frame.GoBack();
             }
         }
+
+        private async void appsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (appsList.SelectedItem == null)
+                return;
+
+            BackupListOfApps selectedApp = (BackupListOfApps)appsList.SelectedItem;
+            appsList.SelectedItem = null;
+
+            if (!selectedApp.IsInstalled)
+            {
+                CompactAppData appd = selectedApp.cAppData;
+
+                Uri storeUri;
+                if (appd.FamilyName[0] == ('{'))
+                    storeUri = new Uri("ms-windows-store://pdp/?PhoneAppId=" + appd.FamilyName.Substring(1, appd.FamilyName.Length - 2).ToLower());
+                else
+                    storeUri = new Uri("ms-windows-store://pdp/?PFN=" + appd.FamilyName);
+
+                await Windows.System.Launcher.LaunchUriAsync(storeUri);
+            }
+        }
+    }
+
+    internal class BackupListOfApps
+    {
+        public string AppName { get; set; }
+        public string Publisher { get; set; } = "";
+        public bool IsInstalled { get; set; }
+        public CompactAppData cAppData { get; set; }
     }
 }
