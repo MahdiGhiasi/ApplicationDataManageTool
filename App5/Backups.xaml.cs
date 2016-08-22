@@ -43,19 +43,6 @@ namespace AppDataManageTool
             ((App)App.Current).BackRequested += Backups_BackRequested;
         }
 
-        public async void RefreshCurrentBackupDataIfNecessary()
-        {
-            if (currentBackup != null)
-            {
-                appsList.ItemsSource = null;
-                BackupDetails.DataContext = null;
-
-                await Task.Delay(50);
-
-                ShowBackup(currentBackup);
-            }
-        }
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if ((e.Parameter != null) && (e.Parameter.GetType() == typeof(Backup)))
