@@ -76,6 +76,7 @@ namespace AppDataManageTool
 
             LoadBackupSize((Backup)backup);
 
+            bool isThereAtLeastOneNotInstalled = false;
             List<BackupListOfApps> listOfApps = new List<BackupListOfApps>();
             foreach (var item in backup.Apps)
             {
@@ -86,7 +87,10 @@ namespace AppDataManageTool
                 AppData appd = LoadAppData.GetAppDataFromCompactAppData(item);
 
                 if (appd == null)
+                {
                     b.IsInstalled = false;
+                    isThereAtLeastOneNotInstalled = true;
+                }
                 else
                 {
                     b.Publisher = appd.Publisher;
@@ -97,6 +101,8 @@ namespace AppDataManageTool
             }
 
             appsList.ItemsSource = listOfApps;
+
+            NotInstalledNotice.Visibility = isThereAtLeastOneNotInstalled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)

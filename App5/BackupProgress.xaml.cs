@@ -72,18 +72,6 @@ namespace AppDataManageTool
                     }
                 }
 
-                if (skipApps.Count > 0)
-                {
-                    string notAvailableMessage;
-                    if (skipApps.Count == 1)
-                        notAvailableMessage = notAvailableNames + " is not installed on this device, so the data related to it will not be restored.";
-                    else
-                        notAvailableMessage = "The following apps are not installed on this device, so the data related to them will not be restored:\r\n\r\n" + notAvailableNames;
-
-                    MessageDialog md = new MessageDialog(notAvailableMessage);
-                    await md.ShowAsync();
-                }
-
                 foreach (var item in backup.Apps)
                 {
                     if (!skipApps.Contains(item))

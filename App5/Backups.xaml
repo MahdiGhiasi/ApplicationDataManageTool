@@ -93,6 +93,15 @@
                             <TextBlock x:Name="BackupSizeText" Text="Checking..." FontSize="14" TextWrapping="Wrap" Grid.Column="1" Margin="5,0,0,0" />
                         </Grid>
 
+                        <TextBlock Margin="0,20,0,0" 
+                                   x:Name="NotInstalledNotice"
+                                   Foreground="Red" 
+                                   Text="If you want to restore some of not installed apps, remember to reopen this tool after installing them from Store; otherwise those will not be restored." 
+                                   TextWrapping="Wrap" 
+                                   FontSize="13"
+                                   Opacity="0.6"
+                                   Visibility="Collapsed" />
+                        
                         <Grid Margin="0,20,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
