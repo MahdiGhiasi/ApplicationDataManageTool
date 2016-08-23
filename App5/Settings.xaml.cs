@@ -34,15 +34,15 @@ namespace AppDataManageTool
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
-            compressArchives.IsChecked = (bool)localSettings.Values["allowCompress"];
+            compressArchives.IsOn = (bool)localSettings.Values["allowCompress"];
             backupFolder.Text = (string)localSettings.Values["backupDest"];
         }
 
-        private void compressArchives_CheckedChanged(object sender, RoutedEventArgs e)
+        private void compressArchives_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
-            localSettings.Values["allowCompress"] = compressArchives.IsChecked;
+            localSettings.Values["allowCompress"] = compressArchives.IsOn;
         }
 
         private async void PickBackupFolder_Click(object sender, RoutedEventArgs e)

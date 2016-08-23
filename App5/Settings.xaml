@@ -28,15 +28,12 @@
                 <TextBox IsReadOnly="True" Grid.Column="0" x:Name="backupFolder" />
                 <Button Content="..." Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,0,0,0" Click="PickBackupFolder_Click" />
             </Grid>
+            <StackPanel Margin="0,24,0,0">
+                <ToggleSwitch Margin="0,0,0,0" x:Name="compressArchives" Tapped="compressArchives_Tapped" Grid.Column="1" Header="Compress backup archives" />
+                <TextBlock Text="Creating backups will take a longer time but the result will be less in size if you enable this option." TextWrapping="WrapWholeWords" Opacity="0.7" Margin="0,5,0,0" />
+            </StackPanel>
+            
 
-            <CheckBox Margin="0,24,0,0" x:Name="compressArchives" Checked="compressArchives_CheckedChanged" Unchecked="compressArchives_CheckedChanged">
-                <CheckBox.Content>
-                    <StackPanel>
-                        <TextBlock Text="Compress backup archives" />
-                        <TextBlock Text="Creating backups will take a longer time but the result will be less in size if you enable this option." TextWrapping="WrapWholeWords" Opacity="0.7" Margin="0,5,0,0" />
-                    </StackPanel>
-                </CheckBox.Content>
-            </CheckBox>
         </StackPanel>
         <Grid x:Name="progress" Visibility="Collapsed" Background="#AA000000">
             <ProgressRing x:Name="progressRing" Height="50" Width="50" IsActive="True"/>
