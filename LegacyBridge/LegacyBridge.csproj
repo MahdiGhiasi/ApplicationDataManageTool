@@ -39,7 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Windows">
-      <HintPath>..\..\..\..\..\Downloads\Compressed\DHTUpgradeAdvisor_1.1.4.0_arm_Debug\DHTUpgradeAdvisor_1.1.4.0_arm_Debug\DHTUpgradeAdvisor_1.1.4.0_ARM_Debug\WinMetadata\Windows.winmd</HintPath>
+      <HintPath>Windows.winmd</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
