@@ -17,7 +17,7 @@ namespace AppDataManageTool
             {
                 PackageVersion currentVersion = GetAppVersion();
 
-                string text = await MakeWebRequest("http://www.ghiasi.net/AppDataManageTool/latestversion.txt");
+                string text = await MakeWebRequest("http://www.ghiasi.net/AppDataManageTool/latestversion.txt?dtcache=" + DateTime.Now.ToString("yyyyMMddHHmmssfff"));
                 string[] parts = text.Split('.');
 
                 PackageVersion latestVersion = new PackageVersion();
