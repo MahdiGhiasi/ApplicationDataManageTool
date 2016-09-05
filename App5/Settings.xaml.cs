@@ -38,7 +38,7 @@ namespace AppDataManageTool
             backupFolder.Text = (string)localSettings.Values["backupDest"];
         }
 
-        private void compressArchives_Tapped(object sender, TappedRoutedEventArgs e)
+        private void compressArchives_Toggled(object sender, RoutedEventArgs e)
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 

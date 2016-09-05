@@ -29,7 +29,7 @@
                 <Button Content="..." Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,0,0,0" Click="PickBackupFolder_Click" />
             </Grid>
             <StackPanel Margin="0,24,0,0">
-                <ToggleSwitch Margin="0,0,0,0" x:Name="compressArchives" Tapped="compressArchives_Tapped" Grid.Column="1" Header="Compress backup archives" />
+                <ToggleSwitch Margin="0,0,0,0" x:Name="compressArchives" Toggled="compressArchives_Toggled" Grid.Column="1" Header="Compress backup archives" />
                 <TextBlock Text="Creating backups will take a longer time but the result will be less in size if you enable this option." TextWrapping="WrapWholeWords" Opacity="0.7" Margin="0,5,0,0" />
             </StackPanel>
             
