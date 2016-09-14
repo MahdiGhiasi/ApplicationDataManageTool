@@ -33,6 +33,8 @@ namespace AppDataManageTool
         BackupManager.BackupLoader backupLoader = new BackupManager.BackupLoader();
         DisplayRequest displayRequest;
 
+        bool loadAppsList = true;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -58,6 +60,14 @@ namespace AppDataManageTool
                 localSettings.Values["allowCompress"] = App.AllowCompress;
             }
 
+            if ((localSettings.Values["loadAppsEveryTime"] != null) && (localSettings.Values["loadAppsEveryTime"].GetType() == typeof(bool)))
+            {
+                loadAppsList = (bool)localSettings.Values["loadAppsEveryTime"];
+            }
+            else
+            {
+                localSettings.Values["loadAppsEveryTime"] = true;
+            }
 
             if ((localSettings.Values["backupDest"] != null) && (localSettings.Values["backupDest"].GetType() == typeof(string)))
             {
@@ -120,7 +130,16 @@ namespace AppDataManageTool
                 progress.Visibility = Visibility.Visible;
                 progressRing.IsActive = true;
 
-                App.appsData = await loadAppData.LoadApps();
+                List<AppData> cachedAppList = loadAppsList ? null : await LoadAppData.LoadCachedAppList();
+                if (cachedAppList == null)
+                {
+                    App.appsData = await loadAppData.LoadApps();
+                    await LoadAppData.SaveAppList();
+                }
+                else
+                {
+                    App.appsData = cachedAppList;
+                }
 
                 await backupLoader.LoadCurrentBackups();
 

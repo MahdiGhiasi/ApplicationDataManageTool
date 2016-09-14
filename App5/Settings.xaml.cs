@@ -7,6 +7,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.System.Display;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -34,6 +35,7 @@ namespace AppDataManageTool
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
+            loadAppsEveryTime.IsOn = (bool)localSettings.Values["loadAppsEveryTime"];
             compressArchives.IsOn = (bool)localSettings.Values["allowCompress"];
             backupFolder.Text = (string)localSettings.Values["backupDest"];
         }
@@ -60,13 +62,18 @@ namespace AppDataManageTool
                 localSettings.Values["backupDest"] = folder.Path;
                 App.BackupDestination = folder.Path;
 
-                BackupManager.BackupLoader bl = new BackupManager.BackupLoader();
-                bl.LoadBackupsProgress += Bl_LoadBackupsProgress;
-                await bl.LoadCurrentBackups();
-                bl.LoadBackupsProgress -= Bl_LoadBackupsProgress;
+                await ReloadBackups();
 
                 progress.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private async System.Threading.Tasks.Task ReloadBackups()
+        {
+            BackupManager.BackupLoader bl = new BackupManager.BackupLoader();
+            bl.LoadBackupsProgress += Bl_LoadBackupsProgress;
+            await bl.LoadCurrentBackups();
+            bl.LoadBackupsProgress -= Bl_LoadBackupsProgress;
         }
 
         private void Bl_LoadBackupsProgress(object sender, LoadingEventArgs e)
@@ -97,6 +104,59 @@ namespace AppDataManageTool
                 App.secretCodeCounter = 0;
 
             System.Diagnostics.Debug.WriteLine("SECRET4");
+        }
+
+        private void loadAppsEveryTime_Toggled(object sender, RoutedEventArgs e)
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+            localSettings.Values["loadAppsEveryTime"] = loadAppsEveryTime.IsOn;
+        }
+
+        private async void ReloadAppList_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            progress.Visibility = Visibility.Visible;
+
+            progressStatus.Text = "Deleting icons cache...";
+
+            await System.Threading.Tasks.Task.Delay(100);
+
+            var displayRequest = new DisplayRequest();
+            displayRequest.RequestActive();
+            ((App)App.Current).BackRequested += BlockBack;
+            LoadAppData lad = new LoadAppData();
+            lad.LoadingProgress += Lad_LoadingProgress;
+
+            StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
+            var logosFolder = await localCacheFolder.TryGetItemAsync("Logos");
+
+            if ((logosFolder != null) && (logosFolder is StorageFolder))
+            {
+                await (logosFolder as StorageFolder).DeleteAsync(StorageDeleteOption.PermanentDelete);
+            }
+
+            App.appsData = await lad.LoadApps();
+            await LoadAppData.SaveAppList();
+
+            await ReloadBackups();
+
+            lad.LoadingProgress -= Lad_LoadingProgress;
+            ((App)App.Current).BackRequested -= BlockBack;
+            displayRequest.RequestRelease();
+
+
+            progress.Visibility = Visibility.Collapsed;
+        }
+
+        private void Lad_LoadingProgress(object sender, LoadingEventArgs e)
+        {
+            int percent = (int)Math.Round((100.0 * e.Current) / e.Total);
+            progressStatus.Text = "Loading apps " + percent.ToString() + "%";
+        }
+
+        private void BlockBack(object sender, Windows.UI.Core.BackRequestedEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 }

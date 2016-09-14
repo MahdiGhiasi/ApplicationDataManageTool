@@ -83,7 +83,7 @@
         </Grid>
         <Grid x:Name="progress" Visibility="Collapsed" Background="#AA000000">
             <ProgressRing x:Name="progressRing" Height="50" Width="50" IsActive="False"/>
-            <TextBlock x:Name="progressStatus" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,100,0,0" Text="Loading apps..." />
+            <TextBlock x:Name="progressStatus" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,100,0,0" Text="Initializing..." />
         </Grid>
     </Grid>
 </Page>

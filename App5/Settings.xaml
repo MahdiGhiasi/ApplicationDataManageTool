@@ -28,11 +28,13 @@
                 <TextBox IsReadOnly="True" Grid.Column="0" x:Name="backupFolder" />
                 <Button Content="..." Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,0,0,0" Click="PickBackupFolder_Click" />
             </Grid>
-            <StackPanel Margin="0,24,0,0">
-                <ToggleSwitch Margin="0,0,0,0" x:Name="compressArchives" Toggled="compressArchives_Toggled" Grid.Column="1" Header="Compress backup archives" />
-                <TextBlock Text="Creating backups will take a longer time but the result will be less in size if you enable this option." TextWrapping="WrapWholeWords" Opacity="0.7" Margin="0,5,0,0" />
-            </StackPanel>
             
+            <ToggleSwitch Margin="0,24,0,0" x:Name="compressArchives" Toggled="compressArchives_Toggled" Header="Compress backup archives" />
+            <TextBlock Text="Creating backups will take a longer time but the result will be less in size if you enable this option." TextWrapping="WrapWholeWords" Opacity="0.7" Margin="0,5,0,0" />
+            
+            <ToggleSwitch Margin="0,24,0,0" x:Name="loadAppsEveryTime" Header="Reload app list every time on startup" IsOn="True" Toggled="loadAppsEveryTime_Toggled" />
+            <TextBlock Text="If you disable this option, the app will not notice changes to app list until you force it by pressing the button below." TextWrapping="WrapWholeWords" Opacity="0.7" Margin="0,5,0,0" />
+            <Button Content="Reload app list and icons" Margin="0,12,0,0" Tapped="ReloadAppList_Tapped"></Button>
 
         </StackPanel>
         <Grid x:Name="progress" Visibility="Collapsed" Background="#AA000000">

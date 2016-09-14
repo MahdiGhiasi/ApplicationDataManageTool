@@ -5,9 +5,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Media.Imaging;
+using WinRTXamlToolkit.Imaging;
 
 namespace AppDataManageTool
 {
@@ -113,9 +115,18 @@ namespace AppDataManageTool
             int count = packages.Count() + (loadLegacyApps ? programs.Count() : 0);
             int progress = 0;
 
+
+            StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
+
+            if ((await localCacheFolder.TryGetItemAsync("Logos")) == null)
+                await localCacheFolder.CreateFolderAsync("Logos");
+
+            StorageFolder logosFolder = await localCacheFolder.GetFolderAsync("Logos");
+
+
             foreach (var item in packages)
             {
-                AppData appD = await LoadModernAppData(item);
+                AppData appD = await LoadModernAppData(item, logosFolder);
                 if (appD != null)
                     list.Add(appD);
 
@@ -203,7 +214,7 @@ namespace AppDataManageTool
                             iconPathTag = iconPathTag.Substring(0, iconPathTag.IndexOf("</IconPath>"));
                             iconPathTag = System.IO.Path.Combine(installFolder.Path, iconPathTag);
 
-                            app.Logo = new BitmapImage(new Uri(iconPathTag));
+                            app.LogoPath = iconPathTag;
                         }
                         catch
                         {
@@ -219,7 +230,7 @@ namespace AppDataManageTool
             return null;
         }
 
-        private async Task<AppData> LoadModernAppData(Windows.ApplicationModel.Package item)
+        private async Task<AppData> LoadModernAppData(Windows.ApplicationModel.Package item, StorageFolder saveLogoLocation)
         {
             AppData data = new AppData();
             try
@@ -231,19 +242,28 @@ namespace AppDataManageTool
 
                 data.DisplayName = (x.First().DisplayInfo.DisplayName);
 
-                BitmapImage bmp = new BitmapImage();
-                try
-                {
-                    bmp.SetSource(await x.First().DisplayInfo.GetLogo(new Size(50, 50)).OpenReadAsync());
-                }
-                catch { }
-                data.Logo = bmp;
-
                 data.PackageId = item.Id.FullName;
                 data.PackageRootFolder = item.InstalledLocation.Path;
                 data.FamilyName = item.Id.FamilyName;
                 data.PackageDataFolder = GetDataFolder(data);
                 data.IsLegacyApp = false;
+
+                if ((await saveLogoLocation.TryGetItemAsync(data.FamilyName + ".png")) == null)
+                {
+                    WriteableBitmap bmp = null;
+                    try
+                    {
+                        var stream = await x.First().DisplayInfo.GetLogo(new Size(50, 50)).OpenReadAsync();
+                        BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
+                        bmp = new WriteableBitmap((int)decoder.PixelWidth, (int)decoder.PixelHeight);
+                        bmp.SetSource(stream);
+                    }
+                    catch { }
+
+                    await bmp.SaveAsync(saveLogoLocation, data.FamilyName + ".png");
+                }
+
+                data.LogoPath = System.IO.Path.Combine(saveLogoLocation.Path, data.FamilyName + ".png");
 
                 try
                 {
@@ -296,7 +316,32 @@ namespace AppDataManageTool
             }
         }
 
-        
+        internal static async Task SaveAppList()
+        {
+            string serializedData = Newtonsoft.Json.JsonConvert.SerializeObject(App.appsData, Newtonsoft.Json.Formatting.Indented);
+
+            System.Diagnostics.Debug.WriteLine(serializedData.Length);
+
+            StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
+            StorageFile cacheFile = await localCacheFolder.CreateFileAsync("applistcache.txt", CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteTextAsync(cacheFile, serializedData);
+        }
+
+        internal static async Task<List<AppData>> LoadCachedAppList()
+        {
+            StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
+            var file = await localCacheFolder.TryGetItemAsync("applistcache.txt");
+            if ((file != null) && (file is StorageFile))
+            {
+                StorageFile cacheFile = file as StorageFile;
+                string data = await FileIO.ReadTextAsync(cacheFile);
+
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<List<AppData>>(data);
+            }
+
+            return null;
+        }
+
         static string GetNameStringFromManifestFormat(string inputS/*, StorageFolder curPath*/)
         {
             if (inputS.Length < 1)

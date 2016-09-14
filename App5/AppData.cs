@@ -5,6 +5,11 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using System.IO;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.Graphics.Imaging;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace AppDataManageTool
 {
@@ -14,7 +19,18 @@ namespace AppDataManageTool
         public string PackageRootFolder { get; set; }
         public string PackageDataFolder { get; set; }
         public string DisplayName { get; set; }
-        public ImageSource Logo { get; set; }
+
+        [JsonIgnore]
+        public BitmapImage Logo {
+            get
+            {
+                if ((LogoPath == null) || (LogoPath.Length == 0))
+                    return null;
+                return new BitmapImage(new Uri(LogoPath));
+            }
+        }
+
+        public string LogoPath { get; set; }
         public string AppDataSize { get; set; } = "Calculating...";
         public string FamilyName { get; set; }
         public bool SizeIsCalculated { get; set; } = false;
@@ -33,7 +49,8 @@ namespace AppDataManageTool
 
         public async Task CalculateSize()
         {
-            try {
+            try
+            {
                 if (SizeIsCalculated)
                     return;
 
