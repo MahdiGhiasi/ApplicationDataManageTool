@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace AppDataManageTool
@@ -72,7 +73,17 @@ namespace AppDataManageTool
 
         public async Task<List<AppData>> LoadApps()
         {
-            legacyTools = new LegacyBridge.LegacyAppTools();
+            bool loadLegacyApps = true;
+            try
+            {
+                legacyTools = new LegacyBridge.LegacyAppTools();
+            }
+            catch (Exception ex)
+            {
+                MessageDialog md = new MessageDialog("Can't load legacy WP8 apps (" + ex.Message + ")");
+                await md.ShowAsync();
+                loadLegacyApps = false;
+            }
 
             List<AppData> list = new List<AppData>();
 
@@ -81,10 +92,25 @@ namespace AppDataManageTool
             IEnumerable<Windows.ApplicationModel.Package> packages = (IEnumerable<Windows.ApplicationModel.Package>)packageManager.FindPackagesForUser("");
 
             //Legacy apps
-            StorageFolder programsFolder = await StorageFolder.GetFolderFromPathAsync(@"C:\Data\Programs");
-            IEnumerable<StorageFolder> programs = await programsFolder.GetFoldersAsync();
+            StorageFolder programsFolder; 
+            IEnumerable<StorageFolder> programs = null; 
 
-            int count = packages.Count() + programs.Count();
+            if (loadLegacyApps)
+            {
+                try
+                {
+                    programsFolder = await StorageFolder.GetFolderFromPathAsync(@"C:\Data\Programs");
+                    programs = await programsFolder.GetFoldersAsync();
+                }
+                catch (Exception ex)
+                {
+                    MessageDialog md = new MessageDialog("Can't access legacy WP8 apps folder (" + ex.Message + ")");
+                    await md.ShowAsync();
+                    loadLegacyApps = false;
+                }
+            }
+
+            int count = packages.Count() + (loadLegacyApps ? programs.Count() : 0);
             int progress = 0;
 
             foreach (var item in packages)
@@ -97,16 +123,19 @@ namespace AppDataManageTool
                 OnLoadingProgress(new LoadingEventArgs(progress, count));
             }
 
-            System.Diagnostics.Debug.WriteLine("Now loading legacy apps...");
-
-            foreach (StorageFolder item in programs)
+            if (loadLegacyApps)
             {
-                AppData appD = await LoadLegacyAppData(item);
-                if (appD != null)
-                    list.Add(appD);
+                System.Diagnostics.Debug.WriteLine("Now loading legacy apps...");
 
-                progress++;
-                OnLoadingProgress(new LoadingEventArgs(progress, count));
+                foreach (StorageFolder item in programs)
+                {
+                    AppData appD = await LoadLegacyAppData(item);
+                    if (appD != null)
+                        list.Add(appD);
+
+                    progress++;
+                    OnLoadingProgress(new LoadingEventArgs(progress, count));
+                }
             }
 
             list = list.OrderBy(x => x.DisplayName).ToList();

@@ -15,7 +15,11 @@ namespace LegacyBridge
             apps = new Dictionary<string, Package>();
             foreach (Package item in InstallationManager.FindPackages())
             {
-                apps.Add(item.Id.ProductId, item);
+                try
+                {
+                    apps.Add(item.Id.ProductId, item);
+                }
+                catch { } //Ignore this.
             }
         }
 
