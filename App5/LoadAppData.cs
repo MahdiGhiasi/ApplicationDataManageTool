@@ -260,7 +260,7 @@ namespace AppDataManageTool
                     }
                     catch { }
 
-                    await bmp.SaveAsync(saveLogoLocation, data.FamilyName + ".png");
+                    bmp.SaveAsync(saveLogoLocation, data.FamilyName + ".png");
                 }
 
                 data.LogoPath = System.IO.Path.Combine(saveLogoLocation.Path, data.FamilyName + ".png");
