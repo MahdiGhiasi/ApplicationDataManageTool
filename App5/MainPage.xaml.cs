@@ -119,14 +119,6 @@ namespace AppDataManageTool
                 progressRing.IsActive = true;
 
                 List<AppData> cachedAppList = await LoadAppData.LoadCachedAppList();
-                /*     {
-                         int count = cachedAppList.Count;
-                         Random rnd = new Random();
-                         for (int i = 0; i < count * 0.66; i++)
-                         {
-                             cachedAppList.RemoveAt(rnd.Next(cachedAppList.Count));
-                         }
-                     }*/
                 
                 App.appsData = new ObservableCollection<AppData>(cachedAppList);
                 App.familyNameAppData = new Dictionary<string, AppData>();
