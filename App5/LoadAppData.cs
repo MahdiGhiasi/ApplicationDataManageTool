@@ -224,7 +224,7 @@ namespace AppDataManageTool
                             IsLegacyApp = true
                         };
 
-                        app.PackageDataFolder = GetDataFolder(app);
+                        app.PackageDataFolder = await GetDataFolder(app);
 
                         string iconPathTag;
                         try
@@ -274,7 +274,7 @@ namespace AppDataManageTool
 
                 data.PackageId = item.Id.FullName;
                 data.PackageRootFolder = item.InstalledLocation.Path;
-                data.PackageDataFolder = GetDataFolder(data);
+                data.PackageDataFolder = await GetDataFolder(data);
                 data.IsLegacyApp = false;
 
                 if ((await saveLogoLocation.TryGetItemAsync(data.FamilyName + ".png")) == null)
@@ -319,17 +319,38 @@ namespace AppDataManageTool
             return null;
         }
 
-        internal static string GetDataFolder(AppData data)
+        internal static async Task<string> GetDataFolder(AppData data)
         {
             if (data.IsLegacyApp)
-                return "C:\\Data\\Users\\DefApps\\AppData\\" + data.FamilyName;
+            {
+                string Cpath = "C:\\Data\\Users\\DefApps\\AppData\\" + data.FamilyName;
+                string Dpath = "D:\\WPSystem\\AppData\\" + data.FamilyName;
+
+                try
+                {
+                    var x = await StorageFolder.GetFolderFromPathAsync(Cpath);
+                    return Cpath;
+                }
+                catch
+                {
+                    try
+                    {
+                        var y = await StorageFolder.GetFolderFromPathAsync(Dpath);
+                        return Dpath;
+                    }
+                    catch
+                    {
+                        return Cpath;
+                    }
+                }
+            }
             else
                 return "C:\\Data\\Users\\DefApps\\APPDATA\\Local\\Packages\\" + data.FamilyName;
         }
 
-        internal static string GetDataFolder(CompactAppData data)
+        internal static async Task<string> GetDataFolder(CompactAppData data)
         {
-            return GetDataFolder(GetAppDataFromCompactAppData(data));
+            return await GetDataFolder(GetAppDataFromCompactAppData(data));
         }
 
         internal static AppData GetAppDataFromCompactAppData(CompactAppData data)

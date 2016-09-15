@@ -243,7 +243,7 @@ namespace AppDataManageTool
                 {
                     FileOperations.RemoveFromGetContentsCache(item.FamilyName);
 
-                    dests[item.FamilyName] = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.GetDirectoryName(LoadAppData.GetDataFolder(item)));
+                    dests[item.FamilyName] = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.GetDirectoryName(await LoadAppData.GetDataFolder(item)));
 
                     familyToDisplayNames.Add(item.FamilyName, item.DisplayName);
                 }
