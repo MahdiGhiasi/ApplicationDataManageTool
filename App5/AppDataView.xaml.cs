@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -68,28 +69,61 @@ namespace AppDataManageTool
 
             appsPlus = appsPlus.OrderBy(x => x.DisplayName).ToList();
 
-            var groupedData = appsPlus.GroupBy( (d) =>
-            {
-                if (d.DisplayName.Length == 0)
-                    return "#";
-                else if ("0123456789".Contains(d.DisplayName[0]))
-                    return "#";
-                else if ("abcdefghijklmnopqrstuvwxyz".Contains(d.DisplayName[0].ToString().ToLower()))
-                    return d.DisplayName[0].ToString().ToUpper();
-                else
-                    return "...";
-            }, (key, items) => new DataGroup()
+            ObservableCollection<DataGroup> groupedData = new ObservableCollection<DataGroup>(appsPlus.GroupBy((d) => ItemsGroupName(d)
+            , (key, items) => new DataGroup()
             {
                 Name = key,
-                Items = items.ToList()
-            }).ToList();
+                Items = new ObservableCollection<AppData>(items)
+            }).ToList());
 
             foreach (var item in groupedData)
             {
-                item.Items = (from AppData x in item.Items
-                              where x.FamilyName.Length > 0
-                              select x).ToList();
+                item.Items = new ObservableCollection<AppData>((from AppData x in item.Items
+                                                                where x.FamilyName.Length > 0
+                                                                select x).ToList());
             }
+
+            App.appsData.CollectionChanged += async (object s, System.Collections.Specialized.NotifyCollectionChangedEventArgs ee) =>
+            {
+                if (ee.NewItems != null)
+                {
+                    foreach (AppData item in ee.NewItems)
+                    {
+                        await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            try
+                            {
+                                string groupName = ItemsGroupName(item);
+                                var group = groupedData.First(x => x.Name == groupName);
+                                group.Items.AddSorted(item, new AppDataNameComparer());
+                                group.NotifyChange();
+                            }
+                            catch
+                            {
+                                //Avoid thread crash if this page instance no longer exists.
+                            }
+                        });
+                    }
+                }
+
+                if (ee.OldItems != null)
+                {
+                    foreach (AppData item in ee.OldItems)
+                    {
+                        try
+                        {
+                            string groupName = ItemsGroupName(item);
+                            var group = groupedData.First(x => x.Name == groupName);
+                            group.Items.Remove(item);
+                            group.NotifyChange();
+                        }
+                        catch
+                        {
+                            //Avoid thread crash if this page instance no longer exists.
+                        }
+                    }
+                }
+            };
 
             collection.Source = groupedData;
 
@@ -106,6 +140,18 @@ namespace AppDataManageTool
                     listView.SelectedItem = PageStatus_CurrentApp;
                 }
             }
+        }
+
+        private static string ItemsGroupName(AppData d)
+        {
+            if (d.DisplayName.Length == 0)
+                return "#";
+            else if ("0123456789".Contains(d.DisplayName[0]))
+                return "#";
+            else if ("abcdefghijklmnopqrstuvwxyz".Contains(d.DisplayName[0].ToString().ToLower()))
+                return d.DisplayName[0].ToString().ToUpper();
+            else
+                return "...";
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -345,7 +391,7 @@ namespace AppDataManageTool
         }
     }
 
-    internal class DataGroup
+    internal class DataGroup : INotifyPropertyChanged
     {
         public string Name
         {
@@ -353,15 +399,24 @@ namespace AppDataManageTool
             set;
         }
 
-        public List<AppData> Items
+        private ObservableCollection<AppData> items;
+
+        public ObservableCollection<AppData> Items
         {
-            get;
-            set;
+            get { return items; }
+            set { items = value; }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public override string ToString()
         {
             return Name;
+        }
+
+        public void NotifyChange()
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs(""));
         }
     }
 }

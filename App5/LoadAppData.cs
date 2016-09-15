@@ -58,22 +58,7 @@ namespace AppDataManageTool
                 LoadCompleted(this, new EventArgs());
         }
 
-
-
-        public async Task<Dictionary<string, AppData>> LoadAppsAsDictionary()
-        {
-            List<AppData> data = await LoadApps();
-            Dictionary<string, AppData> dic = new Dictionary<string, AppData>();
-
-            foreach (var item in data)
-            {
-                dic.Add(item.PackageId, item);
-            }
-
-            return dic;
-        }
-
-        public async Task<List<AppData>> LoadApps()
+        public async Task LoadApps()
         {
             bool loadLegacyApps = true;
             try
@@ -87,15 +72,13 @@ namespace AppDataManageTool
                 loadLegacyApps = false;
             }
 
-            List<AppData> list = new List<AppData>();
-
             //Modern apps
             Windows.Management.Deployment.PackageManager packageManager = new Windows.Management.Deployment.PackageManager();
             IEnumerable<Windows.ApplicationModel.Package> packages = (IEnumerable<Windows.ApplicationModel.Package>)packageManager.FindPackagesForUser("");
 
             //Legacy apps
-            StorageFolder programsFolder; 
-            IEnumerable<StorageFolder> programs = null; 
+            StorageFolder programsFolder;
+            IEnumerable<StorageFolder> programs = null;
 
             if (loadLegacyApps)
             {
@@ -123,12 +106,22 @@ namespace AppDataManageTool
 
             StorageFolder logosFolder = await localCacheFolder.GetFolderAsync("Logos");
 
-
+            HashSet<string> existingAppFamilyNames = new HashSet<string>();
             foreach (var item in packages)
             {
+                System.Diagnostics.Debug.WriteLine(progress);
+
                 AppData appD = await LoadModernAppData(item, logosFolder);
-                if (appD != null)
-                    list.Add(appD);
+                if ((appD != null) && (appD.PackageId != ""))
+                {
+                    App.appsData.AddSorted(appD, new AppDataNameComparer());
+                    App.familyNameAppData.Add(appD.FamilyName, appD);
+                    existingAppFamilyNames.Add(appD.FamilyName);
+                }
+                else if (appD != null)
+                {
+                    existingAppFamilyNames.Add(appD.FamilyName);
+                }
 
                 progress++;
                 OnLoadingProgress(new LoadingEventArgs(progress, count));
@@ -141,22 +134,49 @@ namespace AppDataManageTool
                 foreach (StorageFolder item in programs)
                 {
                     AppData appD = await LoadLegacyAppData(item);
-                    if (appD != null)
-                        list.Add(appD);
+                    if ((appD != null) && (appD.PackageId != ""))
+                    {
+                        App.appsData.AddSorted(appD, new AppDataNameComparer());
+                        App.familyNameAppData.Add(appD.FamilyName, appD);
+                        existingAppFamilyNames.Add(appD.FamilyName);
+                    }
+                    else if (appD != null)
+                    {
+                        existingAppFamilyNames.Add(appD.FamilyName);
+                    }
 
                     progress++;
                     OnLoadingProgress(new LoadingEventArgs(progress, count));
                 }
             }
 
-            list = list.OrderBy(x => x.DisplayName).ToList();
+            //Remove apps that are no longer installed on device from cache.
+            List<AppData> removedApps = new List<AppData>();
+            foreach (var item in App.appsData)
+            {
+                if (!existingAppFamilyNames.Contains(item.FamilyName))
+                    removedApps.Add(item);
+            }
+
+            foreach (var item in removedApps)
+            {
+                App.familyNameAppData.Remove(item.FamilyName);
+                App.appsData.Remove(item);
+            }
+
 
             OnLoadCompleted();
-            return list;
         }
 
         private async Task<AppData> LoadLegacyAppData(StorageFolder item)
         {
+            if (App.familyNameAppData.ContainsKey(item.Name))
+                return new AppData()
+                {
+                    FamilyName = item.Name,
+                    PackageId = ""
+                };
+
             try
             {
                 IStorageItem s = await item.TryGetItemAsync("Install");
@@ -193,7 +213,7 @@ namespace AppDataManageTool
                             publisherName = publisherName.Substring(0, publisherName.IndexOf("\""));
                             publisherName = GetNameStringFromManifestFormat(publisherName);
                         }
-                        
+
                         AppData app = new AppData()
                         {
                             DisplayName = appName,
@@ -235,16 +255,25 @@ namespace AppDataManageTool
             AppData data = new AppData();
             try
             {
-                var x = await item.GetAppListEntriesAsync();
+                data.FamilyName = item.Id.FamilyName;
 
-                if (x.Count == 0)
+                if (App.familyNameAppData.ContainsKey(data.FamilyName))
+                {
+                    App.familyNameAppData[data.FamilyName].PackageId = item.Id.FullName; //Refresh package id.
+
+                    data.PackageId = "";
+                    return data;
+                }
+
+                IReadOnlyList<Windows.ApplicationModel.Core.AppListEntry> x = await item.GetAppListEntriesAsync();
+
+                if ((x == null) || (x.Count == 0))
                     return null;
 
                 data.DisplayName = (x.First().DisplayInfo.DisplayName);
 
                 data.PackageId = item.Id.FullName;
                 data.PackageRootFolder = item.InstalledLocation.Path;
-                data.FamilyName = item.Id.FamilyName;
                 data.PackageDataFolder = GetDataFolder(data);
                 data.IsLegacyApp = false;
 
@@ -257,10 +286,10 @@ namespace AppDataManageTool
                         BitmapDecoder decoder = await BitmapDecoder.CreateAsync(stream);
                         bmp = new WriteableBitmap((int)decoder.PixelWidth, (int)decoder.PixelHeight);
                         bmp.SetSource(stream);
+
+                        await bmp.SaveAsync(saveLogoLocation, data.FamilyName + ".png");
                     }
                     catch { }
-
-                    bmp.SaveAsync(saveLogoLocation, data.FamilyName + ".png");
                 }
 
                 data.LogoPath = System.IO.Path.Combine(saveLogoLocation.Path, data.FamilyName + ".png");
@@ -316,6 +345,16 @@ namespace AppDataManageTool
             }
         }
 
+        internal static async Task DeleteAppListCache()
+        {
+            StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
+            var cacheFile = await localCacheFolder.TryGetItemAsync("applistcache.txt");
+            if ((cacheFile != null) && (cacheFile is StorageFile))
+            {
+                await (cacheFile as StorageFile).DeleteAsync();
+            }
+        }
+
         internal static async Task SaveAppList()
         {
             string serializedData = Newtonsoft.Json.JsonConvert.SerializeObject(App.appsData, Newtonsoft.Json.Formatting.Indented);
@@ -339,7 +378,7 @@ namespace AppDataManageTool
                 return Newtonsoft.Json.JsonConvert.DeserializeObject<List<AppData>>(data);
             }
 
-            return null;
+            return new List<AppData>();
         }
 
         static string GetNameStringFromManifestFormat(string inputS/*, StorageFolder curPath*/)

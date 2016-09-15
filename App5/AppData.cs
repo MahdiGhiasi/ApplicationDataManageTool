@@ -85,4 +85,12 @@ namespace AppDataManageTool
             SizeIsCalculated = false;
         }
     }
+
+    public class AppDataNameComparer : IComparer<AppData>
+    {
+        public int Compare(AppData a, AppData b)
+        {
+            return String.Compare(a.DisplayName, b.DisplayName);
+        }
+    }
 }

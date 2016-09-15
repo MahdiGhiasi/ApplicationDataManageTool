@@ -115,11 +115,18 @@ namespace AppDataManageTool
 
         private async void ReloadAppList_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            if (App.updateCacheInProgress)
+            {
+                MessageDialog md = new MessageDialog("Please wait until startup app list cache update is finished, and then try again.");
+                await md.ShowAsync();
+                return;
+            }
+
             progress.Visibility = Visibility.Visible;
 
             progressStatus.Text = "Deleting icons cache...";
 
-            await System.Threading.Tasks.Task.Delay(100);
+            await LoadAppData.DeleteAppListCache();
 
             var displayRequest = new DisplayRequest();
             displayRequest.RequestActive();
@@ -135,7 +142,16 @@ namespace AppDataManageTool
                 await (logosFolder as StorageFolder).DeleteAsync(StorageDeleteOption.PermanentDelete);
             }
 
-            App.appsData = await lad.LoadApps();
+            App.appsData.Clear();
+            App.familyNameAppData.Clear();
+
+            await lad.LoadApps();
+
+            foreach (var item in App.appsData)
+            {
+                App.familyNameAppData.Add(item.FamilyName, item);
+            }
+
             await LoadAppData.SaveAppList();
 
             await ReloadBackups();

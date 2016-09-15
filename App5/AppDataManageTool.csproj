@@ -110,6 +110,7 @@
     <Compile Include="AppDataView.xaml.cs">
       <DependentUpon>AppDataView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AppListCacheUpdater.cs" />
     <Compile Include="Archiver.cs" />
     <Compile Include="Backup.cs" />
     <Compile Include="BackupManager.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Backups.xaml.cs">
       <DependentUpon>Backups.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CollectionHelper.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="FileOperations.cs" />
     <Compile Include="HiddenThings.cs" />
@@ -193,6 +195,11 @@
       <Project>{95859dda-6415-41dc-afdb-e9b7b41e9cb1}</Project>
       <Name>LegacyBridge</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

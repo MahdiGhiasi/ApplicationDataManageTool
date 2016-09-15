@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.System.Display;
 using Windows.UI.Popups;
@@ -29,9 +30,7 @@ namespace AppDataManageTool
     public sealed partial class MainPage : Page
     {
         Dictionary<string, AppData> AppNames = new Dictionary<string, AppData>();
-        LoadAppData loadAppData = new LoadAppData();
         BackupManager.BackupLoader backupLoader = new BackupManager.BackupLoader();
-        DisplayRequest displayRequest;
 
         bool loadAppsList = true;
 
@@ -39,7 +38,6 @@ namespace AppDataManageTool
         {
             this.InitializeComponent();
 
-            loadAppData.LoadingProgress += LoadAppData_LoadingProgress;
             backupLoader.LoadBackupsProgress += BackupLoader_LoadBackupsProgress;
 
             ((App)App.Current).BackRequested += MainPage_BackRequested;
@@ -85,7 +83,6 @@ namespace AppDataManageTool
         {
             ((App)App.Current).BackRequested -= MainPage_BackRequested;
 
-            loadAppData.LoadingProgress -= LoadAppData_LoadingProgress;
             backupLoader.LoadBackupsProgress -= BackupLoader_LoadBackupsProgress;
 
             base.OnNavigatingFrom(e);
@@ -112,48 +109,71 @@ namespace AppDataManageTool
             /**/
         }
 
-        private void LoadAppData_LoadingProgress(object sender, LoadingEventArgs e)
-        {
-            int percent = (int)Math.Round((100.0 * e.Current) / e.Total);
-            progressStatus.Text = "Loading apps " + percent.ToString() + "%";
-        }
-
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (App.appsData == null)
             {
                 UpdateChecker.CheckForUpdates();
 
-                displayRequest = new DisplayRequest();
-                displayRequest.RequestActive();
-
                 progress.Visibility = Visibility.Visible;
                 progressRing.IsActive = true;
 
-                List<AppData> cachedAppList = loadAppsList ? null : await LoadAppData.LoadCachedAppList();
-                if (cachedAppList == null)
+                List<AppData> cachedAppList = await LoadAppData.LoadCachedAppList();
+                /*     {
+                         int count = cachedAppList.Count;
+                         Random rnd = new Random();
+                         for (int i = 0; i < count * 0.66; i++)
+                         {
+                             cachedAppList.RemoveAt(rnd.Next(cachedAppList.Count));
+                         }
+                     }*/
+                
+                App.appsData = new ObservableCollection<AppData>(cachedAppList);
+                App.familyNameAppData = new Dictionary<string, AppData>();
+                foreach (var item in App.appsData)
                 {
-                    App.appsData = await loadAppData.LoadApps();
-                    await LoadAppData.SaveAppList();
+                    App.familyNameAppData.Add(item.FamilyName, item);
                 }
-                else
+
+                bool appsBg = true;
+                if (cachedAppList.Count == 0)
                 {
-                    App.appsData = cachedAppList;
+                    LoadAppData loadAppData = new LoadAppData();
+
+                    loadAppData.LoadingProgress += LoadAppData_LoadingProgress_2;
+
+                    await loadAppData.LoadApps();
+                    await LoadAppData.SaveAppList();
+
+                    loadAppData.LoadingProgress -= LoadAppData_LoadingProgress_2;
+
+                    appsBg = false;
                 }
 
                 await backupLoader.LoadCurrentBackups();
+
+                if (appsBg)
+                {
+                    AppListCacheUpdater.LoadAppsInBackground();
+                }
 
                 progress.Visibility = Visibility.Collapsed;
                 progressRing.IsActive = false;
 
                 Frame.Background = Header.Background;
-
-                displayRequest.RequestRelease();
             }
 
             AppDataView.PageStatus_CurrentApp = null;
             AppDataView.PageStatus_IsShowingDetails = false;
         }
+
+
+        private void LoadAppData_LoadingProgress_2(object sender, LoadingEventArgs e)
+        {
+            int percent = (int)Math.Round((100.0 * e.Current) / e.Total);
+            progressStatus.Text = "Loading apps " + percent.ToString() + "%";
+        }
+
 
         private void appDataViewButton_Click(object sender, RoutedEventArgs e)
         {

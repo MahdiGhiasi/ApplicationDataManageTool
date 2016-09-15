@@ -55,7 +55,7 @@ namespace AppDataManageTool
             base.OnNavigatedTo(e);
         }
 
-        private void ShowBackup(Backup backup)
+        private async void ShowBackup(Backup backup)
         {
             currentBackup = backup;
 
@@ -64,7 +64,32 @@ namespace AppDataManageTool
 
             LoadBackupSize((Backup)backup);
 
-            bool isThereAtLeastOneNotInstalled = false;
+            bool isThereAtLeastOneNotInstalled;
+            bool isThereAtLeastOneInstalled;
+            LoadBackupAppsList(backup, out isThereAtLeastOneNotInstalled, out isThereAtLeastOneInstalled);
+
+            if ((isThereAtLeastOneNotInstalled) && (App.updateCacheInProgress))
+            {
+                WaitingForCacheMessage.Visibility = Visibility.Visible;
+                RestoreAppBarButton.IsEnabled = false;
+                appsList.ItemsSource = null;
+
+                while (App.updateCacheInProgress)
+                    await Task.Delay(500);
+
+                LoadBackupAppsList(backup, out isThereAtLeastOneNotInstalled, out isThereAtLeastOneInstalled);
+                WaitingForCacheMessage.Visibility = Visibility.Collapsed;
+            }
+
+            NotInstalledNotice.Visibility = isThereAtLeastOneNotInstalled ? Visibility.Visible : Visibility.Collapsed;
+
+            RestoreAppBarButton.IsEnabled = isThereAtLeastOneInstalled;
+        }
+
+        private void LoadBackupAppsList(Backup backup, out bool isThereAtLeastOneNotInstalled, out bool isThereAtLeastOneInstalled)
+        {
+            isThereAtLeastOneNotInstalled = false;
+            isThereAtLeastOneInstalled = false;
             List<BackupListOfApps> listOfApps = new List<BackupListOfApps>();
             foreach (var item in backup.Apps)
             {
@@ -83,14 +108,13 @@ namespace AppDataManageTool
                 {
                     b.Publisher = appd.Publisher;
                     b.IsInstalled = true;
+                    isThereAtLeastOneInstalled = true;
                 }
 
                 listOfApps.Add(b);
             }
 
             appsList.ItemsSource = listOfApps;
-
-            NotInstalledNotice.Visibility = isThereAtLeastOneNotInstalled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)

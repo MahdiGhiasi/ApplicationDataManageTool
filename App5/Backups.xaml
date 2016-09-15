@@ -101,7 +101,7 @@
                                    FontSize="13"
                                    Opacity="0.6"
                                    Visibility="Collapsed" />
-                        
+
                         <Grid Margin="0,20,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -109,6 +109,16 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Apps" FontSize="14" Opacity="0.7" Grid.Column="0" />
 
+                            <TextBlock Margin="20,0,0,0" 
+                                   x:Name="WaitingForCacheMessage"
+                                   Foreground="White" 
+                                   Text="Waiting for cache update to finish..." 
+                                   TextWrapping="Wrap" 
+                                   FontSize="13"
+                                   Opacity="1"
+                                   Grid.Column="1"
+                                   Visibility="Collapsed" />
+                            
                             <ListView x:Name="appsList" Grid.Column="1" SelectionChanged="appsList_SelectionChanged" SelectionMode="Single" Margin="20,-5,0,0">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
