@@ -147,11 +147,6 @@ namespace AppDataManageTool
 
             await lad.LoadApps();
 
-            foreach (var item in App.appsData)
-            {
-                App.familyNameAppData.Add(item.FamilyName, item);
-            }
-
             try
             {
                 await LoadAppData.SaveAppList();

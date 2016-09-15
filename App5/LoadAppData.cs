@@ -380,8 +380,6 @@ namespace AppDataManageTool
         {
             string serializedData = Newtonsoft.Json.JsonConvert.SerializeObject(App.appsData, Newtonsoft.Json.Formatting.Indented);
 
-            System.Diagnostics.Debug.WriteLine(serializedData.Length);
-
             StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
             StorageFile cacheFile = await localCacheFolder.CreateFileAsync("applistcache.txt", CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteTextAsync(cacheFile, serializedData);
