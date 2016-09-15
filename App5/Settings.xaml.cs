@@ -152,7 +152,15 @@ namespace AppDataManageTool
                 App.familyNameAppData.Add(item.FamilyName, item);
             }
 
-            await LoadAppData.SaveAppList();
+            try
+            {
+                await LoadAppData.SaveAppList();
+            }
+            catch (Exception ex)
+            {
+                MessageDialog md = new MessageDialog("Failed to save cache data. (" + ex.Message + ")");
+                await md.ShowAsync();
+            }
 
             await ReloadBackups();
 

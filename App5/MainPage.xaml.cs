@@ -135,7 +135,17 @@ namespace AppDataManageTool
                     loadAppData.LoadingProgress += LoadAppData_LoadingProgress_2;
 
                     await loadAppData.LoadApps();
-                    await LoadAppData.SaveAppList();
+
+                    try
+                    {
+                        await LoadAppData.SaveAppList();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageDialog md = new MessageDialog("Failed to save cache data. (" + ex.Message + ")");
+                        await md.ShowAsync();
+                    }
+                    
 
                     loadAppData.LoadingProgress -= LoadAppData_LoadingProgress_2;
 
