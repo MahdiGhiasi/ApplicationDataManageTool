@@ -147,10 +147,10 @@
                         <TextBlock Text="Installation Path:" FontWeight="SemiBold" />
                         <TextBlock Text="{Binding PackageRootFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
                     </StackPanel>
-                    <TextBlock Text="Hide advanced details" Margin="0,15,20,0" x:Name="HideAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="HideAdvancedDetails_Tapped" />
+                    <TextBlock Text="Hide details" Margin="0,15,20,20" x:Name="HideAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="HideAdvancedDetails_Tapped" />
                 </StackPanel>
-                <TextBlock Text="Show advanced details" Margin="0,15,20,0" x:Name="ShowAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="ShowAdvancedDetails_Tapped" />
-                <Grid Margin="0,40,0,0">
+                <TextBlock Text="Show details" Margin="0,15,20,20" x:Name="ShowAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="ShowAdvancedDetails_Tapped" />
+                <Grid Margin="0,20,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />
@@ -159,7 +159,7 @@
                     <Button Grid.Column="1" Content="Create backup" HorizontalAlignment="Stretch" Margin="0,0,20,0" Tapped="CreateBackupButton_Tapped" />
                 </Grid>
                 <Grid x:Name="hiddenButtons" Margin="0,10,10,0">
-                    <Button Content="Create zip from app install files" HorizontalAlignment="Stretch" Margin="0,0,10,0" Tapped="ZipFromInstallFilesAppButton_Tapped" />
+                    <Button Content="Create archive from installation path" HorizontalAlignment="Stretch" Margin="0,0,10,0" Tapped="ZipFromInstallFilesAppButton_Tapped" />
                 </Grid>
                 <StackPanel Orientation="Vertical" Margin="0,20,20,0">
                     <TextBlock Text="Available backups:" FontWeight="SemiBold" Margin="0,0,0,10" />

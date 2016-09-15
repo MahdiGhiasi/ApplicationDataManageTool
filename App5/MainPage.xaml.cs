@@ -67,6 +67,16 @@ namespace AppDataManageTool
                 localSettings.Values["loadAppsEveryTime"] = true;
             }
 
+            if ((localSettings.Values["hiddenMode"] != null) && (localSettings.Values["hiddenMode"].GetType() == typeof(bool)))
+            {
+                App.hiddenMode = (bool)localSettings.Values["hiddenMode"];
+            }
+            else
+            {
+                localSettings.Values["hiddenMode"] = false;
+                App.hiddenMode = false;
+            }
+
             if ((localSettings.Values["backupDest"] != null) && (localSettings.Values["backupDest"].GetType() == typeof(string)))
             {
                 App.BackupDestination = (string)localSettings.Values["backupDest"];

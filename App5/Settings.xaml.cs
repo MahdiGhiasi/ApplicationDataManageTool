@@ -38,6 +38,7 @@ namespace AppDataManageTool
             loadAppsEveryTime.IsOn = (bool)localSettings.Values["loadAppsEveryTime"];
             compressArchives.IsOn = (bool)localSettings.Values["allowCompress"];
             backupFolder.Text = (string)localSettings.Values["backupDest"];
+            advancedSettings.IsOn = App.hiddenMode;
         }
 
         private void compressArchives_Toggled(object sender, RoutedEventArgs e)
@@ -176,6 +177,14 @@ namespace AppDataManageTool
         private void BlockBack(object sender, Windows.UI.Core.BackRequestedEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void advancedSettings_Toggled(object sender, RoutedEventArgs e)
+        {
+            App.hiddenMode = advancedSettings.IsOn;
+
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings.Values["hiddenMode"] = advancedSettings.IsOn;
         }
     }
 }

@@ -39,7 +39,7 @@ namespace AppDataManageTool
 
             AppDetails.Visibility = Visibility.Collapsed;
             AdvancedDetails.Visibility = Visibility.Collapsed;
-            ShowAdvancedDetails.Visibility = Visibility.Visible;
+            ShowAdvancedDetails.Visibility = App.hiddenMode ? Visibility.Visible : Visibility.Collapsed;
 
             hiddenButtons.Visibility = App.hiddenMode ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -191,7 +191,7 @@ namespace AppDataManageTool
                 AppDetails.DataContext = null;
 
                 AdvancedDetails.Visibility = Visibility.Collapsed;
-                ShowAdvancedDetails.Visibility = Visibility.Visible;
+                ShowAdvancedDetails.Visibility = App.hiddenMode ? Visibility.Visible : Visibility.Collapsed;
 
                 AppDetails.DataContext = listView.SelectedItem;
                 AppDetails.Visibility = Visibility.Visible;
