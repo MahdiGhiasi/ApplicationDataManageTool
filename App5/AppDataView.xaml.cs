@@ -31,7 +31,6 @@ namespace AppDataManageTool
         public static AppData PageStatus_CurrentApp = null;
         public static bool PageStatus_IsShowingDetails = false;
 
-        ObservableCollection<AppData> appsData = new ObservableCollection<AppData>();
         AppData currentApp = null;
 
         public AppDataView()
@@ -89,6 +88,8 @@ namespace AppDataManageTool
                 {
                     foreach (AppData item in ee.NewItems)
                     {
+                        if ((ee.OldItems != null) && (ee.OldItems.Contains(item)))
+                            continue;
                         await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                         {
                             try
@@ -110,6 +111,8 @@ namespace AppDataManageTool
                 {
                     foreach (AppData item in ee.OldItems)
                     {
+                        if ((ee.NewItems != null) && (ee.NewItems.Contains(item)))
+                            continue;
                         try
                         {
                             string groupName = ItemsGroupName(item);
