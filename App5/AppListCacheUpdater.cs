@@ -50,7 +50,7 @@ namespace AppDataManageTool
 
                  //Task would cause some wierd issues. So I used Dispatcher instead.
                  //Task.Run(async () =>
-                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, async () =>
                   {
                       App.updateCacheInProgress = true;
 

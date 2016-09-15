@@ -150,12 +150,12 @@ namespace AppDataManageTool
                     appsBg = false;
                 }
 
-                await backupLoader.LoadCurrentBackups();
-
                 if (appsBg)
                 {
                     AppListCacheUpdater.LoadAppsInBackground();
                 }
+
+                await backupLoader.LoadCurrentBackups();
 
                 progress.Visibility = Visibility.Collapsed;
                 progressRing.IsActive = false;
