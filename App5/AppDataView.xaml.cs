@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -375,14 +377,24 @@ namespace AppDataManageTool
 
             progress.Visibility = Visibility.Visible;
 
-            string fileName = currentApp.FamilyName + DateTime.Now.ToString("yyyyddM HHmmss") + ".zip";
+            string fileName = currentApp.FamilyName + ".zip";
 
-            ht.Progress += Ht_Progress;
-            await ht.BackupPath(currentApp.PackageRootFolder, Path.Combine(App.BackupDestination, fileName));
-            ht.Progress -= Ht_Progress;
+            FileSavePicker fsp = new FileSavePicker();
+            fsp.FileTypeChoices.Add("Zip archive", new[] { ".zip" });
+            fsp.SuggestedFileName = fileName;
+            
+            StorageFile file = await fsp.PickSaveFileAsync();
 
-            MessageDialog md = new MessageDialog("Saved to " + Path.Combine(App.BackupDestination, fileName));
-            await md.ShowAsync();
+            if (file != null)
+            {
+                await file.DeleteAsync();
+                ht.Progress += Ht_Progress;
+                await ht.BackupPath(currentApp.PackageRootFolder, file.Path);
+                ht.Progress -= Ht_Progress;
+
+                MessageDialog md = new MessageDialog("Saved to " + file.Path);
+                await md.ShowAsync();
+            }
 
             progressText.Text = "";
             progress.Visibility = Visibility.Collapsed;
