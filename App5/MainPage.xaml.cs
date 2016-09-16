@@ -40,8 +40,6 @@ namespace AppDataManageTool
 
             backupLoader.LoadBackupsProgress += BackupLoader_LoadBackupsProgress;
 
-            ((App)App.Current).BackRequested += MainPage_BackRequested;
-
             InitSettings();
         }
 
@@ -91,16 +89,9 @@ namespace AppDataManageTool
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            ((App)App.Current).BackRequested -= MainPage_BackRequested;
-
             backupLoader.LoadBackupsProgress -= BackupLoader_LoadBackupsProgress;
 
             base.OnNavigatingFrom(e);
-        }
-
-        private void MainPage_BackRequested(object sender, Windows.UI.Core.BackRequestedEventArgs e)
-        {
-            App.Current.Exit();
         }
 
         private void BackupLoader_LoadBackupsProgress(object sender, LoadingEventArgs e)
