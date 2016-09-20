@@ -32,7 +32,7 @@ namespace AppDataManageTool
     {
         Dictionary<string, AppData> AppNames = new Dictionary<string, AppData>();
         BackupManager.BackupLoader backupLoader = new BackupManager.BackupLoader();
-        LoadAppData lad = new LoadAppData();
+        static LoadAppData lad = new LoadAppData();
 
         bool loadAppsList = true;
 
