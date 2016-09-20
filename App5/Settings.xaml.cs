@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahdiGhiasi.AppListManager;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -143,20 +144,10 @@ namespace AppDataManageTool
                 await (logosFolder as StorageFolder).DeleteAsync(StorageDeleteOption.PermanentDelete);
             }
 
-            App.appsData.Clear();
-            App.familyNameAppData.Clear();
+            LoadAppData.appsData.Clear();
+            LoadAppData.familyNameAppData.Clear();
 
             await lad.LoadApps();
-
-            try
-            {
-                await LoadAppData.SaveAppList();
-            }
-            catch (Exception ex)
-            {
-                MessageDialog md = new MessageDialog("Failed to save cache data. (" + ex.Message + ")");
-                await md.ShowAsync();
-            }
 
             await ReloadBackups();
 

@@ -106,7 +106,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AppData.cs" />
+    <Compile Include="AppDataExtension.cs" />
     <Compile Include="AppDataView.xaml.cs">
       <DependentUpon>AppDataView.xaml</DependentUpon>
     </Compile>
@@ -127,7 +127,6 @@
     <Compile Include="Converters.cs" />
     <Compile Include="FileOperations.cs" />
     <Compile Include="HiddenThings.cs" />
-    <Compile Include="LoadAppData.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -191,6 +190,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AppListManager\AppListManager.csproj">
+      <Project>{6B6BF42F-12D9-4A5C-9274-43584C452928}</Project>
+      <Name>AppListManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LegacyBridge\LegacyBridge.csproj">
       <Project>{95859dda-6415-41dc-afdb-e9b7b41e9cb1}</Project>
       <Name>LegacyBridge</Name>

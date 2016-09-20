@@ -1,4 +1,5 @@
 ﻿using LightBuzz.Archiver;
+using MahdiGhiasi.AppListManager;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -63,7 +64,7 @@ namespace AppDataManageTool
                 string notAvailableNames = "";
                 foreach (var item in backup.Apps)
                 {
-                    if (App.appsData.Count(x => x.FamilyName == item.FamilyName) == 0)
+                    if (LoadAppData.appsData.Count(x => x.FamilyName == item.FamilyName) == 0)
                     {
                         skipApps.Add(item);
                         if (notAvailableNames.Length > 0)
@@ -76,7 +77,7 @@ namespace AppDataManageTool
                 {
                     if (!skipApps.Contains(item))
                     { 
-                        AppData appd = AppData.FindAppData(item.FamilyName);
+                        AppData appd = AppDataExtension.FindAppData(item.FamilyName);
                         if (appd.PackageId != item.PackageId)
                         {
                             MessageDialog md = new MessageDialog("Current installed version doesn't match the version backup was created from.\r\n\r\n" +
@@ -119,7 +120,7 @@ namespace AppDataManageTool
                 LogsView.ItemsSource = log;
 
                 List<AppData> appDatas = (from CompactAppData c in backup.Apps
-                                          select AppData.FindAppData(c.FamilyName)).ToList();
+                                          select AppDataExtension.FindAppData(c.FamilyName)).ToList();
 
                 await backupManager.CreateBackup(appDatas, backup.Name);
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahdiGhiasi.AppListManager;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,8 +24,7 @@ namespace AppDataManageTool
     /// </summary>
     sealed partial class App : Application
     {
-        public static ObservableCollection<AppData> appsData = null;
-        public static Dictionary<string, AppData> familyNameAppData = null;
+        private static ObservableCollection<AppDataExtension> appsSizeData = new ObservableCollection<AppDataExtension>();
         public static string BackupDestination = @"C:\Data\Users\Public\Backups";
         public static bool AllowCompress = false;
         public static int secretCodeCounter = 0;
@@ -58,7 +58,7 @@ namespace AppDataManageTool
             AppListCacheUpdater.LoadAppsInBackground();
 
             FileOperations.ClearGetContentsCache();
-            LoadAppData.ResetAppSizes();
+            AppDataExtension.ResetAppSizes();
         }
 
         /// <summary>
@@ -165,6 +165,21 @@ namespace AppDataManageTool
 
                 }
             }
+        }
+
+        public static AppDataExtension GetAppDataEx(AppData app)
+        {
+            AppDataExtension ade = appsSizeData.FirstOrDefault(x => x.familyName == app.FamilyName);
+            if (ade == null)
+            {
+                ade = new AppDataExtension()
+                {
+                    familyName = app.FamilyName,
+                    TheApp = app
+                };
+                appsSizeData.Add(ade);
+            }
+            return ade;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahdiGhiasi.AppListManager;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -97,7 +98,7 @@ namespace AppDataManageTool
                 b.AppName = item.DisplayName;
                 b.cAppData = item;
 
-                AppData appd = LoadAppData.GetAppDataFromCompactAppData(item);
+                AppData appd = AppDataExtension.GetAppDataFromCompactAppData(item);
 
                 if (appd == null)
                 {

@@ -1,4 +1,5 @@
 ﻿using LightBuzz.Archiver;
+using MahdiGhiasi.AppListManager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -211,7 +212,7 @@ namespace AppDataManageTool
                 }
             }
 
-            app.ResetSizeData();
+            App.GetAppDataEx(app).ResetSizeData();
         }
 
         List<ArchiverError> restoreLog = new List<ArchiverError>();
@@ -224,7 +225,7 @@ namespace AppDataManageTool
                 if (!skipApps.Contains(item))
                 {
                     OnBackupProgress(new BackupEventArgs(-1, BackupState.ResettingAppData, "Clearing current state of " + item.DisplayName, counter.ToString() + " / " + (backup.Apps.Count - skipApps.Count).ToString(), restoreLog));
-                    await ResetAppData(LoadAppData.GetAppDataFromCompactAppData(item));
+                    await ResetAppData(AppDataExtension.GetAppDataFromCompactAppData(item));
                     counter++;
                 }
             }
@@ -243,7 +244,7 @@ namespace AppDataManageTool
                 {
                     FileOperations.RemoveFromGetContentsCache(item.FamilyName);
 
-                    dests[item.FamilyName] = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.GetDirectoryName(await LoadAppData.GetDataFolder(item)));
+                    dests[item.FamilyName] = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.GetDirectoryName(await LoadAppData.GetDataFolder(AppDataExtension.GetAppDataFromCompactAppData(item))));
 
                     familyToDisplayNames.Add(item.FamilyName, item.DisplayName);
                 }

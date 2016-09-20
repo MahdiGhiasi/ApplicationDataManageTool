@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahdiGhiasi.AppListManager;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,7 +42,13 @@ namespace AppDataManageTool
             //});
         }
 
-        internal static async void LoadAppsInBackground()
+        internal static void LoadAppsInBackground()
+        {
+            LoadAppData lad = new LoadAppData();
+            LoadAppsInBackground(lad);
+        }
+
+        internal static async void LoadAppsInBackground(LoadAppData ladInstance)
         {
             await Task.Run(async () =>
              {
@@ -54,14 +61,11 @@ namespace AppDataManageTool
                   {
                       App.updateCacheInProgress = true;
 
-                      LoadAppData loadAppData = new LoadAppData();
+                      ladInstance.LoadingProgress += LoadAppData_LoadingProgress;
 
-                      loadAppData.LoadingProgress += LoadAppData_LoadingProgress;
+                      await ladInstance.LoadApps();
 
-                      await loadAppData.LoadApps();
-                      await LoadAppData.SaveAppList();
-
-                      loadAppData.LoadingProgress -= LoadAppData_LoadingProgress;
+                      ladInstance.LoadingProgress -= LoadAppData_LoadingProgress;
 
                       await UpdateStatusBar(null);
 

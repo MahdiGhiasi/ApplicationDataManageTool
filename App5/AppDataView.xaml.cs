@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahdiGhiasi.AppListManager;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -33,7 +34,7 @@ namespace AppDataManageTool
         public static AppData PageStatus_CurrentApp = null;
         public static bool PageStatus_IsShowingDetails = false;
 
-        AppData currentApp = null;
+        AppDataExtension currentApp = null;
 
         public AppDataView()
         {
@@ -56,7 +57,7 @@ namespace AppDataManageTool
                 commandBar.Visibility = Visibility.Collapsed;
             }
 
-            List<AppData> appsPlus = new List<AppData>(App.appsData);
+            List<AppData> appsPlus = new List<AppData>(LoadAppData.appsData);
             for (char i = 'A'; i <= 'Z'; i++)
             {
                 appsPlus.Add(new AppData()
@@ -84,7 +85,7 @@ namespace AppDataManageTool
                                                                 select x).ToList());
             }
 
-            App.appsData.CollectionChanged += async (object s, System.Collections.Specialized.NotifyCollectionChangedEventArgs ee) =>
+            LoadAppData.appsData.CollectionChanged += async (object s, System.Collections.Specialized.NotifyCollectionChangedEventArgs ee) =>
             {
                 if (ee.NewItems != null)
                 {
@@ -195,23 +196,24 @@ namespace AppDataManageTool
                 AdvancedDetails.Visibility = Visibility.Collapsed;
                 ShowAdvancedDetails.Visibility = App.hiddenMode ? Visibility.Visible : Visibility.Collapsed;
 
-                AppDetails.DataContext = listView.SelectedItem;
+                AppData data = (AppData)listView.SelectedItem;
+                AppDataExtension dataEx = App.GetAppDataEx(data);
+
+                AppDetails.DataContext = dataEx;
                 AppDetails.Visibility = Visibility.Visible;
 
                 commandBar.Visibility = Visibility.Collapsed;
 
-                AppData data = (AppData)listView.SelectedItem;
-
-                currentApp = data;
+                currentApp = dataEx;
 
                 List<Backup> backupsContainingThisApp = (from Backup b in BackupManager.currentBackups
-                                                         where b.Apps.Any(x => x.FamilyName == currentApp.FamilyName)
+                                                         where b.Apps.Any(x => x.FamilyName == currentApp.familyName)
                                                          select b).ToList();
 
                 noBackupsAvailable.Visibility = backupsContainingThisApp.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
                 backupsList.ItemsSource = backupsContainingThisApp;
 
-                await data.CalculateSize();
+                await dataEx.CalculateSize();
             }
         }
 
@@ -266,7 +268,7 @@ namespace AppDataManageTool
 
         private async void CreateBackupButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await StartCreatingBackup(currentApp);
+            await StartCreatingBackup(currentApp.TheApp);
         }
 
         private async void BackupAppBarButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -305,7 +307,7 @@ namespace AppDataManageTool
 
         private async Task StartCreatingBackup(List<CompactAppData> apps)
         {
-            PageStatus_CurrentApp = App.appsData.First(x => x.PackageId == apps.OrderBy(y => y.DisplayName).Last().PackageId);
+            PageStatus_CurrentApp = LoadAppData.appsData.First(x => x.PackageId == apps.OrderBy(y => y.DisplayName).Last().PackageId);
             PageStatus_IsShowingDetails = AppDetails.Visibility == Visibility.Visible;
 
             var dialog = new BackupNameDialog(BackupManager.GenerateBackupName());
@@ -355,8 +357,8 @@ namespace AppDataManageTool
             {
                 progress.Visibility = Visibility.Visible;
                 BackupManager bm = new BackupManager();
-                await bm.ResetAppData(currentApp);
-                FileOperations.RemoveFromGetContentsCache(currentApp.FamilyName);
+                await bm.ResetAppData(currentApp.TheApp);
+                FileOperations.RemoveFromGetContentsCache(currentApp.familyName);
 
                 await currentApp.CalculateSize();
                 progress.Visibility = Visibility.Collapsed;
@@ -365,7 +367,7 @@ namespace AppDataManageTool
 
         private void backupsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            PageStatus_CurrentApp = currentApp;
+            PageStatus_CurrentApp = currentApp.TheApp;
             PageStatus_IsShowingDetails = true;
 
             Frame.Navigate(typeof(Backups), backupsList.SelectedItem);
@@ -377,7 +379,7 @@ namespace AppDataManageTool
 
             progress.Visibility = Visibility.Visible;
 
-            string fileName = currentApp.FamilyName + ".zip";
+            string fileName = currentApp.familyName + ".zip";
 
             FileSavePicker fsp = new FileSavePicker();
             fsp.FileTypeChoices.Add("Zip archive", new[] { ".zip" });
@@ -389,7 +391,7 @@ namespace AppDataManageTool
             {
                 await file.DeleteAsync();
                 ht.Progress += Ht_Progress;
-                await ht.BackupPath(currentApp.PackageRootFolder, file.Path);
+                await ht.BackupPath(currentApp.TheApp.PackageRootFolder, file.Path);
                 ht.Progress -= Ht_Progress;
 
                 MessageDialog md = new MessageDialog("Saved to " + file.Path);

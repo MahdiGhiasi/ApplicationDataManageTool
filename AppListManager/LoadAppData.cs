@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,9 +12,8 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml.Media.Imaging;
 using WinRTXamlToolkit.Imaging;
 
-namespace AppDataManageTool
+namespace MahdiGhiasi.AppListManager
 {
-
     public class LoadingEventArgs : EventArgs
     {
         private readonly int current = 0;
@@ -37,8 +37,11 @@ namespace AppDataManageTool
         }
     }
 
-    class LoadAppData
+    public class LoadAppData
     {
+        public static ObservableCollection<AppData> appsData { get; set; } = new ObservableCollection<AppData>();
+        public static Dictionary<string, AppData> familyNameAppData { get; set; } = new Dictionary<string, AppData>();
+
         public delegate void LoadingEventHandler(object sender, LoadingEventArgs e);
 
         public event LoadingEventHandler LoadingProgress;
@@ -58,18 +61,20 @@ namespace AppDataManageTool
                 LoadCompleted(this, new EventArgs());
         }
 
-        public async Task LoadApps()
+        public async Task LoadApps(bool loadLegacyAppsToo = true)
         {
-            bool loadLegacyApps = true;
-            try
+            if (loadLegacyAppsToo)
             {
-                legacyTools = new LegacyBridge.LegacyAppTools();
-            }
-            catch (Exception ex)
-            {
-                MessageDialog md = new MessageDialog("Can't load legacy WP8 apps (" + ex.Message + ")");
-                await md.ShowAsync();
-                loadLegacyApps = false;
+                try
+                {
+                    legacyTools = new LegacyBridge.LegacyAppTools();
+                }
+                catch (Exception ex)
+                {
+                    MessageDialog md = new MessageDialog("Can't load legacy WP8 apps (" + ex.Message + ")");
+                    await md.ShowAsync();
+                    loadLegacyAppsToo = false;
+                }
             }
 
             //Modern apps
@@ -80,7 +85,7 @@ namespace AppDataManageTool
             StorageFolder programsFolder;
             IEnumerable<StorageFolder> programs = null;
 
-            if (loadLegacyApps)
+            if (loadLegacyAppsToo)
             {
                 try
                 {
@@ -91,11 +96,11 @@ namespace AppDataManageTool
                 {
                     MessageDialog md = new MessageDialog("Can't access legacy WP8 apps folder (" + ex.Message + ")");
                     await md.ShowAsync();
-                    loadLegacyApps = false;
+                    loadLegacyAppsToo = false;
                 }
             }
 
-            int count = packages.Count() + (loadLegacyApps ? programs.Count() : 0);
+            int count = packages.Count() + (loadLegacyAppsToo ? programs.Count() : 0);
             int progress = 0;
 
 
@@ -114,8 +119,8 @@ namespace AppDataManageTool
                 AppData appD = await LoadModernAppData(item, logosFolder);
                 if ((appD != null) && (appD.PackageId != ""))
                 {
-                    App.appsData.AddSorted(appD, new AppDataNameComparer());
-                    App.familyNameAppData.Add(appD.FamilyName, appD);
+                    appsData.AddSorted(appD, new AppDataNameComparer());
+                    familyNameAppData.Add(appD.FamilyName, appD);
                     existingAppFamilyNames.Add(appD.FamilyName);
                 }
                 else if (appD != null)
@@ -127,7 +132,7 @@ namespace AppDataManageTool
                 OnLoadingProgress(new LoadingEventArgs(progress, count));
             }
 
-            if (loadLegacyApps)
+            if (loadLegacyAppsToo)
             {
                 System.Diagnostics.Debug.WriteLine("Now loading legacy apps...");
 
@@ -136,8 +141,8 @@ namespace AppDataManageTool
                     AppData appD = await LoadLegacyAppData(item);
                     if ((appD != null) && (appD.PackageId != ""))
                     {
-                        App.appsData.AddSorted(appD, new AppDataNameComparer());
-                        App.familyNameAppData.Add(appD.FamilyName, appD);
+                        appsData.AddSorted(appD, new AppDataNameComparer());
+                        familyNameAppData.Add(appD.FamilyName, appD);
                         existingAppFamilyNames.Add(appD.FamilyName);
                     }
                     else if (appD != null)
@@ -152,7 +157,7 @@ namespace AppDataManageTool
 
             //Remove apps that are no longer installed on device from cache.
             List<AppData> removedApps = new List<AppData>();
-            foreach (var item in App.appsData)
+            foreach (var item in appsData)
             {
                 if (!existingAppFamilyNames.Contains(item.FamilyName))
                     removedApps.Add(item);
@@ -160,17 +165,18 @@ namespace AppDataManageTool
 
             foreach (var item in removedApps)
             {
-                App.familyNameAppData.Remove(item.FamilyName);
-                App.appsData.Remove(item);
+                familyNameAppData.Remove(item.FamilyName);
+                appsData.Remove(item);
             }
 
 
+            SaveAppList();
             OnLoadCompleted();
         }
 
         private async Task<AppData> LoadLegacyAppData(StorageFolder item)
         {
-            if (App.familyNameAppData.ContainsKey(item.Name))
+            if (familyNameAppData.ContainsKey(item.Name))
                 return new AppData()
                 {
                     FamilyName = item.Name,
@@ -257,9 +263,9 @@ namespace AppDataManageTool
             {
                 data.FamilyName = item.Id.FamilyName;
 
-                if (App.familyNameAppData.ContainsKey(data.FamilyName))
+                if (familyNameAppData.ContainsKey(data.FamilyName))
                 {
-                    App.familyNameAppData[data.FamilyName].PackageId = item.Id.FullName; //Refresh package id.
+                    familyNameAppData[data.FamilyName].PackageId = item.Id.FullName; //Refresh package id.
 
                     data.PackageId = "";
                     return data;
@@ -319,7 +325,7 @@ namespace AppDataManageTool
             return null;
         }
 
-        internal static async Task<string> GetDataFolder(AppData data)
+        public static async Task<string> GetDataFolder(AppData data)
         {
             if (data.IsLegacyApp)
             {
@@ -348,25 +354,7 @@ namespace AppDataManageTool
                 return "C:\\Data\\Users\\DefApps\\APPDATA\\Local\\Packages\\" + data.FamilyName;
         }
 
-        internal static async Task<string> GetDataFolder(CompactAppData data)
-        {
-            return await GetDataFolder(GetAppDataFromCompactAppData(data));
-        }
-
-        internal static AppData GetAppDataFromCompactAppData(CompactAppData data)
-        {
-            return App.appsData.FirstOrDefault(x => x.FamilyName == data.FamilyName);
-        }
-
-        internal static void ResetAppSizes()
-        {
-            foreach (AppData item in App.appsData)
-            {
-                item.ResetSizeData();
-            }
-        }
-
-        internal static async Task DeleteAppListCache()
+        public static async Task DeleteAppListCache()
         {
             StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
             var cacheFile = await localCacheFolder.TryGetItemAsync("applistcache.txt");
@@ -376,16 +364,28 @@ namespace AppDataManageTool
             }
         }
 
-        internal static async Task SaveAppList()
+        public static async Task SaveAppList()
         {
-            string serializedData = Newtonsoft.Json.JsonConvert.SerializeObject(App.appsData, Newtonsoft.Json.Formatting.Indented);
+            string serializedData = Newtonsoft.Json.JsonConvert.SerializeObject(appsData, Newtonsoft.Json.Formatting.Indented);
 
             StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
             StorageFile cacheFile = await localCacheFolder.CreateFileAsync("applistcache.txt", CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteTextAsync(cacheFile, serializedData);
         }
 
-        internal static async Task<List<AppData>> LoadCachedAppList()
+        public static async Task<bool> LoadCachedAppList()
+        {
+            appsData = new ObservableCollection<AppData>(await GetCachedAppList());
+            familyNameAppData.Clear();
+            foreach (var item in appsData)
+            {
+                familyNameAppData.Add(item.FamilyName, item);
+            };
+
+            return appsData.Count != 0;
+        }
+
+        private static async Task<List<AppData>> GetCachedAppList()
         {
             StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
             var file = await localCacheFolder.TryGetItemAsync("applistcache.txt");
@@ -408,86 +408,6 @@ namespace AppDataManageTool
                 return inputS;
             else
                 return "Unknown";
-            /* try
-             {
-                 string s = inputS.Substring(1);
-
-                 string[] parts = s.Split(',');
-
-                 StorageFile file = await curPath.GetFileAsync(parts[0]);
-                 await file.CopyAsync(await StorageFolder.GetFolderFromPathAsync("C:\\Data\\Users\\Public"), parts[0], NameCollisionOption.ReplaceExisting);
-
-                 return GetStringResource(System.IO.Path.Combine("C:\\Data\\Users\\Public", parts[0]), (uint)Math.Abs(int.Parse(parts[1])));
-             }
-             catch (Exception ex)
-             {
-                 return inputS;
-             }
-             */
         }
-        /**
-        static string GetStringResource(string dllPath, uint resourceId)
-        {
-            IntPtr pDll = NativeMethods.LoadLibrary(dllPath);
-            
-            return GetStringResource(pDll, resourceId);
-        }
-
-        /// <summary>Returns a string resource from a DLL.</summary>
-        /// <param name="DLLHandle">The handle of the DLL (from LoadLibrary()).</param>
-        /// <param name="ResID">The resource ID.</param>
-        /// <returns>The name from the DLL.</returns>
-        static string GetStringResource(IntPtr handle, uint resourceId)
-        {
-            StringBuilder buffer = new StringBuilder(8192);     //Buffer for output from LoadString()
-
-            int length = NativeMethods.LoadString(handle, resourceId, buffer, buffer.Capacity);
-
-            return buffer.ToString(0, length);      //Return the part of the buffer that was used.
-        }
-
-
-        static class NativeMethods
-        {
-            [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-            internal static extern IntPtr LoadLibrary(string lpLibFileName);
-
-            [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-            internal static extern int LoadString(IntPtr hInstance, uint wID, StringBuilder lpBuffer, int nBufferMax);
-
-            [DllImport("kernel32.dll")]
-            public static extern int FreeLibrary(IntPtr hLibModule);
-        }
-        /**/
-
-        /**
-public List<AppData> LoadAppNamesRegistry()
-{
-   List<AppData> list = new List<AppData>();
-
-   var reg = new RegistryHelper.CRegistryHelper();
-
-   foreach (var i in reg.GetRegistryItems(RegistryHelper.RegHives.HKEY_CURRENT_USER, @"SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages"))
-   {
-       var children = reg.GetRegistryItems(RegistryHelper.RegHives.HKEY_CURRENT_USER, @"SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages\" + i.Name);
-
-       AppData data = new AppData();
-
-       foreach (var item in children)
-       {
-           if (item.Name == "PackageRootFolder")
-               data.PackageRootFolder = item.Value;
-           else if (item.Name == "PackageID")
-               data.PackageId = item.Value;
-           else if (item.Name == "DisplayName")
-               data.DisplayName = item.Value;
-       }
-
-       list.Add(data);
-   }
-
-   return list;
-}
-/**/
     }
 }

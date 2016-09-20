@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahdiGhiasi.AppListManager;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,6 +32,7 @@ namespace AppDataManageTool
     {
         Dictionary<string, AppData> AppNames = new Dictionary<string, AppData>();
         BackupManager.BackupLoader backupLoader = new BackupManager.BackupLoader();
+        LoadAppData lad = new LoadAppData();
 
         bool loadAppsList = true;
 
@@ -112,50 +114,30 @@ namespace AppDataManageTool
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (App.appsData == null)
+            if (LoadAppData.appsData.Count == 0)
             {
                 UpdateChecker.CheckForUpdates();
 
                 progress.Visibility = Visibility.Visible;
                 progressRing.IsActive = true;
 
-                List<AppData> cachedAppList = await LoadAppData.LoadCachedAppList();
+                bool isThereCache = await LoadAppData.LoadCachedAppList();
                 
-                App.appsData = new ObservableCollection<AppData>(cachedAppList);
-                App.familyNameAppData = new Dictionary<string, AppData>();
-                foreach (var item in App.appsData)
-                {
-                    App.familyNameAppData.Add(item.FamilyName, item);
-                }
-
                 bool appsBg = true;
-                if (cachedAppList.Count == 0)
+                if (!isThereCache)
                 {
-                    LoadAppData loadAppData = new LoadAppData();
+                    lad.LoadingProgress += LoadAppData_LoadingProgress_2;
 
-                    loadAppData.LoadingProgress += LoadAppData_LoadingProgress_2;
-
-                    await loadAppData.LoadApps();
-
-                    try
-                    {
-                        await LoadAppData.SaveAppList();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageDialog md = new MessageDialog("Failed to save cache data. (" + ex.Message + ")");
-                        await md.ShowAsync();
-                    }
+                    await lad.LoadApps();
                     
-
-                    loadAppData.LoadingProgress -= LoadAppData_LoadingProgress_2;
+                    lad.LoadingProgress -= LoadAppData_LoadingProgress_2;
 
                     appsBg = false;
                 }
 
                 if (appsBg)
                 {
-                    AppListCacheUpdater.LoadAppsInBackground();
+                    AppListCacheUpdater.LoadAppsInBackground(lad);
                 }
 
                 await backupLoader.LoadCurrentBackups();

@@ -10,38 +10,20 @@ using System.IO;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Graphics.Imaging;
 using System.Runtime.InteropServices.WindowsRuntime;
+using MahdiGhiasi.AppListManager;
 
 namespace AppDataManageTool
 {
-    public class AppData : INotifyPropertyChanged
+    public class AppDataExtension : INotifyPropertyChanged
     {
-        public string PackageId { get; set; }
-        public string PackageRootFolder { get; set; }
-        public string PackageDataFolder { get; set; }
-        public string DisplayName { get; set; }
-
-        [JsonIgnore]
-        public BitmapImage Logo {
-            get
-            {
-                if ((LogoPath == null) || (LogoPath.Length == 0))
-                    return null;
-                return new BitmapImage(new Uri(LogoPath));
-            }
-        }
-
-        public string LogoPath { get; set; }
         public string AppDataSize { get; set; } = "Calculating...";
-        public string FamilyName { get; set; }
         public bool SizeIsCalculated { get; set; } = false;
-        public string Publisher { get; set; } = "";
-        public bool IsLegacyApp { get; set; } = false;
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        public string familyName { get; set; }
+        public AppData TheApp { get; set; }
 
         public static AppData FindAppData(string family)
         {
-            foreach (var item in App.appsData)
+            foreach (var item in LoadAppData.appsData)
                 if (item.FamilyName == family)
                     return item;
             return null;
@@ -54,7 +36,7 @@ namespace AppDataManageTool
                 if (SizeIsCalculated)
                     return;
 
-                string path = PackageDataFolder;
+                string path = TheApp.PackageDataFolder;
                 StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(path);//PackageRootFolder.ToLower().Replace("c:\\data\\","u:\\"));
 
                 List<IStorageItem> contents = await FileOperations.GetContents(folder);
@@ -74,23 +56,36 @@ namespace AppDataManageTool
             }
         }
 
-        internal void NotifyChange()
-        {
-            PropertyChanged(this, new PropertyChangedEventArgs(""));
-        }
-
         internal void ResetSizeData()
         {
             AppDataSize = "Calculating...";
             SizeIsCalculated = false;
         }
-    }
 
-    public class AppDataNameComparer : IComparer<AppData>
-    {
-        public int Compare(AppData a, AppData b)
+        internal static async Task<string> GetDataFolder(CompactAppData data)
         {
-            return String.Compare(a.DisplayName, b.DisplayName);
+            return await LoadAppData.GetDataFolder(GetAppDataFromCompactAppData(data));
+        }
+
+        internal static AppData GetAppDataFromCompactAppData(CompactAppData data)
+        {
+            return LoadAppData.appsData.FirstOrDefault(x => x.FamilyName == data.FamilyName);
+        }
+
+        internal static void ResetAppSizes()
+        {
+            foreach (AppData item in LoadAppData.appsData)
+            {
+                AppDataExtension itemEx = App.GetAppDataEx(item);
+                itemEx.ResetSizeData();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyChange()
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs(""));
         }
     }
 }

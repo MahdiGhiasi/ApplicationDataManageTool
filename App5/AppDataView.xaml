@@ -89,7 +89,7 @@
                           ItemTemplate="{StaticResource appsListSmall}"
                           HorizontalContentAlignment="Stretch" SelectionMode="Single"
                           ItemsSource="{Binding Source={StaticResource collection}}">
-                    
+
                     <ListView.GroupStyle>
                         <GroupStyle HidesIfEmpty="True">
                             <GroupStyle.HeaderTemplate>
@@ -115,21 +115,23 @@
             <StackPanel Orientation="Vertical" Margin="20,20,0,0">
                 <StackPanel Orientation="Horizontal" Margin="-20,-20,0,0" Padding="20,20,0,10" Background="#FF222222">
                     <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}" Margin="5">
-                        <Image Source="{Binding Logo}" Width="50" Height="50"></Image>
+                        <Image Source="{Binding Logo}" DataContext="{Binding TheApp}" Width="50" Height="50"></Image>
                     </Grid>
                     <StackPanel>
                         <TextBlock Margin="4,8,0,0"
-                                           Text="{Binding DisplayName}"
-                                           TextWrapping="WrapWholeWords" />
+                                   Text="{Binding DisplayName}"
+                                   DataContext="{Binding TheApp}" 
+                                   TextWrapping="WrapWholeWords" />
                         <TextBlock Margin="4,0,0,0" Opacity="0.6"
-                                           Text="{Binding Publisher}"
-                                           TextWrapping="WrapWholeWords" />
+                                   Text="{Binding Publisher}"
+                                   DataContext="{Binding TheApp}" 
+                                   TextWrapping="WrapWholeWords" />
                     </StackPanel>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="0,20,20,0">
                     <TextBlock Text="Package Id:" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding PackageId}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"   />
+                    <TextBlock Text="{Binding PackageId}" DataContext="{Binding TheApp}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"   />
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Margin="0,20,20,0">
                     <TextBlock Text="App data size:" FontWeight="SemiBold" />
@@ -141,11 +143,11 @@
                 <StackPanel Visibility="Visible" x:Name="AdvancedDetails">
                     <StackPanel Orientation="Vertical" Margin="0,15,20,0">
                         <TextBlock Text="Data Path:" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding PackageDataFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
+                        <TextBlock Text="{Binding PackageDataFolder}" DataContext="{Binding TheApp}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Margin="0,20,20,0">
                         <TextBlock Text="Installation Path:" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding PackageRootFolder}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
+                        <TextBlock Text="{Binding PackageRootFolder}" DataContext="{Binding TheApp}" TextWrapping="Wrap" Tapped="CopyToClipboardTextBlock_Tapped" Margin="0,4,0,0"  />
                     </StackPanel>
                     <TextBlock Text="Hide details" Margin="0,15,20,20" x:Name="HideAdvancedDetails" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Tapped="HideAdvancedDetails_Tapped" />
                 </StackPanel>
