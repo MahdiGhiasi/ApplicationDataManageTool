@@ -100,7 +100,7 @@ namespace AppDataManageTool
 
         public static string GenerateBackupName()
         {
-            return "Backup " + DateTime.Now.ToString("yyyy-dd-M  HH-mm-ss-fff");
+            return DateTime.Now.ToString("yyyy-MM-dd  HH-mm-ss");
         }
 
         public async Task CreateBackup(AppData app, string name)
