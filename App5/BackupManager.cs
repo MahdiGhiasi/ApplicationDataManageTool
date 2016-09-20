@@ -192,7 +192,8 @@ namespace AppDataManageTool
                                         where s is StorageFile
                                         select (StorageFile)s).ToList();
 
-
+            int count = files.Count;
+            int current = 0;
             foreach (var item in files)
             {
                 try
@@ -210,8 +211,11 @@ namespace AppDataManageTool
                 {
                     System.Diagnostics.Debug.WriteLine(ex.Message + " :: " + item.Path);
                 }
+                current++;
+                OnBackupProgress(new BackupEventArgs(((double)current) / count, BackupState.ResettingAppData, current.ToString() + " / " + count.ToString(), "", null));
             }
 
+            OnBackupProgress(new BackupEventArgs(100.0, BackupState.Finished, current.ToString() + " / " + count.ToString(), "", null));
             App.GetAppDataEx(app).ResetSizeData();
         }
 

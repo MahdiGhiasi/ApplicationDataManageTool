@@ -357,11 +357,26 @@ namespace AppDataManageTool
             {
                 progress.Visibility = Visibility.Visible;
                 BackupManager bm = new BackupManager();
+                bm.BackupProgress += Bm_BackupProgress;
                 await bm.ResetAppData(currentApp.TheApp);
+                bm.BackupProgress -= Bm_BackupProgress;
                 FileOperations.RemoveFromGetContentsCache(currentApp.familyName);
 
                 await currentApp.CalculateSize();
                 progress.Visibility = Visibility.Collapsed;
+                progressText.Text = "";
+            }
+        }
+
+        private void Bm_BackupProgress(object sender, BackupEventArgs e)
+        {
+            if (e.State == BackupState.ResettingAppData)
+            {
+                progressText.Text = "Removing files " + e.Message; 
+            }
+            else
+            {
+                progressText.Text = "Finalizing...";
             }
         }
 
