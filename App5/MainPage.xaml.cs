@@ -40,7 +40,7 @@ namespace AppDataManageTool
         {
             this.InitializeComponent();
 
-            backupLoader.LoadBackupsProgress += BackupLoader_LoadBackupsProgress;
+            //backupLoader.LoadBackupsProgress += BackupLoader_LoadBackupsProgress;
 
             InitSettings();
         }
@@ -91,15 +91,16 @@ namespace AppDataManageTool
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            backupLoader.LoadBackupsProgress -= BackupLoader_LoadBackupsProgress;
+            //backupLoader.LoadBackupsProgress -= BackupLoader_LoadBackupsProgress;
 
             base.OnNavigatingFrom(e);
         }
 
+        /**
         private void BackupLoader_LoadBackupsProgress(object sender, LoadingEventArgs e)
         {
-            progressStatus.Text = "Loading current backups...";
-            /**
+            
+            
             if (e.Current == 0)
             {
                 progressStatus.Text = "Loading current backups...";
@@ -109,8 +110,9 @@ namespace AppDataManageTool
                 int percent = (int)Math.Round((100.0 * e.Current) / e.Total);
                 progressStatus.Text = "Loading current backups " + percent.ToString() + "%";
             }
-            /**/
+            
         }
+        /**/
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
@@ -121,6 +123,7 @@ namespace AppDataManageTool
                 progress.Visibility = Visibility.Visible;
                 progressRing.IsActive = true;
 
+                progressStatus.Text = "Loading cache...";
                 bool isThereCache = await LoadAppData.LoadCachedAppList();
                 
                 bool appsBg = true;
@@ -135,12 +138,13 @@ namespace AppDataManageTool
                     appsBg = false;
                 }
 
+                progressStatus.Text = "Loading current backups...";
+                await backupLoader.LoadCurrentBackups();
+
                 if (appsBg)
                 {
                     AppListCacheUpdater.LoadAppsInBackground(lad);
                 }
-
-                await backupLoader.LoadCurrentBackups();
 
                 progress.Visibility = Visibility.Collapsed;
                 progressRing.IsActive = false;
