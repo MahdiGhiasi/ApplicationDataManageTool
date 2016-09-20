@@ -17,6 +17,7 @@
             </Grid.RowDefinitions>
             <Grid Background="#FF222222" x:Name="Header" Height="54" Grid.Row="0" PointerPressed="Secret3_PointerPressed">
                 <TextBlock Text="APP DATA MANAGE TOOL (BETA)" FontFamily="Segoe UI Black" FontWeight="Bold" Margin="24,18,24,0" />
+                <TextBlock x:Name="versionNum" Text="vUnknown" VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="0.4" FontSize="12" Margin="0,0,4,2" />
             </Grid>
             <ScrollViewer Grid.Row="1" VerticalScrollMode="Enabled">
                 <StackPanel>

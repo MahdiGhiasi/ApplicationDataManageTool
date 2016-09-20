@@ -43,6 +43,8 @@ namespace AppDataManageTool
             //backupLoader.LoadBackupsProgress += BackupLoader_LoadBackupsProgress;
 
             InitSettings();
+
+            versionNum.Text = "v" + UpdateChecker.GetAppVersionString(false);
         }
 
         private async void InitSettings()
