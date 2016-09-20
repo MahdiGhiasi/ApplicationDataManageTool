@@ -154,7 +154,7 @@ namespace AppDataManageTool
                 progressBar1.Value = e.Progress;
             }
 
-            if (e.Log.Count != LogsView.Items.Count)
+            if ((e.Log != null) && (e.Log.Count != LogsView.Items.Count))
             { //Update the list
                 for (int i = LogsView.Items.Count; i < e.Log.Count; i++)
                     log.Insert(0, e.Log[i]);
