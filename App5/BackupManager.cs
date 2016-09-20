@@ -12,7 +12,7 @@ namespace AppDataManageTool
     public enum BackupState
     {
         Initializing, Compressing, WritingMetadata, Finished,
-        ResettingAppData, Decompressing
+        ResettingAppData, Decompressing, ResettingAppData2, Finalizing2
     }
 
 
@@ -212,10 +212,11 @@ namespace AppDataManageTool
                     System.Diagnostics.Debug.WriteLine(ex.Message + " :: " + item.Path);
                 }
                 current++;
-                OnBackupProgress(new BackupEventArgs(((double)current) / count, BackupState.ResettingAppData, current.ToString() + " / " + count.ToString(), "", null));
+
+                OnBackupProgress(new BackupEventArgs(100.0 * ((double)current) / count, BackupState.ResettingAppData2, current.ToString() + " / " + count.ToString(), "", null));
             }
 
-            OnBackupProgress(new BackupEventArgs(100.0, BackupState.Finished, current.ToString() + " / " + count.ToString(), "", null));
+            OnBackupProgress(new BackupEventArgs(100.0, BackupState.Finalizing2, current.ToString() + " / " + count.ToString(), "", null));
             App.GetAppDataEx(app).ResetSizeData();
         }
 

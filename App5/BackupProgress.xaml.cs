@@ -142,6 +142,12 @@ namespace AppDataManageTool
         {
             if ((e.State == BackupState.Compressing) && ((DateTime.Now - lastUpdate) < TimeSpan.FromMilliseconds(100)))
                 return;
+            if ((e.State == BackupState.ResettingAppData2) || (e.State == BackupState.Finalizing2))
+            {
+                progressBar1.IsIndeterminate = false;
+                progressBar1.Value = e.Progress;
+                return;
+            }
 
             messageTextBlock.Text = e.Message;
             message2TextBlock.Text = e.Message2;
