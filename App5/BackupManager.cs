@@ -67,8 +67,9 @@ namespace AppDataManageTool
 
                 StorageFolder backupLocation;
 
-                try {
-                     backupLocation = await StorageFolder.GetFolderFromPathAsync(App.BackupDestination);
+                try
+                {
+                    backupLocation = await StorageFolder.GetFolderFromPathAsync(App.BackupDestination);
                 }
                 catch
                 {
@@ -139,7 +140,7 @@ namespace AppDataManageTool
 
             OnBackupProgress(new BackupEventArgs(0, BackupState.Compressing, "Copying...", "", log));
             await CreateZip(sources, System.IO.Path.Combine(backupPath, "data.zip"), App.AllowCompress ? System.IO.Compression.CompressionLevel.Optimal : System.IO.Compression.CompressionLevel.NoCompression);
-            
+
             OnBackupProgress(new BackupEventArgs(100.0, BackupState.WritingMetadata, "Creating metadata...", "", log));
 
             Backup currentBackup = new Backup(name, Backup.GenerateAppSubtitle(apps));
@@ -181,7 +182,7 @@ namespace AppDataManageTool
             string status = "Copying...";
             if (familyToDisplayNames.ContainsKey(e.CurrentRootFolder))
                 status = familyToDisplayNames[e.CurrentRootFolder] + ": Copying...";
-            OnBackupProgress(new BackupEventArgs(percent, BackupState.Compressing, status, e.ProcessedFilesCount.ToString() + " / " + totalFiles.ToString() , e.Log));
+            OnBackupProgress(new BackupEventArgs(percent, BackupState.Compressing, status, e.ProcessedFilesCount.ToString() + " / " + totalFiles.ToString(), e.Log));
             log = e.Log;
         }
 
@@ -189,8 +190,8 @@ namespace AppDataManageTool
         {
             StorageFolder dataFolder = await StorageFolder.GetFolderFromPathAsync(app.PackageDataFolder);
             List<StorageFile> files = (from IStorageItem s in (await FileOperations.GetContents(dataFolder))
-                                        where s is StorageFile
-                                        select (StorageFile)s).ToList();
+                                       where s is StorageFile
+                                       select (StorageFile)s).ToList();
 
             int count = files.Count;
             int current = 0;
@@ -273,7 +274,7 @@ namespace AppDataManageTool
             string status = "Restoring...";
             if (familyToDisplayNames.ContainsKey(e.CurrentRootFolder))
                 status = familyToDisplayNames[e.CurrentRootFolder] + ": Restoring...";
-            OnBackupProgress(new BackupEventArgs(e.Percent, BackupState.ResettingAppData,status, e.ProcessedEntries.ToString() + " / " + e.TotalEntries, e.Log));
+            OnBackupProgress(new BackupEventArgs(e.Percent, BackupState.Decompressing, status, e.ProcessedEntries.ToString() + " / " + e.TotalEntries, e.Log));
             restoreLog = e.Log;
         }
 

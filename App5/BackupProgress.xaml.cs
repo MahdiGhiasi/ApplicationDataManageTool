@@ -31,6 +31,9 @@ namespace AppDataManageTool
         ObservableCollection<ArchiverError> log = new ObservableCollection<ArchiverError>();
         DisplayRequest displayRequest;
 
+        private int cleanedCount;
+        private int totalAppsCount = 0;
+
         public BackupProgress()
         {
             this.InitializeComponent();
@@ -100,6 +103,9 @@ namespace AppDataManageTool
                     }
                 }
 
+                cleanedCount = -1;
+                totalAppsCount = backup.Apps.Count;
+
                 await backupManager.Restore(backup, skipApps);
 
                 progressBar1.Value = 100.0;
@@ -145,12 +151,20 @@ namespace AppDataManageTool
             if ((e.State == BackupState.ResettingAppData2) || (e.State == BackupState.Finalizing2))
             {
                 progressBar1.IsIndeterminate = false;
-                progressBar1.Value = e.Progress;
+                double progress = (e.Progress + (cleanedCount * 100.0)) / totalAppsCount;
+                progress = Math.Min(Math.Max(progress, 0.0), 100.0);
+                progressBar1.Value = progress;
                 return;
             }
 
             messageTextBlock.Text = e.Message;
             message2TextBlock.Text = e.Message2;
+
+            if (e.State == BackupState.ResettingAppData)
+            {
+                cleanedCount++;
+                return;
+            }
 
             if (e.Progress < 0)
                 progressBar1.IsIndeterminate = true;
