@@ -49,6 +49,29 @@ namespace MahdiGhiasi.AppListManager
 
         LegacyBridge.LegacyAppTools legacyTools;
 
+        public bool LoadLegacyAppsToo { get; set; }
+
+        public LoadAppData(bool loadLegacyAppsToo = true)
+        {
+            LoadLegacyAppsToo = loadLegacyAppsToo;
+            LoadLegacyTools();
+        }
+
+        private void LoadLegacyTools()
+        {
+            if (LoadLegacyAppsToo)
+            {
+                try
+                {
+                    legacyTools = new LegacyBridge.LegacyAppTools();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Can't load legacy tools.", ex);
+                }
+            }
+        }
+
         protected virtual void OnLoadingProgress(LoadingEventArgs e)
         {
             if (LoadingProgress != null)
@@ -61,20 +84,11 @@ namespace MahdiGhiasi.AppListManager
                 LoadCompleted(this, new EventArgs());
         }
 
-        public async Task LoadApps(bool loadLegacyAppsToo = true)
+        public async Task LoadApps(bool reloadLegacyTools = false)
         {
-            if (loadLegacyAppsToo)
+            if (reloadLegacyTools)
             {
-                try
-                {
-                    legacyTools = new LegacyBridge.LegacyAppTools();
-                }
-                catch (Exception ex)
-                {
-                    MessageDialog md = new MessageDialog("Can't load legacy WP8 apps (" + ex.Message + ")");
-                    await md.ShowAsync();
-                    loadLegacyAppsToo = false;
-                }
+                LoadLegacyTools();
             }
 
             //Modern apps
@@ -85,7 +99,7 @@ namespace MahdiGhiasi.AppListManager
             StorageFolder programsFolder;
             IEnumerable<StorageFolder> programs = null;
 
-            if (loadLegacyAppsToo)
+            if (LoadLegacyAppsToo)
             {
                 try
                 {
@@ -96,11 +110,11 @@ namespace MahdiGhiasi.AppListManager
                 {
                     MessageDialog md = new MessageDialog("Can't access legacy WP8 apps folder (" + ex.Message + ")");
                     await md.ShowAsync();
-                    loadLegacyAppsToo = false;
+                    LoadLegacyAppsToo = false;
                 }
             }
 
-            int count = packages.Count() + (loadLegacyAppsToo ? programs.Count() : 0);
+            int count = packages.Count() + (LoadLegacyAppsToo ? programs.Count() : 0);
             int progress = 0;
 
 
@@ -132,7 +146,7 @@ namespace MahdiGhiasi.AppListManager
                 OnLoadingProgress(new LoadingEventArgs(progress, count));
             }
 
-            if (loadLegacyAppsToo)
+            if (LoadLegacyAppsToo)
             {
                 System.Diagnostics.Debug.WriteLine("Now loading legacy apps...");
 
