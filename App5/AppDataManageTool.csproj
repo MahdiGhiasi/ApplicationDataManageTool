@@ -190,19 +190,15 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AppListManager\AppListManager.csproj">
-      <Project>{6B6BF42F-12D9-4A5C-9274-43584C452928}</Project>
-      <Name>AppListManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LegacyBridge\LegacyBridge.csproj">
-      <Project>{95859dda-6415-41dc-afdb-e9b7b41e9cb1}</Project>
-      <Name>LegacyBridge</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="AppListManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=ARM">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\AppListManager\AppListManager\bin\Release\AppListManager.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
