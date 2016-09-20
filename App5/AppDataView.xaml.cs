@@ -370,7 +370,7 @@ namespace AppDataManageTool
 
         private void Bm_BackupProgress(object sender, BackupEventArgs e)
         {
-            if (e.State == BackupState.ResettingAppData)
+            if (e.State == BackupState.ResettingAppData2)
             {
                 progressText.Text = "Removing files " + e.Message; 
             }
