@@ -57,7 +57,7 @@ namespace AppDataManageTool
                 commandBar.Visibility = Visibility.Collapsed;
             }
 
-            List<AppData> appsPlus = new List<AppData>(LoadAppData.appsData);
+            List<AppData> appsPlus = new List<AppData>(LoadAppData.appsData.Where(x => x.PackageDataFolder.Length > 0));
             for (char i = 'A'; i <= 'Z'; i++)
             {
                 appsPlus.Add(new AppData()
@@ -93,6 +93,10 @@ namespace AppDataManageTool
                     {
                         if ((ee.OldItems != null) && (ee.OldItems.Contains(item)))
                             continue;
+
+                        if (item.PackageDataFolder.Length == 0)
+                            continue;
+
                         await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                         {
                             try
@@ -116,6 +120,7 @@ namespace AppDataManageTool
                     {
                         if ((ee.NewItems != null) && (ee.NewItems.Contains(item)))
                             continue;
+
                         try
                         {
                             string groupName = ItemsGroupName(item);
