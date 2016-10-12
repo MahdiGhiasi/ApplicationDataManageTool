@@ -195,10 +195,10 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="AppListManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=ARM">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\AppListManager\AppListManager\bin\Release\AppListManager.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\AppListManager\AppListManager\AppListManager.csproj">
+      <Project>{6b6bf42f-12d9-4a5c-9274-43584c452928}</Project>
+      <Name>AppListManager</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
