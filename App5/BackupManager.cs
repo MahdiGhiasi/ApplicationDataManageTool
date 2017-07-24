@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.UI.Popups;
 
 namespace AppDataManageTool
 {
@@ -226,44 +227,69 @@ namespace AppDataManageTool
         public async Task Restore(Backup backup, List<CompactAppData> skipApps)
         {
             int counter = 1;
-            foreach (var item in backup.Apps)
+            try
             {
-                if (!skipApps.Contains(item))
+                foreach (var item in backup.Apps)
                 {
-                    OnBackupProgress(new BackupEventArgs(-1, BackupState.ResettingAppData, "Clearing current state of " + item.DisplayName, counter.ToString() + " / " + (backup.Apps.Count - skipApps.Count).ToString(), restoreLog));
-                    await ResetAppData(AppDataExtension.GetAppDataFromCompactAppData(item));
-                    counter++;
+                    if (!skipApps.Contains(item))
+                    {
+                        OnBackupProgress(new BackupEventArgs(-1, BackupState.ResettingAppData, "Clearing current state of " + item.DisplayName, counter.ToString() + " / " + (backup.Apps.Count - skipApps.Count).ToString(), restoreLog));
+                        await ResetAppData(AppDataExtension.GetAppDataFromCompactAppData(item));
+                        counter++;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageDialog md = new MessageDialog("4" + ex.Message);
+                await md.ShowAsync();
+            }
+            ArchiverPlus archiver = new ArchiverPlus();
             OnBackupProgress(new BackupEventArgs(-1, BackupState.Initializing, "Loading backup file...", "", restoreLog));
             StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.Combine(App.BackupDestination, backup.Name));
             StorageFile file = await folder.GetFileAsync("data.zip");
-            ArchiverPlus archiver = new ArchiverPlus();
+
 
 
             Dictionary<string, StorageFolder> dests = new Dictionary<string, StorageFolder>();
             familyToDisplayNames = new Dictionary<string, string>();
-
-            foreach (var item in backup.Apps)
+            try
             {
-                if (!skipApps.Contains(item))
-                {
-                    FileOperations.RemoveFromGetContentsCache(item.FamilyName);
 
-                    dests[item.FamilyName] = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.GetDirectoryName(await LoadAppData.GetDataFolder(AppDataExtension.GetAppDataFromCompactAppData(item))));
 
-                    familyToDisplayNames.Add(item.FamilyName, item.DisplayName);
-                }
-                else
+                foreach (var item in backup.Apps)
                 {
-                    dests[item.FamilyName] = null; //Skip
+                    if (!skipApps.Contains(item))
+                    {
+                        FileOperations.RemoveFromGetContentsCache(item.FamilyName);
+
+                        dests[item.FamilyName] = await StorageFolder.GetFolderFromPathAsync(System.IO.Path.GetDirectoryName(await LoadAppData.GetDataFolder(AppDataExtension.GetAppDataFromCompactAppData(item))));
+
+                        familyToDisplayNames.Add(item.FamilyName, item.DisplayName);
+                    }
+                    else
+                    {
+                        dests[item.FamilyName] = null; //Skip
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageDialog md = new MessageDialog("5" + ex.Message);
+                await md.ShowAsync();
             }
 
             archiver.DecompressingProgress += Archiver_DecompressingProgress;
 
-            await archiver.DecompressSpecial(file, dests);
-
+            try
+            {
+                await archiver.DecompressSpecial(file, dests);
+            }
+            catch (Exception ex)
+            {
+                MessageDialog md = new MessageDialog("6" + ex.Message);
+                await md.ShowAsync();
+            }
             archiver.DecompressingProgress -= Archiver_DecompressingProgress;
 
             OnBackupProgress(new BackupEventArgs(100.0, BackupState.Finished, "Restore completed.", "", restoreLog));

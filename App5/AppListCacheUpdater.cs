@@ -13,7 +13,7 @@ namespace AppDataManageTool
 
         private static async Task UpdateStatusBar(string message, double? val = null)
         {
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+           /* if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
                 var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
                 if (statusBar != null)
@@ -30,7 +30,7 @@ namespace AppDataManageTool
                         await statusBar.ProgressIndicator.HideAsync();
                     }
                 }
-            }
+            }*/
         }
 
         private static async void LoadAppData_LoadingProgress(object sender, LoadingEventArgs e)

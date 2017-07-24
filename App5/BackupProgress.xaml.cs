@@ -55,56 +55,80 @@ namespace AppDataManageTool
                 WarningMessage.Visibility = Visibility.Collapsed;
                 WarningMessage2.Visibility = Visibility.Visible;
 
-                backup = message.backup;
-
-                ((App)App.Current).BackRequested += BackupProgress_BackRequested;
-                backupManager.BackupProgress += BackupManager_BackupProgress;
-
-                LogsView.ItemsSource = log;
-
                 List<CompactAppData> skipApps = new List<CompactAppData>();
 
-                string notAvailableNames = "";
-                foreach (var item in backup.Apps)
+                try
                 {
-                    if (LoadAppData.appsData.Count(x => x.FamilyName == item.FamilyName) == 0)
+                    backup = message.backup;
+
+                    ((App)App.Current).BackRequested += BackupProgress_BackRequested;
+                    backupManager.BackupProgress += BackupManager_BackupProgress;
+
+                    LogsView.ItemsSource = log;
+
+                    string notAvailableNames = "";
+                    foreach (var item in backup.Apps)
                     {
-                        skipApps.Add(item);
-                        if (notAvailableNames.Length > 0)
-                            notAvailableNames += "\r\n";
-                        notAvailableNames += item.DisplayName;
+                        if (LoadAppData.appsData.Count(x => x.FamilyName == item.FamilyName) == 0)
+                        {
+                            skipApps.Add(item);
+                            if (notAvailableNames.Length > 0)
+                                notAvailableNames += "\r\n";
+                            notAvailableNames += item.DisplayName;
+                        }
                     }
                 }
-
-                foreach (var item in backup.Apps)
+                catch (Exception ex)
                 {
-                    if (!skipApps.Contains(item))
-                    { 
-                        AppData appd = AppDataExtension.FindAppData(item.FamilyName);
-                        if (appd.PackageId != item.PackageId)
+                    MessageDialog md = new MessageDialog("1" + ex.Message);
+                    await md.ShowAsync();
+                }
+
+                try
+                {
+                    foreach (var item in backup.Apps)
+                    {
+                        if (!skipApps.Contains(item))
                         {
-                            MessageDialog md = new MessageDialog("Current installed version doesn't match the version backup was created from.\r\n\r\n" +
-                                                                 "Current installed version: " + appd.PackageId + "\r\n\r\n" +
-                                                                 "Backup: " + item.PackageId + "\r\n\r\n\r\n" +
-                                                                 "Do you want to restore this app?",
-                                                                 appd.DisplayName + ": Version mismatch");
-                            md.Commands.Add(new UICommand("Restore") { Id = 1 });
-                            md.Commands.Add(new UICommand("Don't restore") { Id = 0 });
-                            md.DefaultCommandIndex = 1;
-                            md.CancelCommandIndex = 0;
-
-                            var result = await md.ShowAsync();
-
-                            if (((int)result.Id) == 0)
+                            AppData appd = AppDataExtension.FindAppData(item.FamilyName);
+                            if (appd.PackageId != item.PackageId)
                             {
-                                skipApps.Add(item);
+                                MessageDialog md = new MessageDialog("Current installed version doesn't match the version backup was created from.\r\n\r\n" +
+                                                                     "Current installed version: " + appd.PackageId + "\r\n\r\n" +
+                                                                     "Backup: " + item.PackageId + "\r\n\r\n\r\n" +
+                                                                     "Do you want to restore this app?",
+                                                                     appd.DisplayName + ": Version mismatch");
+                                md.Commands.Add(new UICommand("Restore") { Id = 1 });
+                                md.Commands.Add(new UICommand("Don't restore") { Id = 0 });
+                                md.DefaultCommandIndex = 1;
+                                md.CancelCommandIndex = 0;
+
+                                var result = await md.ShowAsync();
+
+                                if (((int)result.Id) == 0)
+                                {
+                                    skipApps.Add(item);
+                                }
                             }
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    MessageDialog md = new MessageDialog("2" + ex.Message);
+                    await md.ShowAsync();
+                }
 
-                cleanedCount = -1;
-                totalAppsCount = backup.Apps.Count;
+                try
+                {
+                    cleanedCount = -1;
+                    totalAppsCount = backup.Apps.Count;
+                }
+                catch (Exception ex)
+                {
+                    MessageDialog md = new MessageDialog("3" + ex.Message);
+                    await md.ShowAsync();
+                }
 
                 await backupManager.Restore(backup, skipApps);
 
@@ -168,7 +192,8 @@ namespace AppDataManageTool
 
             if (e.Progress < 0)
                 progressBar1.IsIndeterminate = true;
-            else {
+            else
+            {
                 if (progressBar1.IsIndeterminate)
                     progressBar1.IsIndeterminate = false;
                 progressBar1.Value = e.Progress;

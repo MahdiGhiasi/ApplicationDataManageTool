@@ -170,7 +170,8 @@ namespace LightBuzz.Archiver
                     int counter = 0;
 
                     IEnumerable<ZipArchiveEntry> notSkippedEntries = from ZipArchiveEntry z in archive.Entries
-                                                                     let dest = destinations[z.FullName.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)[0]]
+                                                                     let destStr = z.FullName.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)[0]
+                                                                     let dest = destinations.ContainsKey(destStr) ? destinations[destStr] : null
                                                                      where dest != null
                                                                      select z;
 
