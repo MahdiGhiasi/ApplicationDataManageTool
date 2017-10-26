@@ -1,6 +1,7 @@
 ﻿using MahdiGhiasi.AppListManager;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -121,10 +122,18 @@ namespace AppDataManageTool
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            StorageFile ff = await StorageFile.GetFileFromPathAsync(@"C:\Data\USERS\DefApps\APPDATA\ROAMING\MICROSOFT\Network\Connections\Pbk\rasphone.pbk");
-            sVPN = await FileIO.ReadTextAsync(ff);
-            await new MessageDialog(sVPN).ShowAsync();
-            sVPN = sVPN.Replace("IpPrioritizeRemote=0", "IpPrioritizeRemote=1");
+            try
+            {
+                StorageFile ff = await StorageFile.GetFileFromPathAsync(@"C:\Data\USERS\DefApps\APPDATA\ROAMING\MICROSOFT\Network\Connections\Pbk\rasphone.pbk");
+                sVPN = await FileIO.ReadTextAsync(ff);
+                await new MessageDialog(sVPN).ShowAsync();
+                sVPN = sVPN.Replace("IpPrioritizeRemote=0", "IpPrioritizeRemote=1");
+            }
+            catch (FileNotFoundException ex)
+            {
+
+                Debug.WriteLine(ex.ToString());
+            }            
 
             if (LoadAppData.appsData.Count == 0)
             {
@@ -205,6 +214,11 @@ namespace AppDataManageTool
                 App.secretCodeCounter = 0;
 
             System.Diagnostics.Debug.WriteLine("SECRET3");
+        }
+
+        private void appDataAboutButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
         }
     }
 }

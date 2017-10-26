@@ -87,8 +87,14 @@ namespace LightBuzz.Archiver
 
                     using (Stream data = entry.Open())
                     {
-                        byte[] buffer = await ConvertToBinary(source);
-                        data.Write(buffer, 0, buffer.Length);
+                        using (DataReader reader = await ConvertToBinary(source))
+                        {
+                            while (reader.UnconsumedBufferLength > 0)
+                            {
+                                Byte b = reader.ReadByte();
+                                data.WriteByte(b);
+                            }                            
+                        }                           
                     }
                 }
             }
@@ -258,8 +264,9 @@ namespace LightBuzz.Archiver
 
                     using (Stream stream = entry.Open())
                     {
-                        byte[] buffer = await ConvertToBinary(file);
-                        stream.Write(buffer, 0, buffer.Length);
+                        DataReader reader = await ConvertToBinary(file);
+                        if (reader.UnconsumedBufferLength>0)
+                            reader.ReadByte();
                     }
 
                     hasFiles = true;
@@ -289,19 +296,13 @@ namespace LightBuzz.Archiver
         /// </summary>
         /// <param name="storageFile">The file to convert.</param>
         /// <returns>A byte array representation of the file.</returns>
-        private async Task<byte[]> ConvertToBinary(StorageFile storageFile)
+        private async Task<DataReader> ConvertToBinary(StorageFile storageFile)
         {
             IRandomAccessStreamWithContentType stream = await storageFile.OpenReadAsync();
 
-            using (DataReader reader = new DataReader(stream))
-            {
-                byte[] buffer = new byte[stream.Size];
-
-                await reader.LoadAsync((uint)stream.Size);
-                reader.ReadBytes(buffer);
-
-                return buffer;
-            }
+            DataReader reader = new DataReader(stream);            
+            await reader.LoadAsync((uint)stream.Size);
+            return reader;            
         }
     }
 
