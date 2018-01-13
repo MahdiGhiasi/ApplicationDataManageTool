@@ -89,11 +89,18 @@ namespace LightBuzz.Archiver
                     {
                         using (DataReader reader = await ConvertToBinary(source))
                         {
-                            while (reader.UnconsumedBufferLength > 0)
+                            while (reader.UnconsumedBufferLength > 8192 && data.CanWrite)
+                            {
+                                const int CHUNK = 8192;
+                                Byte[] b = new byte[CHUNK];
+                                reader.ReadBytes(b);
+                                await data.WriteAsync(b, 0, CHUNK);
+                            }
+                            while (reader.UnconsumedBufferLength > 0 && data.CanWrite)
                             {
                                 Byte b = reader.ReadByte();
                                 data.WriteByte(b);
-                            }                            
+                            }
                         }                           
                     }
                 }
