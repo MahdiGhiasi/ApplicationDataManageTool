@@ -1,15 +1,9 @@
 ﻿using System.ComponentModel;
 using Windows.Storage;
-using Windows.UI.Xaml.Media;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using System.IO;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.Graphics.Imaging;
-using System.Runtime.InteropServices.WindowsRuntime;
 using MahdiGhiasi.AppListManager;
 
 namespace AppDataManageTool
@@ -37,7 +31,7 @@ namespace AppDataManageTool
                     return;
 
                 string path = TheApp.PackageDataFolder;
-                StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(path);//PackageRootFolder.ToLower().Replace("c:\\data\\","u:\\"));
+                StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(path);
 
                 List<IStorageItem> contents = await FileOperations.GetContents(folder);
 
