@@ -189,12 +189,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AppListManager\AppListManager\AppListManager.csproj">
-      <Project>{6b6bf42f-12d9-4a5c-9274-43584c452928}</Project>
-      <Name>AppListManager</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights">
       <Version>2.4.0</Version>
     </PackageReference>
@@ -225,6 +219,11 @@
   <ItemGroup>
     <None Include="20180113.snk" />
     <None Include="AppDataManageTool_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="AppListManager">
+      <HintPath>Libs\AppListManager.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
