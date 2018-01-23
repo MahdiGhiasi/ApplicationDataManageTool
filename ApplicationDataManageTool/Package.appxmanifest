@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap mp rescap">
+  <Identity Name="524695aa-9557-4be3-8b64-d9fd6aae21aa" Publisher="CN=stefa" Version="2.5.1.0" />
+  <mp:PhoneIdentity PhoneProductId="524695aa-9557-4be3-8b64-d9fd6aae21aa" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Properties>
+    <DisplayName>App Data Manage Tool (Beta)</DisplayName>
+    <PublisherDisplayName>Mahdi Ghiasi</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+  </Dependencies>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="AppDataManageTool.App">
+      <uap:VisualElements DisplayName="App Data Manage Tool" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Application Data Manage Tool (Beta)" BackgroundColor="transparent">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\Square71x71Logo.png" ShortName="App Data Manage Tool">
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#000000" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <uap:Capability Name="removableStorage" />
+    <rescap:Capability Name="id_cap_runtime_config" />
+    <rescap:Capability Name="id_cap_oem_custom" />
+    <rescap:Capability Name="oemDeployment" />
+    <rescap:Capability Name="oemPublicDirectory" />
+    <rescap:Capability Name="runtimeConfig" />
+    <rescap:Capability Name="oemCustom" />
+    <rescap:Capability Name="deviceUnlock" />
+    <rescap:Capability Name="deviceManagementAdministrator" />
+    <rescap:Capability Name="userDataSystem" />
+    <rescap:Capability Name="packageManagement" />
+    <rescap:Capability Name="packageQuery" />
+    <rescap:Capability Name="id_cap_medialib_audio" />
+    <rescap:Capability Name="id_cap_medialib_playback" />
+    <rescap:Capability Name="id_cap_medialib_photo" />
+    <rescap:Capability Name="id_cap_webbrowsercomponent" />
+    <rescap:Capability Name="id_cap_interopservices" />
+    <rescap:Capability Name="id_cap_device_management_security_policies" />
+    <rescap:Capability Name="id_cap_device_management_admin" />
+    <rescap:Capability Name="id_cap_oem_deployment" />
+    <rescap:Capability Name="id_cap_csp_foundation" />
+    <rescap:Capability Name="id_cap_csp_oem" />
+    <rescap:Capability Name="id_cap_csp_w4_application" />
+    <rescap:Capability Name="id_cap_internet_explorer_search_provider_keys_hkcu" />
+    <rescap:Capability Name="id_cap_removable_storage" />
+    <rescap:Capability Name="id_cap_oempublicdirectory" />
+    <rescap:Capability Name="id_cap_public_folder_full" />
+    <rescap:Capability Name="id_cap_storage_management" />
+    <rescap:Capability Name="id_cap_chamber_profile_data_rw" />
+    <rescap:Capability Name="id_cap_chamber_profile_code_rw" />
+  </Capabilities>
+</Package>

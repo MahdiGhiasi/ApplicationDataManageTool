@@ -1,2 +1,0 @@
-MainPackage=C:\Users\ghias\Documents\Visual Studio 2015\Projects\ApplicationDataManageTool\App5\bin\ARM\Release\AppDataManageTool_1.0.0.0_ARM.appx
-SymbolPackage=C:\Users\ghias\Documents\Visual Studio 2015\Projects\ApplicationDataManageTool\App5\AppPackages\AppDataManageTool_1.0.0.0_Test\AppDataManageTool_1.0.0.0_ARM.appxsym

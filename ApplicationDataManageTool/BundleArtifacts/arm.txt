@@ -1,0 +1,2 @@
+MainPackage=S:\Progetti\ApplicationDataManageTool\ApplicationDataManageTool\bin\ARM\Release\AppDataManageTool_2.5.1.0_ARM.appx
+SymbolPackage=S:\Progetti\ApplicationDataManageTool\ApplicationDataManageTool\AppPackages\AppDataManageTool_2.5.1.0_Test\AppDataManageTool_2.5.1.0_ARM.appxsym
