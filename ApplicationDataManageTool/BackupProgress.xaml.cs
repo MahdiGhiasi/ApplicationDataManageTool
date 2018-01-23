@@ -148,9 +148,7 @@ namespace AppDataManageTool
                 backupManager.BackupProgress += BackupManager_BackupProgress;
 
                 LogsView.ItemsSource = log;
-
-                List<AppData> appDatas = (from CompactAppData c in backup.Apps
-                                          select AppDataExtension.FindAppData(c.FamilyName)).ToList();
+                List<AppData> appDatas = getAppDatas();
 
                 await backupManager.CreateBackup(appDatas, backup.Name);
 
@@ -165,6 +163,20 @@ namespace AppDataManageTool
 
             ((App)App.Current).BackRequested -= BackupProgress_BackRequested;
             displayRequest.RequestRelease();
+        }
+
+        private List<AppData> getAppDatas()
+        {
+            List < AppData > list = new List<AppData>();
+            foreach (CompactAppData c in backup.Apps)
+            {
+                AppData data = AppDataExtension.FindAppData(c.FamilyName);
+                if (data != null)
+                {
+                    list.Add(data);
+                }                
+            }
+            return list;
         }
 
         private DateTime lastUpdate = DateTime.MinValue;

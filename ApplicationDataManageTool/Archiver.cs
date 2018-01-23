@@ -4,11 +4,8 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.Compression;
-using Windows.Storage.Search;
 using Windows.Storage.Streams;
 
 namespace LightBuzz.Archiver
@@ -27,14 +24,12 @@ namespace LightBuzz.Archiver
 
         protected virtual void OnCompressingProgress(CompressingEventArgs e)
         {
-            if (CompressingProgress != null)
-                CompressingProgress(this, e);
+            CompressingProgress?.Invoke(this, e);
         }
 
         protected virtual void OnDecompressingProgress(DecompressingEventArgs e)
         {
-            if (DecompressingProgress != null)
-                DecompressingProgress(this, e);
+            DecompressingProgress?.Invoke(this, e);
         }
 
         private int _processedFilesCount = 0;
@@ -48,8 +43,10 @@ namespace LightBuzz.Archiver
         /// <param name="destination">The compressed zip file.</param>
         public async Task Compress(StorageFolder source, StorageFile destination, CompressionLevel compressionLevel)
         {
-            List<StorageFolder> l = new List<StorageFolder>();
-            l.Add(source);
+            List<StorageFolder> l = new List<StorageFolder>
+            {
+                source
+            };
 
             await Compress(l, destination, compressionLevel);
         }
@@ -89,12 +86,14 @@ namespace LightBuzz.Archiver
                     {
                         using (DataReader reader = await ConvertToBinary(source))
                         {
+                            int i = 0;
                             while (reader.UnconsumedBufferLength > 8192 && data.CanWrite)
                             {
                                 const int CHUNK = 8192;
                                 Byte[] b = new byte[CHUNK];
                                 reader.ReadBytes(b);
-                                await data.WriteAsync(b, 0, CHUNK);
+                                await data.WriteAsync(b, i* CHUNK, CHUNK);
+                                i++;
                             }
                             while (reader.UnconsumedBufferLength > 0 && data.CanWrite)
                             {
@@ -272,8 +271,12 @@ namespace LightBuzz.Archiver
                     using (Stream stream = entry.Open())
                     {
                         DataReader reader = await ConvertToBinary(file);
-                        if (reader.UnconsumedBufferLength>0)
-                            reader.ReadByte();
+                        while (reader.UnconsumedBufferLength>0)
+                        {
+                            Byte b  = reader.ReadByte();
+                            stream.WriteByte(b);
+
+                        }                            
                     }
 
                     hasFiles = true;

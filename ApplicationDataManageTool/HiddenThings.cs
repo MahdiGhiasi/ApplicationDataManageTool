@@ -15,8 +15,7 @@ namespace AppDataManageTool
 
         protected virtual void OnProgress(string message)
         {
-            if (Progress != null)
-                Progress(this, message);
+            Progress?.Invoke(this, message);
         }
 
         public async Task BackupPath(string path, string output)
